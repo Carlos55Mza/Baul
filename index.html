@@ -6,67 +6,79 @@
     <title>Zúñiga Smart Station 🛰️</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <style>
-        :root { --glass: rgba(255, 255, 255, 0.12); --accent: #FFD700; --alert: #ff4b2b; --money: #00bcd4; }
+        :root { --glass: rgba(255, 255, 255, 0.1); --accent: #FFD700; --alert: #ff4b2b; --money: #00e5ff; }
         
         body {
-            font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0;
+            font-family: 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 0;
             min-height: 100vh; display: flex; flex-direction: column; align-items: center;
-            background: #111 no-repeat center center fixed; background-size: cover; 
-            color: white; overflow-x: hidden;
+            background: #0a0a0a url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1080') no-repeat center center fixed; 
+            background-size: cover; color: white; overflow-x: hidden;
         }
 
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.65); z-index: 1; }
-        .wrapper { position: relative; z-index: 10; width: 95%; max-width: 420px; margin: 15px auto; text-align: center; }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); z-index: 1; }
+        .wrapper { position: relative; z-index: 10; width: 92%; max-width: 400px; margin: 15px auto; text-align: center; }
 
-        /* BLOQUE CAFÉ / ALERTA */
+        .search-container {
+            background: rgba(255,255,255,0.15); border-radius: 25px; padding: 5px 15px;
+            display: flex; align-items: center; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.2);
+        }
+        .search-container input {
+            background: transparent; border: none; color: white; flex: 1; padding: 8px; outline: none; font-size: 0.9rem;
+        }
+        .search-container span { color: var(--money); cursor: pointer; }
+
         #top-info-box {
-            background: linear-gradient(135deg, rgba(0, 188, 212, 0.25), rgba(32, 156, 238, 0.25));
-            border: 2px solid var(--money); border-radius: 15px; padding: 12px; margin-bottom: 15px;
-            display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.8s;
+            background: rgba(0, 229, 255, 0.1); border: 1px solid var(--money); border-radius: 12px; 
+            padding: 8px; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; gap: 10px;
         }
 
-        .sismo-active { 
-            background: var(--alert) !important; 
-            border-color: white !important; 
-            animation: pulse-alert 0.8s infinite; 
+        #clock { font-size: 3.5rem; font-weight: 800; margin: 0; letter-spacing: -2px; }
+        #date { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px; color: #aaa; }
+
+        .info-container { display: grid; grid-template-columns: 1fr 1.2fr; gap: 10px; margin-bottom: 15px; }
+        .weather-card, .news-box { 
+            background: var(--glass); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.15); 
+            border-radius: 20px; height: 130px; overflow: hidden; position: relative;
         }
-        @keyframes pulse-alert { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
-
-        #clock { font-size: 3.8rem; font-weight: 800; margin: 0; letter-spacing: -2px; line-height: 1; }
-        #date { font-size: 0.8rem; text-transform: uppercase; opacity: 0.9; margin: 10px 0 20px; font-weight: 700; }
-
-        .info-container { display: grid; grid-template-columns: 1fr 1.3fr; gap: 10px; margin-bottom: 20px; }
-        .weather-card, .news-box { background: var(--glass); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; overflow: hidden; height: 130px; }
         
-        .temp-val { font-size: 3rem; font-weight: 800; margin: 0; }
-        #news-img { width: 100%; height: 70px; object-fit: cover; }
-        #news-text { color: white; font-size: 0.72rem; padding: 8px; height: 40px; overflow: hidden; font-weight: 600; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); line-height: 1.1; }
+        .temp-val { font-size: 2.8rem; font-weight: 800; margin: 5px 0 0; }
+        #city-display { font-size: 0.55rem; font-weight: 900; color: var(--money); }
 
-        .services-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding-bottom: 110px; }
+        #news-text { 
+            position: absolute; bottom: 0; width: 100%; background: rgba(0,0,0,0.85);
+            color: #fff; font-size: 0.7rem; padding: 6px; box-sizing: border-box;
+            text-align: left; line-height: 1.1; font-weight: 600; border-top: 1px solid var(--money);
+        }
+
+        .services-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding-bottom: 100px; }
         .service-item {
             display: flex; align-items: center; text-decoration: none; color: white; 
-            background: var(--glass); padding: 12px 10px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1);
+            background: var(--glass); padding: 10px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);
         }
-        .service-label { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; margin-left: 10px; text-align: left; }
+        .service-label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; margin-left: 8px; text-align: left; }
 
         .bottom-dock {
-            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-            background: rgba(10,10,10,0.95); padding: 15px 35px; border-radius: 40px; 
-            display: flex; gap: 40px; z-index: 100; border: 1px solid rgba(255,255,255,0.2);
+            position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%);
+            background: rgba(15,15,15,0.98); padding: 10px 25px; border-radius: 40px; 
+            display: flex; gap: 20px; z-index: 100; border: 1px solid var(--money);
         }
+        .social-btn { text-decoration: none; display: flex; flex-direction: column; align-items: center; font-size: 0.55rem; font-weight: bold; color: white; }
     </style>
 </head>
 <body>
     <div class="overlay"></div>
-    <!-- Sonido de alarma real -->
-    <audio id="alarm-sound" src="https://www.soundjay.com/buttons/beep-01a.mp3" preload="auto"></audio>
 
     <div class="wrapper">
+        <div class="search-container">
+            <input type="text" id="city-input" placeholder="Tu ciudad (ej: San Martin, AR)">
+            <span class="material-symbols-outlined" onclick="updateWeather()">search</span>
+        </div>
+
         <div id="top-info-box">
-            <span class="material-symbols-outlined" id="info-icon" style="color:var(--money)">coffee</span>
-            <div id="info-content">
-                <div id="info-title" style="font-size: 0.6rem; font-weight: 900; color: var(--money); text-transform: uppercase;">Invitame un cafecito - Alias AstroPay:</div>
-                <div id="info-data" style="font-weight: 800; letter-spacing: 1px; font-size: 0.9rem;">501.20226254200</div>
+            <span class="material-symbols-outlined" style="color:var(--money)">coffee</span>
+            <div>
+                <div style="font-size: 0.55rem; font-weight: 900; color: var(--money);">INVITAME UN CAFECITO - ALIAS ASTROPAY:</div>
+                <div style="font-weight: 800; font-size: 0.85rem;">501.20226254200</div>
             </div>
         </div>
 
@@ -75,79 +87,66 @@
 
         <div class="info-container">
             <div class="weather-card">
-                <span class="material-symbols-outlined" style="color:var(--accent); font-size: 35px; margin-top:10px;">cloud</span>
+                <!-- ICONO QUE CAMBIA SOLO -->
+                <span id="weather-icon" class="material-symbols-outlined" style="color:var(--accent); font-size: 32px; margin-top:10px;">wb_sunny</span>
                 <div class="temp-val"><span id="temp">--</span>°</div>
-                <div style="font-size: 0.55rem; font-weight: 900;">SAN MARTÍN, MZA</div>
+                <div id="city-display">CARGANDO...</div>
             </div>
-
-            <a href="https://news.google.com/" target="_blank" class="news-box" id="news-link">
-                <img src="https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=300" id="news-img">
-                <div id="news-text">Cargando noticias...</div>
+            <a href="https://news.google.com/" target="_blank" class="news-box">
+                <img src="https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=300" style="width:100%; height:100%; object-fit:cover;">
+                <div id="news-text">Cargando noticias de hoy...</div>
             </a>
         </div>
 
         <div class="services-grid">
-            <a href="https://www.mendoza.gov.ar/transportes/mendotran/" target="_blank" class="service-item" style="border-left: 4px solid #339af0;">
-                <span class="material-symbols-outlined" style="color:#339af0">directions_bus</span><span class="service-label">Mendotran<br>Horarios</span>
-            </a>
-            <!-- NUEVA PAGINA DE JUEGOS VARIADOS -->
-            <a href="https://www.crazygames.com/es/" target="_blank" class="service-item" style="border-left: 4px solid var(--accent);">
-                <span class="material-symbols-outlined" style="color:var(--accent)">sports_esports</span><span class="service-label">Multijuegos<br>Online</span>
-            </a>
-            <a href="https://www.promiedos.com.ar/" target="_blank" class="service-item"><span class="material-symbols-outlined" style="color:#51cf66">trophy</span><span class="service-label">Resultados<br>Fútbol</span></a>
-            <a href="https://mendozagol.com.ar/" target="_blank" class="service-item"><span class="material-symbols-outlined" style="color:#fa5252">sports_soccer</span><span class="service-label">Mendoza<br>Gol</span></a>
-            <a href="https://www.inpres.gob.ar/" target="_blank" class="service-item"><span class="material-symbols-outlined" style="color:#fcc419">shiver</span><span class="service-label">Sismos<br>INPRES</span></a>
-            <a href="https://www.mendoza.gov.ar/contingencias/radar/" target="_blank" class="service-item"><span class="material-symbols-outlined" style="color:#fab005">radar</span><span class="service-label">Radar<br>Granizo</span></a>
-            <a href="https://myradioenvivo.ar/" target="_blank" class="service-item"><span class="material-symbols-outlined" style="color:#ff922b">radio</span><span class="service-label">Radio en<br>Vivo</span></a>
-            <a href="https://cookpad.com/ar" target="_blank" class="service-item"><span class="material-symbols-outlined" style="color:#ff6b6b">restaurant</span><span class="service-label">Recetas<br>Fáciles</span></a>
-            <a href="https://pagomiscuentas.com/" target="_blank" class="service-item"><span class="material-symbols-outlined" style="color:#4dabf7">payments</span><span class="service-label">Pago mis<br>Cuentas</span></a>
-            <a href="https://www.anses.gob.ar/" target="_blank" class="service-item"><span class="material-symbols-outlined" style="color:#74c0fc">account_balance</span><span class="service-label">Mi<br>ANSES</span></a>
-            <a href="https://www.afip.gob.ar/" target="_blank" class="service-item"><span class="material-symbols-outlined" style="color:#63e6be">description</span><span class="service-label">Trámites<br>AFIP</span></a>
-            <a href="https://x.com/PasoCRMza" target="_blank" class="service-item"><span class="material-symbols-outlined" style="color:#339af0">mountain_flag</span><span class="service-label">Paso a<br>Chile</span></a>
+            <a href="https://www.mendoza.gov.ar/transportes/mendotran/" target="_blank" class="service-item"><span class="material-symbols-outlined" style="color:#4dabf7">directions_bus</span><span class="service-label">Mendotran</span></a>
+            <a href="https://www.1001juegos.com/clasicos" target="_blank" class="service-item"><span class="material-symbols-outlined" style="color:var(--accent)">sports_esports</span><span class="service-label">Juegos</span></a>
+            <a href="https://www.promiedos.com.ar/" target="_blank" class="service-item"><span class="material-symbols-outlined" style="color:#69db7c">trophy</span><span class="service-label">Promiedos</span></a>
+            <a href="https://mendozagol.com.ar/" target="_blank" class="service-item"><span class="material-symbols-outlined" style="color:#ff6b6b">sports_soccer</span><span class="service-label">Mza Gol</span></a>
+            <a href="https://www.inpres.gob.ar/" target="_blank" class="service-item"><span class="material-symbols-outlined" style="color:#fcc419">shiver</span><span class="service-label">Sismos</span></a>
+            <a href="https://www.mendoza.gov.ar/contingencias/radar/" target="_blank" class="service-item"><span class="material-symbols-outlined" style="color:#ff922b">radar</span><span class="service-label">Granizo</span></a>
+            <a href="https://myradioenvivo.ar/" target="_blank" class="service-item"><span class="material-symbols-outlined" style="color:#845ef7">radio</span><span class="service-label">Radio</span></a>
+            <a href="https://cookpad.com/ar" target="_blank" class="service-item"><span class="material-symbols-outlined" style="color:#ff8787">restaurant</span><span class="service-label" style="font-size:0.55rem;">Recetas</span></a>
+            <a href="https://pagomiscuentas.com/" target="_blank" class="service-item"><span class="material-symbols-outlined" style="color:#339af0">payments</span><span class="service-label">Pagos</span></a>
+            <a href="https://www.anses.gob.ar/" target="_blank" class="service-item"><span class="material-symbols-outlined" style="color:#74c0fc">account_balance</span><span class="service-label">ANSES</span></a>
+            <a href="https://www.afip.gob.ar/" target="_blank" class="service-item"><span class="material-symbols-outlined" style="color:#63e6be">description</span><span class="service-label">AFIP</span></a>
+            <a href="https://x.com/PasoCRMza" target="_blank" class="service-item"><span class="material-symbols-outlined" style="color:#339af0">mountain_flag</span><span class="service-label">Chile</span></a>
         </div>
     </div>
 
     <div class="bottom-dock">
-        <a href="https://wa.me/" target="_blank" style="color:white"><span class="material-symbols-outlined">chat</span></a>
-        <a href="tel:911" style="color:var(--alert)"><span class="material-symbols-outlined">emergency</span></a>
+        <a href="https://www.google.com" target="_blank" class="social-btn"><span class="material-symbols-outlined" style="color:#4285F4">search</span>Google</a>
+        <a href="https://www.facebook.com" target="_blank" class="social-btn"><span class="material-symbols-outlined" style="color:#1877F2">facebook</span>FB</a>
+        <a href="https://www.instagram.com" target="_blank" class="social-btn"><span class="material-symbols-outlined" style="color:#E4405F">photo_camera</span>IG</a>
+        <a href="https://www.tiktok.com" target="_blank" class="social-btn"><span class="material-symbols-outlined" style="color:#00f2ea">music_note</span>TikTok</a>
     </div>
 
     <script>
-        // --- LÓGICA DE ALERTA ---
-        function checkSismos() {
-            const magnitudReal = 0; // Solo cambiará si hay sismo real detectado
-            const box = document.getElementById('top-info-box');
-            
-            if(magnitudReal >= 4.0) {
-                box.classList.add('sismo-active');
-                document.getElementById('info-icon').innerText = "warning";
-                document.getElementById('info-title').innerText = "¡ALERTA SÍSMICA!";
-                document.getElementById('info-data').innerText = `Magnitud: ${magnitudReal}`;
-                document.getElementById('alarm-sound').play().catch(e => {});
-            } else {
-                box.classList.remove('sismo-active');
-                document.getElementById('info-icon').innerText = "coffee";
-                document.getElementById('info-title').innerText = "Invitame un cafecito - Alias AstroPay:";
-                document.getElementById('info-data').innerText = "501.20226254200";
-            }
-        }
+        const noticiasLocales = ["San Martín: Cielo despejado.", "Viento Zonda en precordillera.", "Mendotran anuncia cambios.", "Consultá ANSES por bonos."];
+        let i = 0;
+        function rotarNoticias() { document.getElementById('news-text').innerText = noticiasLocales[i]; i = (i + 1) % noticiasLocales.length; }
 
-        const news = [
-            { txt: "San Martín: Clima ideal para disfrutar al aire libre.", img: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=300" },
-            { txt: "Mendoza: Se esperan novedades en los servicios de transporte.", img: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=300" }
-        ];
-
-        let newsIndex = 0;
-        function rotateNews() {
-            const textEl = document.getElementById('news-text');
-            const imgEl = document.getElementById('news-img');
-            textEl.style.opacity = 0; imgEl.style.opacity = 0;
-            setTimeout(() => {
-                textEl.innerText = news[newsIndex].txt;
-                imgEl.src = news[newsIndex].img;
-                textEl.style.opacity = 1; imgEl.style.opacity = 1;
-                newsIndex = (newsIndex + 1) % news.length;
-            }, 500);
+        async function updateWeather() {
+            const city = document.getElementById('city-input').value || "San Martin, AR";
+            try {
+                const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&lang=es&appid=e8249e08c3e546966e2e394e0485e7ec`);
+                const data = await res.json();
+                if(data.cod === 200) {
+                    document.getElementById('temp').innerText = Math.round(data.main.temp);
+                    document.getElementById('city-display').innerText = data.name.toUpperCase();
+                    
+                    // Lógica de íconos dinámicos
+                    const main = data.weather[0].main.toLowerCase();
+                    const iconEl = document.getElementById('weather-icon');
+                    
+                    if(main.includes('clear')) iconEl.innerText = "wb_sunny";
+                    else if(main.includes('cloud')) iconEl.innerText = "cloud";
+                    else if(main.includes('rain')) iconEl.innerText = "rainy";
+                    else if(main.includes('thunderstorm')) iconEl.innerText = "thunderstorm";
+                    else if(main.includes('snow')) iconEl.innerText = "ac_unit";
+                    else iconEl.innerText = "filter_drama";
+                } else { alert("Ciudad no encontrada. Probá agregando el país, ej: 'Palmira, AR'"); }
+            } catch (e) { console.error(e); }
         }
 
         function updateClock() {
@@ -156,19 +155,9 @@
             document.getElementById('date').innerText = now.toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long' }).toUpperCase();
         }
 
-        async function updateWeather() {
-            try {
-                const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=San Martin,AR&units=metric&lang=es&appid=e8249e08c3e546966e2e394e0485e7ec`);
-                const data = await res.json();
-                document.getElementById('temp').innerText = Math.round(data.main.temp);
-            } catch (e) { console.log(e); }
-        }
-
         setInterval(updateClock, 1000);
-        setInterval(rotateNews, 10000);
-        setInterval(checkSismos, 30000); 
-
-        updateClock(); updateWeather(); rotateNews();
+        setInterval(rotarNoticias, 8000);
+        updateClock(); updateWeather(); rotarNoticias();
     </script>
 </body>
 </html>
