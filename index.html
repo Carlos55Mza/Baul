@@ -6,55 +6,77 @@
     <title>Zúñiga Smart Station 🛰️</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <style>
-        :root { --glass: rgba(255, 255, 255, 0.1); --accent: #FFD700; }
+        :root { --glass: rgba(255, 255, 255, 0.12); --accent: #FFD700; }
         body {
             font-family: 'Segoe UI', system-ui, sans-serif; margin: 0; padding: 0;
             min-height: 100vh; display: flex; flex-direction: column; align-items: center;
-            background: #111 no-repeat center center fixed; background-size: cover; 
-            transition: background 1.5s ease-in-out; color: white; overflow-x: hidden;
+            background: #111 no-repeat center center fixed; background-size: cover; color: white; overflow-x: hidden;
         }
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.55); z-index: 1; }
-        .wrapper { position: relative; z-index: 10; width: 100%; max-width: 450px; padding: 15px; box-sizing: border-box; text-align: center; }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 1; }
+        
+        /* MARQUESINA */
+        .news-ticker {
+            position: fixed; top: 0; width: 100%; background: rgba(0,0,0,0.85);
+            color: var(--accent); padding: 6px 0; z-index: 100; font-size: 0.75rem;
+            font-weight: bold; border-bottom: 1px solid var(--accent);
+        }
 
-        /* RELOJ MÁS FINO */
+        .wrapper { 
+            position: relative; z-index: 10; width: 90%; max-width: 380px; 
+            margin: 45px auto 0; text-align: center; display: flex; flex-direction: column; align-items: center;
+        }
+
+        /* FRASE MOTIVACIONAL */
+        #quote-container {
+            font-style: italic; font-size: 0.8rem; margin: 10px 0;
+            padding: 10px; border-left: 3px solid var(--accent); background: rgba(255,255,255,0.05);
+            width: 100%; box-sizing: border-box; border-radius: 0 10px 10px 0; line-height: 1.3;
+        }
+
         .clock-section { margin-top: 1vh; }
-        #clock { font-size: 3rem; font-weight: 700; margin: 0; letter-spacing: -1px; }
-        #date { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0.7; }
+        #clock { font-size: 3.5rem; font-weight: 700; margin: 0; letter-spacing: -2px; }
+        #date { font-size: 0.8rem; text-transform: uppercase; opacity: 0.7; letter-spacing: 1px; }
 
-        /* TARJETA CLIMA COMPACTA */
         .weather-card {
-            background: var(--glass); backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.15); border-radius: 35px;
-            padding: 20px 10px; margin-top: 2vh; box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            background: var(--glass); backdrop-filter: blur(25px);
+            border: 1px solid rgba(255,255,255,0.2); border-radius: 25px;
+            padding: 15px 0; margin: 12px 0; width: 100%; box-sizing: border-box;
         }
-        .temp-val { font-size: 5rem; font-weight: 800; margin: 0; line-height: 1; }
-        .weather-icon { font-size: 60px !important; color: var(--accent); }
+        .temp-val { font-size: 4.2rem; font-weight: 800; margin: 0; line-height: 1; }
+        .weather-icon { font-size: 40px !important; color: var(--accent); }
+        #desc { font-size: 0.7rem; font-weight: 800; letter-spacing: 1px; margin-top: 5px; }
 
-        /* GRILLA DE ICONOS CHICOS (4 por fila) */
+        /* GRILLA DE 2 COLUMNAS COMPLETA */
         .services-grid {
-            display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
-            margin-top: 20px; padding-bottom: 100px;
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; 
+            width: 100%; box-sizing: border-box; padding-bottom: 110px;
         }
-        .service-item {
-            display: flex; flex-direction: column; align-items: center; text-decoration: none; color: white;
-            background: rgba(255,255,255,0.05); padding: 12px 5px; border-radius: 18px;
-            border: 1px solid rgba(255,255,255,0.1); transition: 0.2s;
-        }
-        .service-item:active { transform: scale(0.9); background: rgba(255,255,255,0.2); }
-        .service-item span { font-size: 28px !important; margin-bottom: 5px; }
-        .service-label { font-size: 9px; font-weight: 600; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
 
-        /* DOCK */
+        .service-item {
+            display: flex; flex-direction: row; align-items: center; 
+            text-decoration: none; color: white; background: var(--glass); 
+            padding: 10px 12px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); 
+            transition: 0.2s; box-sizing: border-box;
+        }
+        .service-item:active { transform: scale(0.95); background: rgba(255,255,255,0.2); }
+        .service-item span { font-size: 18px !important; margin-right: 10px; }
+        .service-label { 
+            font-size: 9px; font-weight: 700; text-transform: uppercase; 
+            text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
+        }
+
         .bottom-dock {
             position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-            background: rgba(0,0,0,0.75); backdrop-filter: blur(25px);
-            padding: 10px 25px; border-radius: 30px; display: flex; gap: 20px;
-            border: 1px solid rgba(255,255,255,0.1); z-index: 100;
+            background: rgba(10,10,10,0.9); padding: 10px 25px; border-radius: 30px; 
+            display: flex; gap: 25px; border: 1px solid rgba(255,255,255,0.15); z-index: 100;
         }
-        .dock-icon { color: white; text-decoration: none; }
     </style>
 </head>
 <body>
+    <div class="news-ticker">
+        <marquee scrollamount="5">🗞️ NOTICIAS: El tiempo en San Martín se mantiene estable • Resultados en vivo en Promiedos • Seguí el monitor sísmico del INPRES • ¡Buen día para todos los vecinos! 🛰️</marquee>
+    </div>
+
     <div class="overlay"></div>
 
     <div class="wrapper">
@@ -63,13 +85,48 @@
             <div id="date">Cargando...</div>
         </div>
 
+        <div id="quote-container">
+            "<span id="quoteText">Cargando inspiración...</span>"
+        </div>
+
         <div class="weather-card">
             <span class="material-symbols-outlined weather-icon" id="icon">cloud_sync</span>
             <div class="temp-val"><span id="temp">--</span>°</div>
-            <div id="desc" style="font-size: 0.8rem; opacity: 0.8; letter-spacing: 1px;">SINCRONIZANDO...</div>
+            <div id="desc">ACTUALIZANDO...</div>
         </div>
 
         <div class="services-grid">
+            <!-- DEPORTES -->
+            <a href="https://www.promiedos.com.ar/" target="_blank" class="service-item">
+                <span class="material-symbols-outlined" style="color:#51cf66">trophy</span>
+                <span class="service-label">Promiedos</span>
+            </a>
+            <a href="https://mendozagol.com.ar/equipo/atletico-club-san-martin/" target="_blank" class="service-item">
+                <span class="material-symbols-outlined" style="color:#fa5252">sports_soccer</span>
+                <span class="service-label">Chacarero</span>
+            </a>
+
+            <!-- INFORMACIÓN CLAVE -->
+            <a href="https://www.inpres.gob.ar/" target="_blank" class="service-item">
+                <span class="material-symbols-outlined" style="color:#fcc419">shiver</span>
+                <span class="service-label">Sismos</span>
+            </a>
+            <a href="https://www.mendoza.gov.ar/contingencias/radar/" target="_blank" class="service-item">
+                <span class="material-symbols-outlined" style="color:#fab005">radar</span>
+                <span class="service-label">Radar</span>
+            </a>
+
+            <!-- COCINA Y RADIO -->
+            <a href="https://cookpad.com/ar/buscar/facil%20y%20rapido" target="_blank" class="service-item" style="background: rgba(255, 107, 107, 0.2);">
+                <span class="material-symbols-outlined" style="color:#ff6b6b">restaurant_menu</span>
+                <span class="service-label">Receta de Hoy</span>
+            </a>
+            <a href="https://myradioenvivo.ar/" target="_blank" class="service-item">
+                <span class="material-symbols-outlined" style="color:#ff922b">radio</span>
+                <span class="service-label">Radio Vivo</span>
+            </a>
+
+            <!-- TRAMITES -->
             <a href="https://pagomiscuentas.com/" target="_blank" class="service-item">
                 <span class="material-symbols-outlined" style="color:#4dabf7">payments</span>
                 <span class="service-label">Pagos</span>
@@ -78,71 +135,56 @@
                 <span class="material-symbols-outlined" style="color:#74c0fc">account_balance</span>
                 <span class="service-label">ANSES</span>
             </a>
+
+            <!-- OTROS -->
             <a href="https://www.afip.gob.ar/" target="_blank" class="service-item">
                 <span class="material-symbols-outlined" style="color:#63e6be">description</span>
                 <span class="service-label">AFIP</span>
             </a>
-            <a href="https:/www.instagram.com/munisanmartinok/" target="_blank" class="service-item">
-                <span class="material-symbols-outlined" style="color:#ff8787">location_city</span>
-                <span class="service-label">Muni SM</span>
-            </a>
-
             <a href="https://x.com/PasoCRMza" target="_blank" class="service-item">
                 <span class="material-symbols-outlined" style="color:#339af0">mountain_flag</span>
-                <span class="service-label">Chile</span>
-            </a>
-            <a href="https://www.mendoza.gov.ar/contingencias/radar/" target="_blank" class="service-item">
-                <span class="material-symbols-outlined" style="color:#fab005">radar</span>
-                <span class="service-label">Radar</span>
-            </a>
-            <a href="https://www.pedidosya.com.ar/restaurantes/san-martin" target="_blank" class="service-item">
-                <span class="material-symbols-outlined" style="color:#ff6b6b">delivery_dining</span>
-                <span class="service-label">Delivery</span>
-            </a>
-            <a href="https://mendozagol.com.ar/equipo/atletico-club-san-martin/" target="_blank" class="service-item">
-                <span class="material-symbols-outlined" style="color:#fa5252">sports_soccer</span>
-                <span class="service-label">Chacarero</span>
+                <span class="service-label">Paso Chile</span>
             </a>
         </div>
     </div>
 
     <div class="bottom-dock">
-        <a href="https://wa.me/" target="_blank" class="dock-icon"><span class="material-symbols-outlined">chat</span></a>
-        <a href="https://www.google.com/maps/search/estacion+de+servicio+san+martin+mendoza" target="_blank" class="dock-icon"><span class="material-symbols-outlined">local_gas_station</span></a>
-        <a href="https://www.google.com/maps/search/comida+san+martin+mendoza" target="_blank" class="dock-icon"><span class="material-symbols-outlined">restaurant</span></a>
-        <a href="tel:911" class="dock-icon" style="color:#ff4b2b"><span class="material-symbols-outlined">emergency</span></a>
+        <a href="https://wa.me/" target="_blank" style="color:white"><span class="material-symbols-outlined">chat</span></a>
+        <a href="https://www.google.com.ar/maps/search/estaciones+de+servicio" target="_blank" style="color:white"><span class="material-symbols-outlined">local_gas_station</span></a>
+        <a href="tel:911" style="color:#ff4b2b"><span class="material-symbols-outlined">emergency</span></a>
     </div>
 
     <script>
-        const API_KEY = "e8249e08c3e546966e2e394e0485e7ec"; 
-        const CIUDAD = "San Martin,AR"; 
+        const quotes = [
+            "El éxito es la suma de pequeños esfuerzos repetidos cada día.",
+            "Hoy es un gran día para hacer que las cosas sucedan.",
+            "La actitud es el pincel con el que la mente colorea nuestra vida.",
+            "No cuentes los días, haz que los días cuenten.",
+            "La mejor forma de predecir el futuro es creándolo.",
+            "Cada logro comienza con la decisión de intentarlo.",
+            "¡Fuerza Carlos! Hoy es un gran día para San Martín."
+        ];
 
-        const fondos = {
-            Clear: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?q=80&w=1600",
-            Clouds: "https://images.unsplash.com/photo-1534088568595-a066f410bcda?q=80&w=1600",
-            Rain: "https://images.unsplash.com/photo-1433838552652-f9a46b332c40?q=80&w=1600",
-            Thunderstorm: "https://images.unsplash.com/photo-1433838552652-f9a46b332c40?q=80&w=1600",
-            Mist: "https://images.unsplash.com/photo-1534088568595-a066f410bcda?q=80&w=1600"
-        };
-        const iconos = { Clear: "wb_sunny", Clouds: "cloud", Rain: "rainy", Thunderstorm: "thunderstorm", Mist: "filter_drama" };
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('clock').innerText = now.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
+            document.getElementById('date').innerText = now.toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long' });
+        }
 
         async function updateWeather() {
             try {
-                const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${CIUDAD}&units=metric&lang=es&appid=${API_KEY}`);
+                const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=San Martin,AR&units=metric&lang=es&appid=e8249e08c3e546966e2e394e0485e7ec`);
                 const data = await res.json();
                 document.getElementById('temp').innerText = Math.round(data.main.temp);
                 document.getElementById('desc').innerText = data.weather[0].description.toUpperCase();
                 const clima = data.weather[0].main;
+                const iconos = { Clear: "wb_sunny", Clouds: "cloud", Rain: "rainy", Thunderstorm: "thunderstorm", Mist: "filter_drama" };
                 document.getElementById('icon').innerText = iconos[clima] || "wb_cloudy";
-                document.body.style.backgroundImage = `url('${fondos[clima] || fondos.Clear}')`;
-            } catch (err) { console.error(err); }
+            } catch (e) { console.log("Error Clima"); }
         }
 
-        function updateClock() {
-            const now = new Date();
-            document.getElementById('clock').innerText = now.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', hour12: false });
-            document.getElementById('date').innerText = now.toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long' });
-        }
+        // Frase aleatoria
+        document.getElementById('quoteText').innerText = quotes[Math.floor(Math.random() * quotes.length)];
 
         setInterval(updateClock, 1000);
         setInterval(updateWeather, 900000);
