@@ -16,6 +16,7 @@
             --whatsapp: #25D366;
             --dolar: #4caf50;
             --news: #ff922b;
+            --cafecito: #ffa000;
         }
         
         body {
@@ -75,6 +76,13 @@
         }
         .social-btn:hover { transform: translateY(-3px); background: rgba(255,255,255,0.2); }
 
+        /* SECCIÓN CAFECITO */
+        .donation-card {
+            background: rgba(255, 160, 0, 0.15); border: 1px solid var(--cafecito);
+            padding: 12px; border-radius: 15px; margin-top: 15px; display: flex; align-items: center; justify-content: space-between;
+        }
+        .donation-alias { background: white; color: black; padding: 5px 12px; border-radius: 20px; font-weight: 900; font-size: 0.8rem; }
+
         .info-bar {
             display: flex; justify-content: space-between; align-items: center;
             margin-top: 20px; gap: 10px;
@@ -128,7 +136,6 @@
         </div>
 
         <div class="main-content">
-            <!-- COLUMNA IZQUIERDA -->
             <div>
                 <div class="section-title" style="color: var(--money);">SERVICIOS Y TRÁMITES 🛠️</div>
                 <div class="services-grid">
@@ -147,7 +154,6 @@
                 </div>
             </div>
 
-            <!-- COLUMNA DERECHA -->
             <div>
                 <div class="section-title" style="color: var(--accent);">REDES Y COMUNIDAD 📱</div>
                 <div class="social-grid">
@@ -155,6 +161,11 @@
                     <a href="#" target="_blank" class="social-btn" style="border-bottom: 3px solid var(--instagram);"><span class="material-symbols-outlined" style="color:var(--instagram)">photo_camera</span></a>
                     <a href="#" target="_blank" class="social-btn" style="border-bottom: 3px solid var(--whatsapp);"><span class="material-symbols-outlined" style="color:var(--whatsapp)">chat</span></a>
                     <a href="#" target="_blank" class="social-btn" style="border-bottom: 3px solid #1DA1F2;"><span class="material-symbols-outlined" style="color:#1DA1F2">share</span></a>
+                </div>
+
+                <div class="donation-card">
+                    <span style="font-size: 0.7rem; font-weight: bold; color: var(--cafecito);">☕ COLABORÁ CON LA ESTACIÓN:</span>
+                    <span class="donation-alias">501.20226254200</span>
                 </div>
 
                 <div class="section-title" style="color: var(--news);">DIARIOS Y NOTICIAS 📰</div>
