@@ -50,7 +50,6 @@
             display: inline-flex; align-items: center; gap: 8px; font-size: 1rem;
         }
 
-        /* --- ESTILOS DE LA NUEVA ALERTA --- */
         .alerta-container {
             margin-top: 15px;
             padding: 10px 15px;
@@ -79,7 +78,6 @@
             75% { transform: translateX(2px); }
             100% { transform: translateX(0); }
         }
-        /* ---------------------------------- */
 
         .weather-main-card {
             background: var(--glass); backdrop-filter: blur(10px);
@@ -157,7 +155,7 @@
             
             <div class="weather-main-card">
                 <div class="city-selector">
-                    <select onchange="updateWeatherLocation(this.value)">
+                    <select id="select-clima" onchange="updateWeatherLocation(this.value)">
                         <option value="-33.08,-68.47,SAN MARTÍN">San Martín</option>
                         <option value="-32.89,-68.84,MENDOZA CAP.">Mendoza Cap.</option>
                         <option value="-32.92,-68.81,GODOY CRUZ">Godoy Cruz</option>
@@ -272,12 +270,7 @@
     </div>
 
     <script>
-        // ==========================================
-        // 🚨 CONFIGURACIÓN DE ALERTA RÁPIDA 🚨
-        // Cambiá 'tranquilo' por 'zonda' o 'sismo'
-        // ==========================================
         const ESTADO_ACTUAL = 'tranquilo'; 
-        // ==========================================
 
         function manejarAlertas() {
             const box = document.getElementById('alerta-box');
@@ -320,7 +313,7 @@
 
         async function getDolar() {
             try {
-                const res = await fetch('https://dolarapi.com/v1/dolares/blue');
+                const res = await fetch('https://dolarapi.com/v1/dolares/blue?t=' + Date.now());
                 const data = await res.json();
                 document.getElementById('dolar-val').innerText = `$${data.venta}`;
             } catch (e) { document.getElementById('dolar-val').innerText = "N/A"; }
@@ -330,7 +323,7 @@
             const parts = val.split(',');
             const lat = parts[0]; const lon = parts[1]; const name = parts[2];
             try {
-                const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature&timezone=auto`);
+                const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature&timezone=auto&t=${Date.now()}`);
                 const data = await response.json();
                 document.getElementById('temp').innerText = Math.round(data.current.temperature_2m);
                 document.getElementById('st-val').innerText = Math.round(data.current.apparent_temperature);
@@ -340,35 +333,57 @@
         }
 
         async function updateSismos() {
+            const lista = document.getElementById('lista-sismos');
             try {
-                const res = await fetch('https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=' + new Date(Date.now() - 604800000).toISOString() + '&latitude=-32.88&longitude=-68.84&maxradiuskm=500&minmagnitude=2.0');
-                const data = await res.json();
-                const lista = document.getElementById('lista-sismos');
-                lista.innerHTML = '';
-                const sismos = data.features.slice(0, 3);
-                if (sismos.length === 0) {
+                // Usamos una URL ultra-simple para evitar que el navegador la bloquee
+                const url = 'https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&latitude=-32.89&longitude=-68.84&maxradiuskm=600&minmagnitude=2.5';
+                
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (!data.features || data.features.length === 0) {
                     lista.innerHTML = '<div class="sismo-item">Sin sismos recientes</div>';
                     return;
                 }
-                sismos.forEach(s => {
+
+                lista.innerHTML = '';
+                // Tomamos los 3 más nuevos
+                const ultimosSismos = data.features.slice(0, 3);
+                
+                ultimosSismos.forEach(s => {
                     const mag = s.properties.mag.toFixed(1);
-                    let lugar = s.properties.place.split('of ')[1] || s.properties.place;
+                    let lugar = s.properties.place;
+                    
+                    // Limpiamos el nombre del lugar para que quede bonito
+                    if (lugar.includes('of ')) lugar = lugar.split('of ')[1];
                     lugar = lugar.replace(', Argentina', '').replace(', Chile', ' 🇨🇱');
+                    
                     const item = document.createElement('div');
                     item.className = 'sismo-item';
                     item.innerHTML = `<span class="sismo-mag">${mag}</span> ${lugar}`;
                     lista.appendChild(item);
                 });
-            } catch (e) { document.getElementById('lista-sismos').innerHTML = "No se pudo cargar."; }
+            } catch (error) {
+                console.error("Error en sismos:", error);
+                lista.innerHTML = '<div class="sismo-item" style="color:red">Error de conexión</div>';
+            }
         }
 
-        setInterval(updateClock, 1000);
+        // --- INTERVALOS DE ACTUALIZACIÓN ---
+        setInterval(updateClock, 1000); // Reloj cada segundo
+        setInterval(updateSismos, 300000); // Sismos cada 5 min
+        setInterval(getDolar, 1800000); // Dólar cada 30 min
+        setInterval(() => {
+            const select = document.getElementById('select-clima');
+            updateWeatherLocation(select.value);
+        }, 600000); // Clima cada 10 min
+
+        // --- CARGA INICIAL ---
         updateClock();
         getDolar();
         updateWeatherLocation("-33.08,-68.47,SAN MARTÍN");
         updateSismos();
-        manejarAlertas(); // Iniciamos la alerta
-        setInterval(updateSismos, 300000);
+        manejarAlertas();
     </script>
 </body>
 </html>
