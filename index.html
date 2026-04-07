@@ -93,6 +93,15 @@
 
         .visitor-counter { position: fixed; bottom: 10px; left: 10px; z-index: 100; opacity: 0.8; }
 
+        /* ESTILOS SISMOS COMPACTOS */
+        .sismo-container {
+            background: rgba(255, 255, 255, 0.4); border-radius: 12px; padding: 10px; margin-top: 20px;
+            border-left: 4px solid #e74c3c; border: 1px solid rgba(255,255,255,0.5);
+        }
+        .sismo-titulo { font-size: 0.65rem; font-weight: 900; color: #c0392b; margin-bottom: 5px; letter-spacing: 1px; }
+        .sismo-item { font-size: 0.72rem; padding: 4px 0; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; align-items: center; }
+        .sismo-mag { background: #e74c3c; color: white; padding: 1px 5px; border-radius: 4px; font-weight: 900; margin-right: 8px; font-size: 0.65rem; }
+
         @media (max-width: 900px) { .main-content { grid-template-columns: 1fr 1fr; } }
         @media (max-width: 600px) { .top-grid, .main-content { grid-template-columns: 1fr; } .weather-main-card { padding-top: 50px; } }
     </style>
@@ -149,7 +158,6 @@
         </div>
 
         <div class="main-content">
-            <!-- COLUMNA 1 -->
             <div>
                 <div class="section-title" style="color: var(--money);">SERVICIOS 🛠️</div>
                 <div class="services-grid" style="display: grid; gap: 8px;">
@@ -166,9 +174,18 @@
                     <a href="https://www.quini-6-resultados.com.ar/" target="_blank" class="service-item"><span class="material-symbols-outlined" style="color:#ff8787">casino</span><span class="service-label">Quiniela</span></a>
                     <a href="https://myradioenvivo.ar/" target="_blank" class="service-item"><span class="material-symbols-outlined" style="color:#845ef7">radio</span><span class="service-label">Radios Arg.</span></a>
                 </div>
+
+                <div class="sismo-container">
+                    <div class="sismo-titulo">
+                        <span class="material-symbols-outlined" style="font-size: 14px;">sensors</span>
+                        SISMOS RECIENTES
+                    </div>
+                    <div id="lista-sismos">
+                        <div class="sismo-item">Cargando...</div>
+                    </div>
+                </div>
             </div>
 
-            <!-- COLUMNA 2 -->
             <div>
                 <div class="section-title" style="color: var(--news);">DIARIOS Y NOTICIAS 📰</div>
                 <div class="services-grid" style="display: grid; gap: 8px;">
@@ -187,7 +204,6 @@
                 </div>
             </div>
 
-            <!-- COLUMNA 3 -->
             <div>
                 <div class="section-title" style="color: #e4405f;">REDES Y COMUNIDAD 📱</div>
                 <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 10px;">
@@ -262,10 +278,36 @@
             } catch (error) { console.log("Error Clima"); }
         }
 
+        async function updateSismos() {
+            try {
+                // Buscamos sismos de magnitud 2.0+ en un radio de 500km de Mendoza
+                const res = await fetch('https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=' + new Date(Date.now() - 604800000).toISOString() + '&latitude=-32.88&longitude=-68.84&maxradiuskm=500&minmagnitude=2.0');
+                const data = await res.json();
+                const lista = document.getElementById('lista-sismos');
+                lista.innerHTML = '';
+                const sismos = data.features.slice(0, 3);
+                if (sismos.length === 0) {
+                    lista.innerHTML = '<div class="sismo-item">Sin sismos recientes</div>';
+                    return;
+                }
+                sismos.forEach(s => {
+                    const mag = s.properties.mag.toFixed(1);
+                    let lugar = s.properties.place.split('of ')[1] || s.properties.place;
+                    lugar = lugar.replace(', Argentina', '').replace(', Chile', ' 🇨🇱');
+                    const item = document.createElement('div');
+                    item.className = 'sismo-item';
+                    item.innerHTML = `<span class="sismo-mag">${mag}</span> ${lugar}`;
+                    lista.appendChild(item);
+                });
+            } catch (e) { document.getElementById('lista-sismos').innerHTML = "No se pudo cargar."; }
+        }
+
         setInterval(updateClock, 1000);
         updateClock();
         getDolar();
-        updateWeatherLocation("-33.08,-68.47,SAN MARTÍN"); 
+        updateWeatherLocation("-33.08,-68.47,SAN MARTÍN");
+        updateSismos();
+        setInterval(updateSismos, 300000); // Actualiza cada 5 minutos
     </script>
 </body>
 </html>
