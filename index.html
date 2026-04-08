@@ -29,13 +29,13 @@
             display: flex; flex-direction: column; align-items: center;
         }
 
-        /* --- NUEVA MARQUESINA --- */
+        /* --- MARQUESINA DINÁMICA --- */
         .marquesina-clima {
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(0, 0, 0, 0.7);
             backdrop-filter: blur(5px);
             color: white;
             padding: 8px 0;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             font-weight: bold;
             white-space: nowrap;
             overflow: hidden;
@@ -46,15 +46,15 @@
         .marquesina-content {
             display: inline-block;
             padding-left: 100%;
-            animation: scroll-clima 50s linear infinite;
+            animation: scroll-clima 60s linear infinite;
         }
         .marquesina-item { margin-right: 50px; text-transform: uppercase; }
         .marquesina-item span { color: var(--accent); }
+        
         @keyframes scroll-clima {
             0% { transform: translateX(0); }
             100% { transform: translateX(-100%); }
         }
-        /* ------------------------ */
 
         .overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
@@ -149,30 +149,8 @@
 </head>
 <body>
     <div class="marquesina-clima">
-        <div class="marquesina-content">
-            <span class="marquesina-item">CABA: <span>19°</span> 🌤️</span>
-            <span class="marquesina-item">LA PLATA: <span>18°</span> ☁️</span>
-            <span class="marquesina-item">CÓRDOBA: <span>22°</span> ☀️</span>
-            <span class="marquesina-item">SANTA FE: <span>21°</span> 🌤️</span>
-            <span class="marquesina-item">PARANÁ: <span>20°</span> ⛅</span>
-            <span class="marquesina-item">POSADAS: <span>28°</span> ⛈️</span>
-            <span class="marquesina-item">CORRIENTES: <span>26°</span> 🌦️</span>
-            <span class="marquesina-item">FORMOSA: <span>29°</span> ☀️</span>
-            <span class="marquesina-item">RESISTENCIA: <span>27°</span> 🌤️</span>
-            <span class="marquesina-item">S.S. DE JUJUY: <span>24°</span> ☀️</span>
-            <span class="marquesina-item">SALTA: <span>23°</span> 🌤️</span>
-            <span class="marquesina-item">S.M. DE TUCUMÁN: <span>25°</span> ☀️</span>
-            <span class="marquesina-item">S.I. DEL ESTERO: <span>27°</span> ☀️</span>
-            <span class="marquesina-item">CATAMARCA: <span>26°</span> ☀️</span>
-            <span class="marquesina-item">LA RIOJA: <span>25°</span> ☀️</span>
-            <span class="marquesina-item">SAN JUAN: <span>24°</span> ☀️</span>
-            <span class="marquesina-item">SAN LUIS: <span>22°</span> 🌤️</span>
-            <span class="marquesina-item">SANTA ROSA: <span>19°</span> ⛅</span>
-            <span class="marquesina-item">NEUQUÉN: <span>17°</span> 💨</span>
-            <span class="marquesina-item">VIEDMA: <span>15°</span> 🌤️</span>
-            <span class="marquesina-item">RAWSON: <span>14°</span> ☁️</span>
-            <span class="marquesina-item">RÍO GALLEGOS: <span>9°</span> 🌦️</span>
-            <span class="marquesina-item">USHUAIA: <span>6°</span> ❄️</span>
+        <div id="marquesina-dinamica" class="marquesina-content">
+            <span class="marquesina-item">Sintonizando Estación Zúñiga...</span>
         </div>
     </div>
 
@@ -237,7 +215,7 @@
                 <div class="services-grid" style="display: grid; gap: 8px;">
                     <a href="https://www.mendoza.gov.ar/transportes/mendotran/" target="_blank" class="service-item"><span class="material-symbols-outlined" style="color:#4dabf7">directions_bus</span><span class="service-label">Mendotran</span></a>
                     <a href="https://www.mendoza.gov.ar/contingencias/radar/" target="_blank" class="service-item"><span class="material-symbols-outlined" style="color:#69db7c">radar</span><span class="service-label">Radar Granizo</span></a>
-                    <a href="https://www.inpres.gob.ar/" target="_blank" class="service-item"><span class="material-symbols-outlined" style="color:#fcc419">shiver</span><span class="service-label">Sismos</span></a>
+                    <a href="https://www.inpres.gob.ar/" target="_blank" class="service-item"><span class="material-symbols-outlined" style="color:#fcc419">troubleshoot</span><span class="service-label">Sismos</span></a>
                     <a href="https://pagomiscuentas.com/" target="_blank" class="service-item"><span class="material-symbols-outlined" style="color:var(--money)">payments</span><span class="service-label">Pagos</span></a>
                 </div>
 
@@ -271,7 +249,13 @@
 
                 <div class="section-title" style="color: #2980b9;">TELEVISIÓN EN VIVO 📺</div>
                 <div class="services-grid" style="display: grid; gap: 8px;">
-                    <a href="https://www.youtube.com/@todonoticias/live" target="_blank" class="service-item"><span class="service-label">TN en Vivo</span></a>
+<a href="https://youtu.be/DVZ2rJQb_0g" target="_blank" class="service-item">
+    <span class="service-label">La Nacion +</span>
+</a>
+<a href="https://www.youtube.com/@canal26/live" target="_blank" class="service-item">
+    <span class="service-label">Canal 26</span>
+</a>                    
+<a href="https://www.youtube.com/@todonoticias/live" target="_blank" class="service-item"><span class="service-label">TN en Vivo</span></a>
                     <a href="https://www.youtube.com/watch?v=63FF72LFxAw" target="_blank" class="service-item"><span class="service-label">Canal 9</span></a>
                     <a href="https://www.youtube.com/watch?v=ArKbAx1K-2U" target="_blank" class="service-item"><span class="service-label">A24</span></a>
                     <a href="https://www.youtube.com/c/C5N/live" target="_blank" class="service-item"><span class="service-label">C5N</span></a>
@@ -373,26 +357,127 @@
             } catch (error) { console.log("Error Clima"); }
         }
 
+        // --- NUEVA FUNCIÓN PARA MARQUESINA NACIONAL ---
+        async function actualizarMarquesina() {
+            const ciudades = [
+                {n: 'CABA', lat: -34.61, lon: -58.37},
+                {n: 'La Plata', lat: -34.92, lon: -57.95},
+                {n: 'Córdoba', lat: -31.41, lon: -64.18},
+                {n: 'Mendoza', lat: -32.89, lon: -68.84},
+                {n: 'Santa Fe', lat: -31.63, lon: -60.70},
+                {n: 'Paraná', lat: -31.73, lon: -60.52},
+                {n: 'Posadas', lat: -27.36, lon: -55.89},
+                {n: 'Corrientes', lat: -27.46, lon: -58.83},
+                {n: 'Formosa', lat: -26.17, lon: -58.17},
+                {n: 'Resistencia', lat: -27.45, lon: -58.98},
+                {n: 'S.S. de Jujuy', lat: -24.18, lon: -65.29},
+                {n: 'Salta', lat: -24.78, lon: -65.41},
+                {n: 'Tucumán', lat: -26.82, lon: -65.22},
+                {n: 'S.I. del Estero', lat: -27.78, lon: -64.26},
+                {n: 'Catamarca', lat: -28.46, lon: -65.78},
+                {n: 'La Rioja', lat: -29.41, lon: -66.85},
+                {n: 'San Juan', lat: -31.53, lon: -68.53},
+                {n: 'San Luis', lat: -33.29, lon: -66.33},
+                {n: 'Santa Rosa', lat: -36.61, lon: -64.28},
+                {n: 'Neuquén', lat: -38.95, lon: -68.05},
+                {n: 'Viedma', lat: -40.81, lon: -62.99},
+                {n: 'Rawson', lat: -43.30, lon: -65.10},
+                {n: 'Río Gallegos', lat: -51.62, lon: -69.21},
+                {n: 'Ushuaia', lat: -54.80, lon: -68.30}
+            ];
+
+            const lats = ciudades.map(c => c.lat).join(',');
+            const lons = ciudades.map(c => c.lon).join(',');
+            
+            try {
+                const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lats}&longitude=${lons}&current=temperature_2m,weather_code&timezone=auto`);
+                const data = await res.json();
+                const container = document.getElementById('marquesina-dinamica');
+                container.innerHTML = ''; 
+
+                // MAPA DE EMOJIS ESTÁNDAR (Para evitar el cuadrado blanco)
+                const getEmoji = (code) => {
+                    // 0-1: Despejado
+                    if (code <= 1) return '☀️'; // Sol
+                    
+                    // 2-3: Nublado parcial
+                    if (code <= 3) return '🌤️'; // Sol detrás de nube
+                    
+                    // 45, 48: Niebla (Aquí estaba el problema, usamos nube simple)
+                    if (code === 45 || code === 48) return '☁️'; 
+                    
+                    // 51-65: Drizzle/Lluvia
+                    if (code <= 65) return '🌧️'; // Nube con lluvia
+                    
+                    // 66-77: Nieve (Usamos el copo simple que es más compatible)
+                    if (code <= 77) return '❄️';
+                    
+                    // 80-82: Chubascos (Usamos lluvia fuerte)
+                    if (code <= 82) return '☔'; 
+
+                    // 95-99: Tormenta
+                    if (code <= 99) return '⛈️'; // Nube con rayo y lluvia
+                    
+                    // Por defecto: Nube
+                    return '☁️';
+                };
+
+                // Asegurar que procesamos data como array
+                const dataResults = Array.isArray(data) ? data : [data];
+
+                ciudades.forEach((c, i) => {
+                    // Verificación de seguridad por si falla alguna ciudad
+                    if(dataResults[i] && dataResults[i].current) {
+                        const temp = Math.round(dataResults[i].current.temperature_2m);
+                        const emoji = getEmoji(dataResults[i].current.weather_code);
+                        container.innerHTML += `<span class="marquesina-item">${c.n}: <span>${temp}°</span> ${emoji}</span>`;
+                    }
+                });
+            } catch (e) { 
+                console.log("Error en la marquesina nacional", e); 
+                container.innerHTML = 'Error cargando clima.';
+            }
+        }
+
         async function updateSismos() {
             const lista = document.getElementById('lista-sismos');
             try {
-                const url = 'https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&latitude=-32.89&longitude=-68.84&maxradiuskm=600&minmagnitude=2.5';
+                // Cambiamos el filtro: Buscamos sismos de magnitud 4.5+ en TODO EL MUNDO
+                // Así nos aseguramos que siempre haya actividad reciente
+                const url = 'https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=4.5&orderby=time&limit=5';
+                
                 const response = await fetch(url);
                 const data = await response.json();
+                
                 if (!data.features || data.features.length === 0) {
-                    lista.innerHTML = '<div class="sismo-item">Sin sismos recientes</div>';
+                    lista.innerHTML = '<div class="sismo-item">Sin sismos detectados</div>';
                     return;
                 }
+                
                 lista.innerHTML = '';
-                const ultimosSismos = data.features.slice(0, 3);
-                ultimosSismos.forEach(s => {
+                
+                data.features.forEach(s => {
                     const mag = s.properties.mag.toFixed(1);
                     let lugar = s.properties.place;
-                    if (lugar.includes('of ')) lugar = lugar.split('of ')[1];
-                    lugar = lugar.replace(', Argentina', '').replace(', Chile', ' 🇨🇱');
+                    
+                    // Limpiamos un poco el nombre del lugar para que no sea tan largo
+                    if (lugar.includes(', ')) {
+                        const partes = lugar.split(', ');
+                        lugar = partes[partes.length - 1]; // Nos quedamos con el país o región principal
+                    }
+
+                    // Ponemos banderitas para que quede más pintoresco
+                    let bandera = '🌍';
+                    if (lugar.includes('Chile')) bandera = '🇨🇱';
+                    if (lugar.includes('Argentina')) bandera = '🇦🇷';
+                    if (lugar.includes('Japan')) lugar = 'Japón 🇯🇵';
+                    if (lugar.includes('Indonesia')) bandera = '🇮🇩';
+                    if (lugar.includes('Mexico')) lugar = 'México 🇲🇽';
+                    if (lugar.includes('Alaska')) bandera = '🇺🇸';
+
                     const item = document.createElement('div');
                     item.className = 'sismo-item';
-                    item.innerHTML = `<span class="sismo-mag">${mag}</span> ${lugar}`;
+                    item.innerHTML = `<span class="sismo-mag">${mag}</span> ${bandera} ${lugar}`;
                     lista.appendChild(item);
                 });
             } catch (error) {
@@ -400,18 +485,22 @@
             }
         }
 
+        // Intervalos de actualización
         setInterval(updateClock, 1000);
         setInterval(updateSismos, 300000);
         setInterval(getDolar, 1800000);
+        setInterval(actualizarMarquesina, 900000); // Cada 15 min
         setInterval(() => {
             const select = document.getElementById('select-clima');
             updateWeatherLocation(select.value);
         }, 600000);
 
+        // Carga inicial
         updateClock();
         getDolar();
         updateWeatherLocation("-33.08,-68.47,SAN MARTÍN");
         updateSismos();
+        actualizarMarquesina();
         manejarAlertas();
     </script>
 </body>
