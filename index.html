@@ -145,16 +145,10 @@
 
         @media (max-width: 900px) { .main-content { grid-template-columns: 1fr 1fr; } }
         @media (max-width: 600px) { .top-grid, .main-content { grid-template-columns: 1fr; } .weather-main-card { padding-top: 50px; } }
-
-/* Esto esconde el panel de control para que nadie lo vea al entrar */
-.editor-zuniga, #panel-admin {
-    display: none !important;
-}    
-
-</style>
+    </style>
 </head>
 <body>
-<div class="marquesina-clima">
+    <div class="marquesina-clima">
         <div id="marquesina-dinamica" class="marquesina-content">
             <span class="marquesina-item">Sintonizando Estación Zúñiga...</span>
         </div>
@@ -173,15 +167,13 @@
                 </div>
 
                 <div id="alerta-box" class="alerta-container">
-    <span id="alerta-icon" class="material-icons">check_circle</span>
-    <span id="alerta-mensaje">No hay alertas hoy</span>
-</div>
+                    <span id="alerta-icon" class="material-symbols-outlined" style="font-size: 18px;">check_circle</span>
+                    <span id="alerta-mensaje">No hay alertas hoy</span>
+                </div>
             </div>
             <div style="background: #2c3e50; padding: 15px; border-radius: 10px; margin-top: 20px; border: 2px solid #e74c3c; color: white;">
-    <!-- INICIO DEL PANEL (Con el nombre mágico para esconderlo) -->
-<div id="panel-zuniga" style="background: #2c3e50; padding: 15px; border-radius: 10px; margin-top: 20px; border: 2px solid #e74c3c; text-align: center; color: white;">
     <h3 style="margin-top: 0; font-size: 16px;">
-        <span class="material-icons" style="vertical-align: middle;">settings</span> 
+        <span class="material-icons" style="vertical-align: middle;"></span> 
         Panel de Control - Estación Zúñiga
     </h3>
     <input type="text" id="input-nueva-alerta" placeholder="Escribí la alerta aquí..." 
@@ -197,7 +189,6 @@
             Limpiar
     </button>
 </div>
-<!-- FIN DEL PANEL -->
             <div class="weather-main-card">
                 <div class="city-selector">
                     <select id="select-clima" onchange="updateWeatherLocation(this.value)">
@@ -378,25 +369,9 @@
              style="max-width: 100%; height: auto;">
     </div>
 </div>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
     <script>
-        var firebaseConfig = {
-            apiKey: "AIzaSyDEwSHLN9du40_SkzU7IzONQdSow9CBqu0",
-            authDomain: "estacion-zuniga.firebaseapp.com",
-            projectId: "estacion-zuniga",
-            storageBucket: "estacion-zuniga.firebasestorage.app",
-            messagingSenderId: "717556109707",
-            appId: "1:717556109707:web:e48a9bc10ac6ec86909f8e"
-        };
-
-        // Esto enciende la conexión (fundamental)
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
-        var db = firebase.firestore();
-
-const ESTADO_ACTUAL = 'tranquilo'; 
+        const ESTADO_ACTUAL = 'tranquilo'; 
 
         function manejarAlertas() {
             const box = document.getElementById('alerta-box');
@@ -419,19 +394,6 @@ const ESTADO_ACTUAL = 'tranquilo';
             }
         }
 
-// Función para mostrar el panel si sos Carlos
-(function() {
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('admin') === 'carlos') {
-        // Buscamos el panel (por clase o por ID para estar seguros)
-        const panel = document.querySelector('.editor-zuniga') || document.getElementById('panel-admin');
-        if (panel) {
-            panel.style.display = 'block';
-            panel.style.setProperty('display', 'block', 'important');
-        }
-    }
-})();
-
         function updateClock() {
             const now = new Date();
             let h = now.getHours();
@@ -444,56 +406,27 @@ const ESTADO_ACTUAL = 'tranquilo';
             
            }
 
-// 1. Esta función manda la alerta a Google
-window.lanzarAlerta = function() {
+function lanzarAlerta() {
     const texto = document.getElementById('input-nueva-alerta').value;
+    const mensaje = document.getElementById('alerta-mensaje');
+    const icono = document.getElementById('alerta-icon');
+    const contenedor = document.getElementById('alerta-box');
+
     if (texto.trim() !== "") {
-        
-db.collection("alertas").doc("actual").set({
-            mensaje: texto,
-            tipo: "alerta"
-        }).then(() => {
-            document.getElementById('input-nueva-alerta').value = ""; // Limpia el buscador
-        });
+        mensaje.innerText = texto;
+        icono.innerText = "warning"; // Cambia el check por un triángulo
+        contenedor.style.backgroundColor = "#e74c3c"; // Fondo rojo
+        contenedor.style.color = "white";
+        document.getElementById('input-nueva-alerta').value = ""; // Limpia el buscador
     }
 }
 
-// 2. Esta función borra la alerta en todos lados
-window.limpiarAlerta = function() {
-    db.collection("alertas").doc("actual").set({
-        mensaje: "No hay alertas hoy",
-        tipo: "normal"
-    });
+function limpiarAlerta() {
+    document.getElementById('alerta-mensaje').innerText = "No hay alertas hoy";
+    document.getElementById('alerta-icon').innerText = "check_circle";
+    document.getElementById('alerta-box').style.backgroundColor = "#27ae60"; // Vuelve al verde (o el color que tengas)
 }
-   
-// 3. EL RADAR: Esto hace que el cartel cambie SOLO en todos los celus
-db.collection("alertas").doc("actual").onSnapshot(function(doc) {
-    if (doc.exists) {
-        const data = doc.data();
-        const msj = document.getElementById('alerta-mensaje');
-        const icono = document.getElementById('alerta-icon');
-        const contenedor = document.getElementById('alerta-box');
-
-        if (msj) msj.innerText = data.mensaje;
-
-        if (data.tipo === "alerta") {
-            if (contenedor) {
-                contenedor.style.backgroundColor = "#e74c3c"; // Rojo
-                contenedor.style.color = "white";
-                contenedor.classList.add('alerta-sismo'); // Efecto vibrar
-            }
-            if (icono) icono.innerText = "warning";
-        } else {
-            if (contenedor) {
-                contenedor.style.backgroundColor = "#27ae60"; // Verde (o el que uses)
-                contenedor.style.color = "white";
-                contenedor.classList.remove('alerta-sismo');
-            }
-            if (icono) icono.innerText = "check_circle";
-        }
-    }
-});
-     async function getDolar() {
+        async function getDolar() {
             try {
                 const res = await fetch('https://dolarapi.com/v1/dolares/blue?t=' + Date.now());
                 const data = await res.json();
@@ -764,20 +697,6 @@ function obtenerIconoClima(codigo, hora) {
         updateSismos();
         actualizarMarquesina();
         manejarAlertas();
-    
-    // 1. Buscamos el panel que acabamos de nombrar
-    const elPanel = document.getElementById('panel-zuniga');
-
-    // 2. Revisamos la dirección (URL)
-    const parametros = new URLSearchParams(window.location.search);
-
-    if (parametros.get('admin') === 'carlos') {
-        // Si dice ?admin=carlos, lo dejamos visible
-        if (elPanel) elPanel.style.display = 'block';
-    } else {
-        // Si no dice nada, lo escondemos para los vecinos
-        if (elPanel) elPanel.style.display = 'none';
-    }
-</script>
+    </script>
 </body>
 </html>
