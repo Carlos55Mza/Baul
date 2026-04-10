@@ -4,7 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Estación Zúñiga 🛰️ Smart</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    
+
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-messaging-compat.js"></script>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <style>
         :root { 
             --glass: rgba(255, 255, 255, 0.7); 
@@ -381,6 +386,26 @@
         document.getElementById('ampm').innerText = ampm;
         document.getElementById('date').innerText = now.toLocaleDateString('es-AR', {weekday:'long', day:'numeric', month:'long'});
     }
+
+// --- EL ENCHUFE: CONEXIÓN CON FIREBASE ---
+const firebaseConfig = {
+    apiKey: "AIzaSyDEwSHLN9du40_SkzU7IzONQdSow9CBqu0",
+    authDomain: "estacion-zuniga.firebaseapp.com",
+    projectId: "estacion-zuniga",
+    storageBucket: "estacion-zuniga.firebasestorage.app",
+    messagingSenderId: "717556109707",
+    appId: "1:717556109707:web:e48a9bc10ac6ec86909f8e",
+    measurementId: "G-6MJPN6CPE1"
+};
+
+// Esto "prende" la conexión
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+} else {
+    firebase.app(); // Si ya estaba prendido, lo usa
+}
+
+const messaging = firebase.messaging();
 
     async function getDolar() {
         try {
