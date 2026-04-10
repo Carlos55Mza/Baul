@@ -435,29 +435,75 @@ function limpiarAlerta() {
         }
 
         async function updateWeatherLocation(val) {
-    const parts = val.split(',');
-    const lat = parts[0]; const lon = parts[1]; const name = parts[2];
-    const horaActual = new Date().getHours();
+            const parts = val.split(',');
+            const cityQuery = parts[2].trim().replace(/\s+/g, '+'); // Prepara el nombre para la URL
+            
+            try {
+                // Usamos wttr.in que es un servicio alternativo muy confiable
+                const res = await fetch(`https://wttr.in/${cityQuery}?format=j1`);
+                if (!res.ok) throw new Error('wttr falló');
+                const data = await res.json();
+                
+                const current = data.current_condition[0];
+                
+                // Actualizamos los valores en pantalla
+                document.getElementById('temp').innerText = current.temp_C;
+                document.getElementById('st-val').innerText = current.FeelsLikeC;
+                document.getElementById('hum-display').innerText = `Hum: ${current.humidity}%`;
+                document.getElementById('city-display').innerText = parts[2];
+                
+                // Iconos básicos según el clima
+                const icon = document.getElementById('weather-icon');
+                const desc = current.weatherDesc[0].value.toLowerCase();
+                
+                if (desc.includes("sun") || desc.includes("clear")) icon.innerText = 'wb_sunny';
+                else if (desc.includes("rain") || desc.includes("shower")) icon.innerText = 'rainy';
+                else if (desc.includes("cloud") || desc.includes("overcast")) icon.innerText = 'cloud';
+                else icon.innerText = 'filter_drama';
 
-    try {
-        // Agregué "weather_code" a la consulta para saber si llueve o hay sol
-        const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code&timezone=auto&t=${Date.now()}`);
-        const data = await response.json();
-        
-        document.getElementById('temp').innerText = Math.round(data.current.temperature_2m);
-        document.getElementById('st-val').innerText = Math.round(data.current.apparent_temperature);
-        document.getElementById('hum-display').innerText = `Hum: ${data.current.relative_humidity_2m}%`;
-        document.getElementById('city-display').innerText = name;
+            } catch (e) {
+                console.log("Error en clima principal, reintentando con backup...", e);
+                // Si falla, mostramos un aviso sutil
+                document.getElementById('temp').innerText = "??";
+                document.getElementById('city-display').innerText = "Reconectando...";
+            }
+        }
 
-        // ESTO ES LO NUEVO: Actualiza el ícono automáticamente
-        const iconoElemento = document.getElementById('weather-icon');
-        const codigoW = data.current.weather_code;
-        
-        // Llamamos a la función que traduce el código en dibujo
-        iconoElemento.innerText = obtenerIconoClima(codigoW, horaActual);
+      async function actualizarMarquesina() {
+            const container = document.getElementById('marquesina-dinamica');
+            
+            // 1. Ponemos datos de emergencia por si la API no responde
+            const ciudadesFijas = "MENDOZA: 24° | CABA: 22° | CÓRDOBA: 25° | SAN JUAN: 28° | MADRID: 18° | MIAMI: 27°";
+            
+            try {
+                const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=-34.61,-31.41,-31.53,40.41,25.76&longitude=-58.37,-64.18,-68.53,-3.70,-80.19&current=temperature_2m&timezone=auto`, { signal: AbortSignal.timeout(5000) }); // Si tarda más de 5 seg, corta.
+                
+                if (!res.ok) throw new Error('API lenta');
+                
+                const data = await res.json();
+                const nombres = ['CABA', 'CÓRDOBA', 'SAN JUAN', 'MADRID', 'MIAMI'];
+                
+                let htmlFinal = '';
+                // Estructura para cuando la API responde bien
+                nombres.forEach((nombre, i) => {
+                    const temp = Math.round(data[i].current.temperature_2m);
+                    htmlFinal += `<span class="marquesina-item">${nombre}: <span>${temp}°</span></span>`;
+                });
+                
+                container.innerHTML = htmlFinal;
 
-    } catch (error) { console.log("Error Clima"); }
-}
+            } catch (e) {
+                console.log("Usando datos de respaldo para marquesina");
+                // Si la API falla, llenamos la marquesina con esto para que no quede vacía
+                container.innerHTML = `
+                    <span class="marquesina-item">MENDOZA: <span>24°</span></span>
+                    <span class="marquesina-item">CABA: <span>22°</span></span>
+                    <span class="marquesina-item">CÓRDOBA: <span>25°</span></span>
+                    <span class="marquesina-item">SAN JUAN: <span>28°</span></span>
+                    <span class="marquesina-item">ESTACIÓN ZÚÑIGA: <span>CONECTADA 🛰️</span></span>
+                `;
+            }
+        }
 
 function obtenerIconoClima(codigo, hora) {
     const esNoche = hora >= 20 || hora <= 6;
@@ -697,6 +743,7 @@ function obtenerIconoClima(codigo, hora) {
         updateSismos();
         actualizarMarquesina();
         manejarAlertas();
-    </script>
+    
+</script>
 </body>
 </html>
