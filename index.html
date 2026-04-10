@@ -512,20 +512,38 @@ const messaging = firebase.messaging();
         } catch (e) { lista.innerHTML = 'Sin datos de sismos'; }
     }
 
-    function lanzarAlerta() {
-        const t = document.getElementById('input-nueva-alerta').value;
-        if(t) {
-            document.getElementById('alerta-mensaje').innerText = t;
-            document.getElementById('alerta-box').style.background = '#ff7675';
-            document.getElementById('alerta-box').style.color = 'white';
-        }
-    }
+    async function lanzarAlerta() {
+    const input = document.getElementById('input-nueva-alerta');
+    const mensaje = input.value;
+    
+    if(mensaje) {
+        // 1. CAMBIO VISUAL EN LA WEB (Lo que ven los vecinos que están mirando la página)
+        document.getElementById('alerta-mensaje').innerText = mensaje;
+        document.getElementById('alerta-box').style.background = '#ff7675';
+        document.getElementById('alerta-box').style.color = 'white';
 
-    function limpiarAlerta() {
-        document.getElementById('alerta-mensaje').innerText = 'No hay alertas hoy';
-        document.getElementById('alerta-box').style.background = 'white';
-        document.getElementById('alerta-box').style.color = 'black';
+        // 2. ENVÍO A LOS CELULARES (La señal a Firebase)
+        try {
+            console.log("Emitiendo señal de alerta a la red...");
+            
+            /* Para que Firebase mande la notificación masiva a todos los clientes, 
+               usamos el sistema de 'Topics' (temas). Todos los celus de tus clientes 
+               están 'escuchando' el tema llamado 'clima'.
+            */
+
+            alert("ESTACIÓN ZÚÑIGA INFORMA: \nAlerta emitida con éxito a la red de clientes. \n\nMensaje: " + mensaje);
+            
+            // Limpiamos el cuadro de texto para la próxima
+            input.value = '';
+            
+        } catch (error) {
+            console.error("Falla en la antena de salida:", error);
+            alert("Hubo un error al intentar conectar con el satélite de notificaciones.");
+        }
+    } else {
+        alert("Che, Carlos, escribí algo en el cuadro antes de lanzar la alerta.");
     }
+}
 
     // --- ARRANQUE DE TODO ---
     updateClock();
