@@ -422,27 +422,56 @@ const ESTADO_ACTUAL = 'tranquilo';
             
            }
 
-function lanzarAlerta() {
+// 1. Esta función manda la alerta a Google
+window.lanzarAlerta = function() {
     const texto = document.getElementById('input-nueva-alerta').value;
-    const mensaje = document.getElementById('alerta-mensaje');
-    const icono = document.getElementById('alerta-icon');
-    const contenedor = document.getElementById('alerta-box');
-
     if (texto.trim() !== "") {
-        mensaje.innerText = texto;
-        icono.innerText = "warning"; // Cambia el check por un triángulo
-        contenedor.style.backgroundColor = "#e74c3c"; // Fondo rojo
-        contenedor.style.color = "white";
-        document.getElementById('input-nueva-alerta').value = ""; // Limpia el buscador
+        
+db.collection("alertas").doc("actual").set({
+            mensaje: texto,
+            tipo: "alerta"
+        }).then(() => {
+            document.getElementById('input-nueva-alerta').value = ""; // Limpia el buscador
+        });
     }
 }
 
-function limpiarAlerta() {
-    document.getElementById('alerta-mensaje').innerText = "No hay alertas hoy";
-    document.getElementById('alerta-icon').innerText = "check_circle";
-    document.getElementById('alerta-box').style.backgroundColor = "#27ae60"; // Vuelve al verde (o el color que tengas)
+// 2. Esta función borra la alerta en todos lados
+window.limpiarAlerta = function() {
+    db.collection("alertas").doc("actual").set({
+        mensaje: "No hay alertas hoy",
+        tipo: "normal"
+    });
 }
-        async function getDolar() {
+   
+// 3. EL RADAR: Esto hace que el cartel cambie SOLO en todos los celus
+db.collection("alertas").doc("actual").onSnapshot(function(doc) {
+    if (doc.exists) {
+        const data = doc.data();
+        const msj = document.getElementById('alerta-mensaje');
+        const icono = document.getElementById('alerta-icon');
+        const contenedor = document.getElementById('alerta-box');
+
+        if (msj) msj.innerText = data.mensaje;
+
+        if (data.tipo === "alerta") {
+            if (contenedor) {
+                contenedor.style.backgroundColor = "#e74c3c"; // Rojo
+                contenedor.style.color = "white";
+                contenedor.classList.add('alerta-sismo'); // Efecto vibrar
+            }
+            if (icono) icono.innerText = "warning";
+        } else {
+            if (contenedor) {
+                contenedor.style.backgroundColor = "#27ae60"; // Verde (o el que uses)
+                contenedor.style.color = "white";
+                contenedor.classList.remove('alerta-sismo');
+            }
+            if (icono) icono.innerText = "check_circle";
+        }
+    }
+});
+     async function getDolar() {
             try {
                 const res = await fetch('https://dolarapi.com/v1/dolares/blue?t=' + Date.now());
                 const data = await res.json();
