@@ -145,18 +145,19 @@
 
         @media (max-width: 900px) { .main-content { grid-template-columns: 1fr 1fr; } }
         @media (max-width: 600px) { .top-grid, .main-content { grid-template-columns: 1fr; } .weather-main-card { padding-top: 50px; } }
-    </style>
+    
+/* Esto esconde el panel de control para que nadie lo vea al entrar */
+.editor-zuniga, #panel-admin {
+    display: none !important;
+}
+</style>
 </head>
 <body>
-    <div class="marquesina-clima">
+<div class="marquesina-clima">
         <div id="marquesina-dinamica" class="marquesina-content">
             <span class="marquesina-item">Sintonizando Estación Zúñiga...</span>
         </div>
     </div>
-
-.editor-zuniga, #panel-admin {
-    display: none !important;
-}
 
     <div class="overlay"></div>
 
