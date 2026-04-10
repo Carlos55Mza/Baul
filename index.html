@@ -145,11 +145,12 @@
 
         @media (max-width: 900px) { .main-content { grid-template-columns: 1fr 1fr; } }
         @media (max-width: 600px) { .top-grid, .main-content { grid-template-columns: 1fr; } .weather-main-card { padding-top: 50px; } }
-    
+
 /* Esto esconde el panel de control para que nadie lo vea al entrar */
 .editor-zuniga, #panel-admin {
     display: none !important;
-}
+}    
+
 </style>
 </head>
 <body>
@@ -177,8 +178,10 @@
 </div>
             </div>
             <div style="background: #2c3e50; padding: 15px; border-radius: 10px; margin-top: 20px; border: 2px solid #e74c3c; color: white;">
+    <!-- INICIO DEL PANEL (Con el nombre mágico para esconderlo) -->
+<div id="panel-zuniga" style="background: #2c3e50; padding: 15px; border-radius: 10px; margin-top: 20px; border: 2px solid #e74c3c; text-align: center; color: white;">
     <h3 style="margin-top: 0; font-size: 16px;">
-        <span class="material-icons" style="vertical-align: middle;"></span> 
+        <span class="material-icons" style="vertical-align: middle;">settings</span> 
         Panel de Control - Estación Zúñiga
     </h3>
     <input type="text" id="input-nueva-alerta" placeholder="Escribí la alerta aquí..." 
@@ -194,6 +197,7 @@
             Limpiar
     </button>
 </div>
+<!-- FIN DEL PANEL -->
             <div class="weather-main-card">
                 <div class="city-selector">
                     <select id="select-clima" onchange="updateWeatherLocation(this.value)">
@@ -760,6 +764,20 @@ function obtenerIconoClima(codigo, hora) {
         updateSismos();
         actualizarMarquesina();
         manejarAlertas();
-    </script>
+    
+    // 1. Buscamos el panel que acabamos de nombrar
+    const elPanel = document.getElementById('panel-zuniga');
+
+    // 2. Revisamos la dirección (URL)
+    const parametros = new URLSearchParams(window.location.search);
+
+    if (parametros.get('admin') === 'carlos') {
+        // Si dice ?admin=carlos, lo dejamos visible
+        if (elPanel) elPanel.style.display = 'block';
+    } else {
+        // Si no dice nada, lo escondemos para los vecinos
+        if (elPanel) elPanel.style.display = 'none';
+    }
+</script>
 </body>
 </html>
