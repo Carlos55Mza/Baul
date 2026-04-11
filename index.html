@@ -168,12 +168,7 @@
                     <span class="material-symbols-outlined">payments</span>
                     BLUE: <span id="dolar-val">...</span>
                 </div>
-
-                <div id="alerta-box" class="alerta-container">
-                    <span id="alerta-icon" class="material-symbols-outlined" style="font-size: 18px;">check_circle</span>
-                    <span id="alerta-mensaje">No hay alertas hoy</span>
-                </div>
-            </div>
+           </div>
             <div id="panel-zuniga" style="display: none; background: #2c3e50; padding: 15px; border-radius: 10px; margin-top: 20px; border: 2px solid #e74c3c; color: white;">
     <h3 style="margin-top: 0; font-size: 16px;">
         <span class="material-icons" style="vertical-align: middle;">settings</span> 
@@ -585,6 +580,11 @@ const messaging = firebase.messaging();
 </script>
 </html>
 </body>
+<div style="background: yellow; color: black; width: 100%; height: 50px; line-height: 50px; position: relative; z-index: 9999; display: block !important;">
+    <marquee behavior="scroll" direction="left" scrollamount="10" style="font-weight: bold; font-size: 20px;">
+        ⚠️ ESTACIÓN ZÚÑIGA: Desmiento totalmente el alerta que se está divulgando por redes sobre una tormenta muy fuerte para el martes 14 en Tucumán. Es totalmente falso. San Martín, Mendoza. Sábado con sol tras la tormenta. Humedad 65%, viento calmo. ⚠️” ESTACIÓN ZÚÑIGA
+    </marquee>
+</div>
 <div style="text-align: center; padding: 20px; color: #666; font-family: Arial, sans-serif; clear: both;">
     <hr style="width: 30%; border: 0.1px solid #ccc; margin: 20px auto;">
     <p style="margin: 0; font-weight: bold;">Estación Zúñiga - 2026</p>
