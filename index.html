@@ -365,7 +365,7 @@
     <div style="margin-top: 6px; font-size: 0.75em; color: #777; border-top: 1px solid #eee; padding-top: 4px;">
         <i>Actualizado: 9:00 hs</i>
 </div>
-  	</div>
+</div>
 <div id="cuadro-sismos" style="background: #ffffff; border: 2px solid #333333; border-radius: 5px; padding: 10px; margin: 10px; width: 280px; text-align: center; font-family: sans-serif; box-shadow: 2px 2px 5px rgba(0,0,0,0.1); box-sizing: border-box; display: inline-block; vertical-align: top;">
     <div style="font-weight: bold; color: #333; font-size: 1em; margin-bottom: 8px;">📡 SISMOS EN VIVO</div>
     
@@ -380,6 +380,25 @@
 </div>
 
 <script>
+    // Diccionario extendido de banderas
+    function obtenerBanderaGlobal(lugar) {
+        const texto = lugar.toUpperCase();
+        if (texto.includes("ARGENTINA") || texto.includes("MENDOZA") || texto.includes("SAN JUAN")) return "🇦🇷";
+        if (texto.includes("CHILE")) return "🇨🇱";
+        if (texto.includes("TURKEY") || texto.includes("TURQUIA")) return "🇹🇷";
+        if (texto.includes("USA") || texto.includes("ALASKA") || texto.includes("CALIFORNIA")) return "🇺🇸";
+        if (texto.includes("JAPAN") || texto.includes("JAPON")) return "🇯🇵";
+        if (texto.includes("MEXICO")) return "🇲🇽";
+        if (texto.includes("PERU")) return "🇵🇪";
+        if (texto.includes("ECUADOR")) return "🇪🇨";
+        if (texto.includes("INDONESIA")) return "🇮🇩";
+        if (texto.includes("GREECE") || texto.includes("GRECIA")) return "🇬🇷";
+        if (texto.includes("ITALY") || texto.includes("ITALIA")) return "🇮🇹";
+        if (texto.includes("CHINA")) return "🇨🇳";
+        
+        return "🌐"; // Si es un país que no está en la lista, pone el globo
+    }
+
     async function actualizarSismos() {
         try {
             const respuesta = await fetch('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson');
@@ -387,18 +406,21 @@
             const sismos = datos.features;
 
             if (sismos.length > 0) {
-                // Sismo más reciente (Principal)
+                // Sismo Principal
                 const principal = sismos[0].properties;
+                const banderaP = obtenerBanderaGlobal(principal.place);
+                
                 document.getElementById('sismo-principal').innerHTML = `
                     <div style="background: #e74c3c; color: white; padding: 5px; border-radius: 5px; font-size: 0.9em; font-weight: bold;">
-                        ⚠️ Mag: ${principal.mag} - ${principal.place}
+                        ${banderaP} Mag: ${principal.mag} - ${principal.place}
                     </div>`;
 
-                // Los siguientes 3 sismos
+                // Lista de sismos
                 let listaHTML = '';
                 for (let i = 1; i < Math.min(sismos.length, 4); i++) {
                     let s = sismos[i].properties;
-                    listaHTML += `🌐 <b>${s.mag}</b> ${s.place}<br>`;
+                    const banderaL = obtenerBanderaGlobal(s.place);
+                    listaHTML += `${banderaL} <b>${s.mag}</b> ${s.place}<br>`;
                 }
                 document.getElementById('lista-sismos').innerHTML = listaHTML;
             } else {
@@ -409,9 +431,8 @@
         }
     }
     actualizarSismos();
-    setInterval(actualizarSismos, 300000); // Se actualiza cada 5 minutos solo
+    setInterval(actualizarSismos, 300000);
 </script>
-
 </div>
 
 </div>
