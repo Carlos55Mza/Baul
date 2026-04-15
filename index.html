@@ -6,7 +6,9 @@
     <title>Estación Zúñiga 🛰️ Smart</title>
     
 <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-messaging-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-messaging-compat.js">
+
+</script>
 
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 <style>
@@ -118,6 +120,13 @@
         display: inline-flex; align-items: center; gap: 8px; font-size: 0.9rem;
         margin-bottom: 10px;
     }
+.euro-mini-box { 
+        background: #e3f2fd; border: 2px solid #1976d2; color: #1565c0; 
+        padding: 10px 12px; border-radius: 10px; font-weight: 800; 
+        display: inline-flex; align-items: center; gap: 8px; font-size: 0.9rem;
+        margin-bottom: 10px; margin-left: 5px; margin-top: -3px;
+    }
+
 
     /* SISMO CONTAINER */
     .sismo-container {
@@ -150,7 +159,11 @@
                     <span class="material-symbols-outlined">payments</span>
                     BLUE: <span id="dolar-val">...</span>
                 </div>
-           </div>
+<div class="euro-mini-box">
+    <span>🇪🇺 EURO:</span>
+    <span id="euro-val">$---</span>
+</div>           
+</div>
             
             <div class="weather-main-card">
                 <div class="city-selector">
@@ -188,9 +201,10 @@
                 </div>
             </div>
         </div>
-
         <div class="main-content">
             <div>
+
+
 <style>
   /* Estilo para los botones del menú */
   .boton-desplegable {
@@ -688,6 +702,17 @@ const ciudades = [
     }
 </script>
 </html>
+
+
+<script>
+    // Buscamos el precio del Euro
+    fetch('https://dolarapi.com/v1/cotizaciones/eur')
+    .then(res => res.json())
+    .then(data => {
+        // El .toFixed(2) es el que corta los decimales a solo dos
+        document.getElementById('euro-val').innerText = '$' + parseFloat(data.venta).toFixed(2);
+    });
+</script>
 </body>
 <div style="width: 100%; background: linear-gradient(90deg, #d32f2f, #b71c1c); color: white; margin: 25px 0; box-shadow: 0 4px 15px rgba(0,0,0,0.6); border-top: 2px solid #ff5252; border-bottom: 2px solid #ff5252; overflow: hidden;">
     <marquee behavior="scroll" direction="left" scrollamount="8" style="font-family: 'Arial Black', Gadget, sans-serif; font-size: 18px; line-height: 50px; text-shadow: 2px 2px 4px rgba(0,0,0,0.7);">
