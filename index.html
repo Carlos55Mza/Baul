@@ -69,7 +69,52 @@
     font-style: italic;
 }
 
-    
+/* ARREGLO PARA CELULARES - ESTACIÓN ZÚÑIGA */
+@media (max-width: 480px) {
+    /* 1. Hacemos que el reloj no sea tan gigante */
+    #clock { 
+        font-size: 2.8rem !important; 
+    }
+
+    /* 2. Achicamos los cuadros de Dólar y Euro para que entren juntos */
+    .dolar-mini-box, .euro-mini-box, .vuelos-mini-box {
+        padding: 5px 8px !important;
+        font-size: 0.75rem !important;
+        margin: 3px !important;
+        display: inline-flex !important;
+    }
+
+    /* 3. Ajustamos la columna izquierda para que no desborde */
+    #columna-izquierda {
+        width: 100% !important;
+        margin: 5px 0 !important;
+        padding: 0 10px !important;
+        box-sizing: border-box;
+    }
+
+    /* 4. Achicamos los botones desplegables para que sea más fácil scrollear */
+    .boton-desplegable {
+        padding: 12px !important;
+        font-size: 0.9rem !important;
+    }
+
+    /* 5. Los iconos de clima y servicios más compactos */
+    .temp-huge {
+        font-size: 2.5rem !important;
+    }
+
+    /* 6. Evitamos que la marquesina deforme el ancho */
+    .marquesina-clima {
+        font-size: 0.8rem !important;
+    }
+}
+
+/* EL TOQUE FINAL: Para que nada se salga por los costados */
+body, html {
+    overflow-x: hidden !important;
+    width: 100%;
+} 
+   
 /* EL MAZO: Esto obliga a los iconos a juntarse */
 .container, .grid, [class*="container"], [class*="grid"] {
     gap: 10px !important; /* Achica el espacio entre cajas */
