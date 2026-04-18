@@ -225,7 +225,20 @@
     .temp-huge { font-size: 3.5rem; font-weight: 900; color: var(--text-dark); line-height: 1; }
     .st-box { font-size: 0.9rem; color: #d35400; font-weight: bold; }
 
-    /* SECCIÓN DE SERVICIOS */
+.sismo-container {
+    background: rgba(255, 255, 255, 0.6); /* Fondo clarito y elegante */
+    backdrop-filter: blur(5px);
+    border-radius: 12px;
+    padding: 15px;
+    margin: 15px auto; /* Centrado y con aire arriba/abajo */
+    width: 95%;
+    max-width: 380px; /* Para que no se estire de más en la compu */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    border: 1px solid rgba(255,255,255,0.8);
+    text-align: center;
+}   
+
+ /* SECCIÓN DE SERVICIOS */
     .main-content { display: grid; grid-template-columns: 1fr; gap: 10px; }
     .section-title { font-size: 0.75rem; font-weight: 900; margin: 10px 0 5px; text-transform: uppercase; border-bottom: 3px solid var(--money); display: inline-block; color: #2d3436; }
     
@@ -384,6 +397,15 @@ vertical-align: middle;
     </div>
 <div class="seccion-columna" style="display: block; width: 350px; float: left; clear: left; margin: 10px;">
     
+<div id="nuevo-cuadro-sismos" class="sismo-container">
+    <h3 style="font-size: 0.9rem; margin: 0 0 8px 0; color: #2d3436; border-bottom: 2px solid #e74c3c; display: inline-block;">
+        MOVIMIENTOS SÍSMICOS ⚠️
+    </h3>
+    <div id="sismos-content" style="min-height: 50px;">
+        <span style="font-size: 0.8rem; color: #666;">Buscando actividad...</span>
+    </div>
+</div>
+
     <div id="sector-publicidad" style="background: rgba(0, 0, 0, 0.7); border: 1px solid #444; border-radius: 10px; padding: 12px; box-sizing: border-box;">
         
         <a id="link-whatsapp" href="https://wa.me/5492634277869?text=Hola%20Carlos,%20vi%20tu%20web%20y%20quiero%20publicitar" target="_blank" style="text-decoration: none; display: block; color: white;">
@@ -849,23 +871,37 @@ const ciudades = [
     }
 }
 
-    async function updateSismos() {
-        const lista = document.getElementById('lista-sismos');
-        try {
-            const res = await fetch('https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=4.5&limit=5');
-            const data = await res.json();
-            lista.innerHTML = '';
-            data.features.forEach(s => {
-                const mag = s.properties.mag;
-                const lugar = s.properties.place;
-                let bandera = lugar.includes('Chile') ? '🇨🇱' : lugar.includes('Argentina') ? '🇦🇷' : '🌍';
-                const item = document.createElement('div');
-                item.className = 'sismo-item';
-                item.innerHTML = `<span class="sismo-mag">${mag}</span> ${bandera} ${lugar.split(',').pop()}`;
-                lista.appendChild(item);
-            });
-        } catch (e) { lista.innerHTML = 'Sin datos de sismos'; }
+async function actualizarSismosBunker() {
+    const contenedor = document.getElementById('sismos-content');
+    try {
+        const res = await fetch('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson');
+        const data = await res.json();
+        
+        // Filtro para nuestra zona (Mendoza/San Juan)
+        const locales = data.features.filter(s => {
+            const c = s.geometry.coordinates;
+            return c[1] > -36 && c[1] < -28 && c[0] > -71 && c[0] < -67;
+        }).slice(0, 2); // Mostramos los 2 más importantes para no amontonar
+
+        if (locales.length > 0) {
+            contenedor.innerHTML = locales.map(s => `
+                <div style="margin-bottom: 8px; padding: 5px; background: rgba(255,255,255,0.5); border-radius: 8px;">
+                    <strong style="color: #d35400; font-size: 1rem;">${s.properties.mag.toFixed(1)}M</strong><br>
+                    <span style="font-size: 0.8rem; color: #333;">${s.properties.place}</span>
+                </div>
+            `).join('');
+        } else {
+            contenedor.innerHTML = "<p style='font-size: 0.8rem;'>Sin sismos recientes en la región.</p>";
+        }
+    } catch (e) {
+        contenedor.innerHTML = "<p style='font-size: 0.8rem;'>Datos no disponibles.</p>";
     }
+}
+actualizarSismosBunker();
+setInterval(actualizarSismosBunker, 600000); // Actualiza cada 10 min
+
+     } catch (e) { lista.innerHTML = 'Sin datos de sismos'; }
+}
 
     async function lanzarAlerta() {
     const input = document.getElementById('input-nueva-alerta');
@@ -997,6 +1033,9 @@ async function cargarFinanzas() {
 setTimeout(cargarFinanzas, 1000);
 </script>
 
+
+
+
 </script>
 
 <div id="alerta-zonda" style="display:none; background:red; color:white; text-align:center; padding:15px; font-weight:bold; font-size:1.4rem; animation: parpadeoZonda 1s infinite; position: fixed; top: 0; left: 0; width: 100%; z-index: 9999; border-bottom: 3px solid black;">
@@ -1062,6 +1101,8 @@ function actualizarEstadoPaso() {
 // Se ejecuta al cargar la página
 actualizarEstadoPaso();
 </script>
+
+
 
 
 </body>
