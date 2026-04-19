@@ -69,55 +69,23 @@
     font-style: italic;
 }
 
-.uv-card {
-    background: white;
-    border-radius: 12px;
-    padding: 15px;
-    margin: 10px auto;
-    width: 90%;
-    max-width: 320px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-    border: 1px solid #eee;
-    font-family: Arial, sans-serif;
+function ponerFechaActual() {
+    const ahora = new Date();
+    const opciones = { 
+        weekday: 'long', 
+        day: 'numeric', 
+        month: 'long' 
+    };
+    
+    // Formatea la fecha y la pone en Mayúsculas
+    let fechaHoy = ahora.toLocaleDateString('es-AR', opciones).toUpperCase();
+    
+    // La inyecta en el HTML
+    document.getElementById('fecha-dinamica').innerText = fechaHoy;
 }
 
-.uv-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-weight: bold;
-    font-size: 0.85rem;
-    color: #333;
-    margin-bottom: 10px;
-}
-
-#uv-valor {
-    font-size: 1.2rem;
-    background: #eee;
-    padding: 2px 8px;
-    border-radius: 6px;
-}
-
-.uv-barra-fondo {
-    background: #e0e0e0;
-    height: 12px;
-    border-radius: 10px;
-    overflow: hidden;
-    margin-bottom: 10px;
-}
-
-.uv-barra-color {
-    height: 100%;
-    width: 0%;
-    transition: width 1.5s ease-in-out, background-color 0.5s;
-}
-
-.uv-status {
-    font-size: 0.75rem;
-    color: #666;
-    text-align: center;
-    font-style: italic;
-}
+// Ejecutar al cargar
+ponerFechaActual();
 
 
 /* ARREGLO PARA QUE NO SE MONTEN LOS DEPARTAMENTOS */
@@ -387,40 +355,6 @@ vertical-align: middle;
     color: #888;
 }
 
-.emergencias-mini-bunker {
-    width: 95%;
-    max-width: 350px;
-    margin: 10px auto;
-    font-family: sans-serif;
-}
-
-.em-mini-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr; /* Dos por fila, pero bajitos */
-    gap: 5px;
-}
-
-.em-item {
-    text-decoration: none;
-    color: white;
-    font-size: 0.75rem; /* Letra bien chiquita y legible */
-    font-weight: bold;
-    padding: 6px 10px;
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-shadow: 1px 1px 1px rgba(0,0,0,0.2);
-}
-
-/* Colores más sobrios */
-.red-mini { background: #d63031; }
-.blue-mini { background: #0984e3; }
-.orange-mini { background: #e67e22; }
-.green-mini { background: #27ae60; }
-
-.em-item:active { background: #333; } /* Efecto al tocar */
-
 </style>
 </head>
 <body>
@@ -479,9 +413,14 @@ vertical-align: middle;
         <div class="main-content">
            
 <div style="text-align: left; margin-left: 10px;">
+    <div style="font-size: 1.4rem; font-weight: 900; color: #333; margin-bottom: 8px; font-family: sans-serif;">
+        JUEVES, 16 DE ABRIL
+    </div>
+<div style="text-align: left; margin-left: 10px;">
     <div id="fecha-dinamica" style="font-size: 1.4rem; font-weight: 900; color: #333; margin-bottom: 8px; font-family: sans-serif;">
         </div>
 </div>
+
 <div class="card-paso">
     <h3>PASO CRISTO REDENTOR</h3>
     <div id="estado-paso-box">
@@ -509,17 +448,6 @@ vertical-align: middle;
         </a>
     </div>
 <div class="seccion-columna" style="display: block; width: 350px; float: left; clear: left; margin: 10px;">
-
-<div class="uv-card">
-    <div class="uv-header">
-        <span>ÍNDICE UV ACTUAL</span>
-        <span id="uv-valor">--</span>
-    </div>
-    <div class="uv-barra-fondo">
-        <div id="uv-progreso" class="uv-barra-color" style="width: 0%"></div>
-    </div>
-    <div id="uv-consejo" class="uv-status">Cargando datos...</div>
-</div>
     
     <div id="sector-publicidad" style="background: rgba(0, 0, 0, 0.7); border: 1px solid #444; border-radius: 10px; padding: 12px; box-sizing: border-box;">
         
@@ -595,15 +523,6 @@ vertical-align: middle;
 
 <div id="columna-izquierda" style="width: 280px; margin: 30px; display: inline-block; vertical-align: top;">
 
-<div class="emergencias-mini-bunker">
-    <div class="em-mini-grid">
-        <a href="tel:911" class="em-item red-mini">🚑 911</a>
-        <a href="tel:02634421111" class="em-item blue-mini">🏥 Perrupato</a>
-        <a href="tel:100" class="em-item orange-mini">🚒 100</a>
-        <a href="tel:02634428999" class="em-item green-mini">🚓 Policía</a>
-    </div>
-</div>
-
 
     <button class="boton-desplegable">DIARIOS 🗞️ <span>▼</span></button>
     <div class="contenido-menu">
@@ -629,8 +548,7 @@ vertical-align: middle;
 	<a href="https://youtu.be/P5kePDsFUBg" target="_blank">TV Pública (En Vivo)</a>
 	<a href="https://youtu.be/SF06Qy1Ct6Y" target="_blank">C5N (En Vivo)</a>
         <a href="https://youtu.be/ArKbAx1K-2U" target="_blank">A24 (En Vivo)</a>
-	<a href="https://youtu.be/6Hu1Cxc80jI?list=PLQ3qY-8lWxfm4Jm7cWzpyy6IzHu3pV21P" target="_blank">Canal Rural (En Vivo)</a>
-	<a href="https://youtu.be/ArKbAx1K-2U" target="_blank">Canal de la Ciudad (En Vivo)</a>
+	<a href="https://youtu.be/6Pi56InbEEc" target="_blank">TyC SPORT PLAY (En Vivo)</a>
     </div>
 
     <button class="boton-desplegable">SERVICIOS 💼 <span>▼</span></button>
@@ -785,25 +703,6 @@ setInterval(cargarSismos, 900000);
         // ... después podemos agregar el resto de las fases
     }
     actualizarLuna();
-
-function ponerFechaActual() {
-    const ahora = new Date();
-    const opciones = { 
-        weekday: 'long', 
-        day: 'numeric', 
-        month: 'long' 
-    };
-    
-    // Formatea la fecha y la pone en Mayúsculas
-    let fechaHoy = ahora.toLocaleDateString('es-AR', opciones).toUpperCase();
-    
-    // La inyecta en el HTML
-    document.getElementById('fecha-dinamica').innerText = fechaHoy;
-}
-
-// Ejecutar al cargar
-ponerFechaActual();
-
 </script>
 
 <script>
@@ -890,47 +789,6 @@ ponerFechaActual();
         document.getElementById('ampm').innerText = ampm;
         document.getElementById('date').innerText = now.toLocaleDateString('es-AR', {weekday:'long', day:'numeric', month:'long'});
     }
-
-async function actualizarUV() {
-    const valorTxt = document.getElementById('uv-valor');
-    const barra = document.getElementById('uv-progreso');
-    const consejo = document.getElementById('uv-consejo');
-
-    try {
-        // Usamos las coordenadas de San Martín, Mendoza
-        const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-33.0811&longitude=-68.4681&daily=uv_index_max&timezone=auto');
-        const data = await res.json();
-        const uv = data.daily.uv_index_max[0];
-
-        valorTxt.innerText = uv.toFixed(1);
-        
-        // Calculamos el ancho (máximo 11 para el 100%)
-        let porcentaje = (uv / 11) * 100;
-        barra.style.width = Math.min(porcentaje, 100) + "%";
-
-        // Lógica de colores y consejos
-        if (uv <= 2) {
-            barra.style.backgroundColor = "#2ecc71"; // Verde
-            consejo.innerText = "Riesgo bajo. Podes estar afuera.";
-        } else if (uv <= 5) {
-            barra.style.backgroundColor = "#f1c40f"; // Amarillo
-            consejo.innerText = "Riesgo moderado. Usa gorra.";
-        } else if (uv <= 7) {
-            barra.style.backgroundColor = "#e67e22"; // Naranja
-            consejo.innerText = "Riesgo alto. Usa protector solar.";
-        } else if (uv <= 10) {
-            barra.style.backgroundColor = "#e74c3c"; // Rojo
-            consejo.innerText = "Riesgo muy alto. Busca la sombra.";
-        } else {
-            barra.style.backgroundColor = "#9b59b6"; // Violeta
-            consejo.innerText = "¡Extremo! No salgas si no es necesario.";
-        }
-    } catch (e) {
-        consejo.innerText = "Dato UV no disponible.";
-    }
-}
-
-actualizarUV();
 
 // --- CONEXIÓN SEGURA FIREBASE (Al final del script) ---
 (function() {
