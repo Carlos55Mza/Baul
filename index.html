@@ -270,6 +270,73 @@ vertical-align: middle;
     color: white;
 }
 
+.sismo-global-container {
+    background: #1a1a1a; /* Fondo oscuro tipo monitor de control */
+    color: #ffffff;
+    border-radius: 8px;
+    padding: 10px;
+    margin: 15px auto;
+    width: 90%;
+    max-width: 320px; /* Tamaño compacto */
+    border: 1px solid #444;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.sismo-titulo {
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: #ff4757;
+    text-align: center;
+    border-bottom: 1px solid #333;
+    padding-bottom: 5px;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+}
+
+.sismo-fila {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid #222;
+}
+
+.sismo-fila:last-child { border-bottom: none; }
+
+.mag-circulo {
+    background: #ff4757;
+    color: white;
+    font-weight: bold;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+}
+
+.sismo-detalle {
+    flex: 1;
+    margin-left: 10px;
+    text-align: left;
+}
+
+.sismo-lugar {
+    font-size: 0.75rem;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Para que no se deforme si el nombre es largo */
+    max-width: 180px;
+}
+
+.sismo-tiempo {
+    font-size: 0.65rem;
+    color: #888;
+}
+
 </style>
 </head>
 <body>
@@ -374,6 +441,14 @@ vertical-align: middle;
         </a>
 
     </div>
+
+<div id="bunker-sismos-global" class="sismo-global-container">
+    <div class="sismo-titulo">🔴 ÚLTIMOS SISMOS MUNDIALES</div>
+    <div id="lista-sismos-mundo">
+        <div class="cargando-sismo">Conectando con servidores...</div>
+    </div>
+</div>
+
 </div>
 
 <div style="clear: both;"></div>    </div>
@@ -1033,6 +1108,48 @@ function actualizarEstadoPaso() {
 
 // Se ejecuta al cargar la página
 actualizarEstadoPaso();
+
+// MOTOR SÍSMICO MUNDIAL - ESTACIÓN ZÚÑIGA
+async function actualizarSismosMundiales() {
+    const lista = document.getElementById('lista-sismos-mundo');
+    try {
+        // Consultamos los sismos de la última hora en todo el mundo
+        const respuesta = await fetch('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson');
+        const datos = await respuesta.json();
+        
+        // Tomamos solo los 3 más recientes
+        const ultimosTres = datos.features.slice(0, 3);
+
+        if (ultimosTres.length > 0) {
+            lista.innerHTML = ultimosTres.map(sismo => {
+                const mag = sismo.properties.mag.toFixed(1);
+                const lugar = sismo.properties.place;
+                // Calculamos hace cuánto tiempo fue
+                const haceCuanto = Math.round((Date.now() - sismo.properties.time) / 60000);
+                
+                return `
+                    <div class="sismo-fila">
+                        <div class="mag-circulo">${mag}</div>
+                        <div class="sismo-detalle">
+                            <span class="sismo-lugar">${lugar}</span>
+                            <span class="sismo-tiempo">Hace ${haceCuanto} min</span>
+                        </div>
+                    </div>`;
+            }).join('');
+        } else {
+            lista.innerHTML = "<div style='font-size:0.7rem; padding:10px;'>Sin actividad mundial en la última hora.</div>";
+        }
+    } catch (error) {
+        lista.innerHTML = "<div style='font-size:0.7rem; padding:10px;'>Error de conexión.</div>";
+        console.error("Error sismos:", error);
+    }
+}
+
+// Iniciar al cargar la página
+actualizarSismosMundiales();
+
+// Actualización automática cada 5 minutos (300,000 milisegundos)
+setInterval(actualizarSismosMundiales, 300000);
 </script>
 
 
