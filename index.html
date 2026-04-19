@@ -270,29 +270,6 @@ vertical-align: middle;
     color: white;
 }
 
-   /* AJUSTE DEL CUADRO DE SISMOS */
-.sismo-container {
-    background: rgba(255, 255, 255, 0.4); 
-    backdrop-filter: blur(10px);
-    border-radius: 12px; 
-    padding: 10px; 
-    margin-top: 15px;
-    border-left: 4px solid #e74c3c; 
-    border: 1px solid rgba(255,255,255,0.5);
-    width: 100%; /* Toma el ancho de lo que lo rodea */
-    box-sizing: border-box;
-    display: block;
-    clear: both; /* Evita que se monte sobre cosas flotantes */
-}
-
-/* En el celular, que no se escape */
-@media (max-width: 480px) {
-    .sismo-container {
-        width: 95% !important;
-        margin: 15px auto !important;
-        font-size: 0.85rem;
-    }
-
 </style>
 </head>
 <body>
@@ -363,7 +340,6 @@ vertical-align: middle;
     </div>
     <p class="paso-update">Sincronizado con Gendarmería</p>
 </div>
-
 
     <div style="display: flex; flex-direction: column; gap: 6px;">
         
@@ -530,11 +506,7 @@ vertical-align: middle;
         <a href="https://www.ruta0.com/" target="_blank">RUTA 0</a>
 	
    
-    <div class="sismo-container">
-        <h3 style="font-size: 0.8rem; margin: 0 0 5px 0;">ÚLTIMOS SISMOS ⚠️</h3>
-        <div id="sismos-content">Cargando datos...</div>
-    </div>
-
+   
 <script>
     var acc = document.getElementsByClassName("boton-desplegable");
     for (var i = 0; i < acc.length; i++) {
