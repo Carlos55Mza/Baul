@@ -355,6 +355,57 @@ vertical-align: middle;
     color: #888;
 }
 
+.uv-card {
+    background: white;
+    border-radius: 12px;
+    padding: 15px;
+    margin: 10px auto;
+    width: 90%;
+    max-width: 320px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    border: 1px solid #eee;
+    font-family: Arial, sans-serif;
+}
+
+.uv-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    font-size: 0.85rem;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+#uv-valor {
+    font-size: 1.2rem;
+    background: #eee;
+    padding: 2px 8px;
+    border-radius: 6px;
+}
+
+.uv-barra-fondo {
+    background: #e0e0e0;
+    height: 12px;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.uv-barra-color {
+    height: 100%;
+    width: 0%;
+    transition: width 1.5s ease-in-out, background-color 0.5s;
+}
+
+.uv-status {
+    font-size: 0.75rem;
+    color: #666;
+    text-align: center;
+    font-style: italic;
+}
+
+
 </style>
 </head>
 <body>
@@ -374,6 +425,7 @@ vertical-align: middle;
                 
 </div>
  
+
            
             <div class="weather-main-card">
                 <div class="city-selector">
@@ -434,6 +486,18 @@ vertical-align: middle;
     </div>
     <p class="paso-update">Sincronizado con Gendarmería</p>
 </div>
+
+<div class="uv-card">
+    <div class="uv-header">
+        <span>ÍNDICE UV ACTUAL</span>
+        <span id="uv-valor">--</span>
+    </div>
+    <div class="uv-barra-fondo">
+        <div id="uv-progreso" class="uv-barra-color" style="width: 0%"></div>
+    </div>
+    <div id="uv-consejo" class="uv-status">Cargando datos...</div>
+</div>
+
 
     <div style="display: flex; flex-direction: column; gap: 6px;">
         
@@ -674,6 +738,47 @@ const hoyZuniga = new Date().toLocaleDateString('es-AR', {weekday:'long', day:'n
 if(document.getElementById('fecha-zuniga')) {
     document.getElementById('fecha-zuniga').innerText = hoyZuniga;
 }
+
+async function actualizarUV() {
+    const valorTxt = document.getElementById('uv-valor');
+    const barra = document.getElementById('uv-progreso');
+    const consejo = document.getElementById('uv-consejo');
+
+    try {
+        // Usamos las coordenadas de San Martín, Mendoza
+        const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-33.0811&longitude=-68.4681&daily=uv_index_max&timezone=auto');
+        const data = await res.json();
+        const uv = data.daily.uv_index_max[0];
+
+        valorTxt.innerText = uv.toFixed(1);
+        
+        // Calculamos el ancho (máximo 11 para el 100%)
+        let porcentaje = (uv / 11) * 100;
+        barra.style.width = Math.min(porcentaje, 100) + "%";
+
+        // Lógica de colores y consejos
+        if (uv <= 2) {
+            barra.style.backgroundColor = "#2ecc71"; // Verde
+            consejo.innerText = "Riesgo bajo. Podes estar afuera.";
+        } else if (uv <= 5) {
+            barra.style.backgroundColor = "#f1c40f"; // Amarillo
+            consejo.innerText = "Riesgo moderado. Usa gorra.";
+        } else if (uv <= 7) {
+            barra.style.backgroundColor = "#e67e22"; // Naranja
+            consejo.innerText = "Riesgo alto. Usa protector solar.";
+        } else if (uv <= 10) {
+            barra.style.backgroundColor = "#e74c3c"; // Rojo
+            consejo.innerText = "Riesgo muy alto. Busca la sombra.";
+        } else {
+            barra.style.backgroundColor = "#9b59b6"; // Violeta
+            consejo.innerText = "¡Extremo! No salgas si no es necesario.";
+        }
+    } catch (e) {
+        consejo.innerText = "Dato UV no disponible.";
+    }
+}
+
+actualizarUV();
 
 </script></script>
 
