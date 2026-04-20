@@ -532,14 +532,12 @@ vertical-align: middle;
         </a>
 
     </div>
-
-<div id="bunker-sismos-global" class="sismo-global-container">
+<div id="bunker-sismos-global" class="sismo-global-container" style="display: none;">
     <div class="sismo-titulo">🔴 ÚLTIMOS SISMOS MUNDIALES</div>
     <div id="lista-sismos-mundo">
         <div class="cargando-sismo">Conectando con servidores...</div>
     </div>
 </div>
-
 </div>
 
 <div style="clear: both;"></div>    </div>
@@ -692,43 +690,46 @@ vertical-align: middle;
 // MOTOR DE SISMOS - ESTACIÓN ZÚÑIGA
 async function cargarSismos() {
     const contenedor = document.getElementById('sismos-content');
+    if (!contenedor) return;
+
     try {
-        // Consultamos a la API de sismos (USGS que cubre todo el mundo, incluida nuestra zona)
-        const respuesta = await fetch('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson');
+        // Agregamos un número aleatorio al final (?v=...) para engañar al navegador y que no use datos viejos
+        const respuesta = await fetch('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson?v=' + Math.random());
         const datos = await respuesta.json();
         
-        // Buscamos los sismos en un radio cercano a Mendoza/San Juan
-        // Filtramos por latitud y longitud aproximada de nuestra región
-        const sismosLocales = datos.features.filter(sismo => {
-            const coords = sismo.geometry.coordinates;
-            return coords[1] > -36 && coords[1] < -28 && coords[0] > -71 && coords[0] < -67;
-        }).slice(0, 3); // Nos quedamos con los 3 más recientes
+        // FILTRO ESTRICTO: Solo sismos de 3.0 para arriba
+        const sismosFiltrados = datos.features.filter(sismo => sismo.properties.mag >= 3.0);
 
-        if (sismosLocales.length > 0) {
+        // Ordenamos por tiempo (el más nuevo arriba)
+        sismosFiltrados.sort((a, b) => b.properties.time - a.properties.time);
+
+        if (sismosFiltrados.length > 0) {
             let htmlSismos = "";
-            sismosLocales.forEach(s => {
+            // Mostramos los 5 más importantes que pasaron el filtro
+            sismosFiltrados.slice(0, 5).forEach(s => {
                 const mag = s.properties.mag.toFixed(1);
                 const lugar = s.properties.place;
                 const hora = new Date(s.properties.time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
                 
-                // Color según la magnitud
-                const colorMag = mag >= 4 ? '#e74c3c' : '#2d3436';
+                let colorMag = '#7f8c8d'; 
+                if (mag >= 5.0) colorMag = '#e74c3c';
+                else if (mag >= 4.0) colorMag = '#e67e22';
                 
                 htmlSismos += `
                     <div style="border-bottom: 1px solid rgba(0,0,0,0.1); padding: 5px 0; font-size: 0.75rem; text-align: left;">
-                        <b style="color: ${colorMag};">[${mag} M]</b> ${hora} - ${lugar}
+                        <b style="color: ${colorMag}; font-weight: 900;">[${mag} M]</b> ${hora} - ${lugar}
                     </div>`;
             });
             contenedor.innerHTML = htmlSismos;
         } else {
-            contenedor.innerHTML = "Sin actividad reciente en la zona.";
+            contenedor.innerHTML = "<div style='font-size:0.7rem; color:#666;'>Sin sismos > 3.0 en las últimas 24hs.</div>";
         }
     } catch (error) {
-        contenedor.innerHTML = "Dato no disponible momentáneamente.";
-        console.error("Error sismos:", error);
+        contenedor.innerHTML = "Error al cargar sismos.";
     }
 }
 
+cargarSismos();
 // Ejecutar al cargar la página
 cargarSismos();
 // Actualizar cada 15 minutos
@@ -1306,10 +1307,75 @@ actualizarSismosMundiales();
 
 // Actualización automática cada 5 minutos (300,000 milisegundos)
 setInterval(actualizarSismosMundiales, 300000);
+
+</script>
+<script>
+async function cargarSismosZunigaFinal() {
+    // Buscamos el lugar donde escribir
+    const lista = document.getElementById('lista-sismos-nueva');
+    
+    if (!lista) {
+        console.error("No encontré el ID lista-sismos-nueva");
+        return;
+    }
+
+    try {
+        console.log("Conectando con la USGS...");
+        // Usamos una URL que trae TODO para filtrar nosotros
+        const res = await fetch('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson');
+        const data = await res.json();
+        
+        // FILTRO: Solo 3.0 para arriba
+        const filtrados = data.features.filter(s => s.properties.mag >= 3.0)
+                          .sort((a, b) => b.properties.time - a.properties.time)
+                          .slice(0, 5);
+
+        console.log("Sismos filtrados encontrados:", filtrados.length);
+
+        let html = "";
+        if (filtrados.length > 0) {
+            filtrados.forEach(s => {
+                const mag = s.properties.mag.toFixed(1);
+                const lugar = s.properties.place;
+                const hora = new Date(s.properties.time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                
+                let color = mag >= 5.0 ? '#ff4757' : '#ffa502';
+                
+                html += `<div style="border-bottom: 1px solid rgba(255,255,255,0.1); padding: 8px 0; font-size: 0.85rem; text-align: left;">
+                            <b style="color: ${color};">[${mag} M]</b> ${hora} - ${lugar}
+                         </div>`;
+            });
+        } else {
+            html = "<div style='font-size:0.8rem;'>Sin actividad mayor a 3.0 hoy.</div>";
+        }
+        
+        lista.innerHTML = html;
+        console.log("Lista actualizada en el búnker.");
+
+    } catch (error) {
+        console.error("Error al cargar:", error);
+        lista.innerHTML = "<div style='color:red; font-size:0.8rem;'>Error de conexión. Reintentando...</div>";
+    }
+}
+
+// Lo ejecutamos apenas carga la página
+window.addEventListener('load', cargarSismosZunigaFinal);
+
+// Y que se actualice solo cada 5 minutos
+setInterval(cargarSismosZunigaFinal, 300000);
 </script>
 
-
 </body>
+
+<div id="radar-zuniga-final" style="background: #1e1e1e; border: 2px solid #ff4757; border-radius: 10px; padding: 15px; color: white; max-width: 400px; margin: 20px auto; display: block !important; visibility: visible !important;">
+    <div style="color: #ff4757; font-weight: bold; text-align: center; border-bottom: 1px solid #333; padding-bottom: 8px; margin-bottom: 10px;">
+        📢 SISMOS MUNDIALES (+3.0 M)
+    </div>
+    <div id="lista-sismos-nueva">
+        <div style="color: #666; font-size: 0.8rem; text-align: center;">Iniciando sensores...</div>
+    </div>
+</div>
+
 <div style="width: 100%; background: linear-gradient(90deg, #d32f2f, #b71c1c); color: white; margin: 25px 0; box-shadow: 0 4px 15px rgba(0,0,0,0.6); border-top: 2px solid #ff5252; border-bottom: 2px solid #ff5252; overflow: hidden;">
     <marquee behavior="scroll" direction="left" scrollamount="8" style="font-family: 'Arial Black', Gadget, sans-serif; font-size: 18px; line-height: 50px; text-shadow: 2px 2px 4px rgba(0,0,0,0.7);">
         ⚠️ <span style="color: #ffeb3b;">CESE DEL ALERTA METEOROLÓGICA:</span> No hay alertas vigentes <span style="color: #ffeb3b;"</span>  ESTACIÓN ZÚÑIGA ⚠️
