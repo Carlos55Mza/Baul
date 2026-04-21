@@ -475,6 +475,27 @@ vertical-align: middle;
                         <div id="hum-display" style="font-size: 0.8rem; color: #636e72; font-weight: bold;">Hum: --%</div>
                     </div>
                 </div>
+<div style="display: flex; justify-content: center; gap: 10px; margin-top: 15px; font-family: sans-serif;">
+    
+    <div style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 8px; text-align: center; width: 100px; border: 1px solid #444;">
+        <div id="fecha-manana" style="font-size: 0.7em; color: #bdc3c7; text-transform: uppercase;">Mañana</div>
+        <div id="icono-manana" style="font-size: 1.5em; margin: 5px 0;">☀️</div>
+        <div style="font-size: 0.9em; font-weight: bold; color: #fff;">
+            <span id="max-manana" style="color: #e74c3c;">--°</span> / 
+            <span id="min-manana" style="color: #3498db;">--°</span>
+        </div>
+    </div>
+
+    <div style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 8px; text-align: center; width: 100px; border: 1px solid #444;">
+        <div id="fecha-pasado" style="font-size: 0.7em; color: #bdc3c7; text-transform: uppercase;">Pasado</div>
+        <div id="icono-pasado" style="font-size: 1.5em; margin: 5px 0;">🌤️</div>
+        <div style="font-size: 0.9em; font-weight: bold; color: #fff;">
+            <span id="max-pasado" style="color: #e74c3c;">--°</span> / 
+            <span id="min-pasado" style="color: #3498db;">--°</span>
+        </div>
+    </div>
+
+</div>
         </div>
         <div class="main-content">
  
@@ -1059,77 +1080,87 @@ const messaging = firebase.messaging();
         }
     }
 
-    async function updateWeatherLocation(val) {
-        const parts = val.split(',');
-        const coords = `${parts[0]},${parts[1]}`;
-        const ciudad = parts[2];
-        try {
-            const res = await fetch(`https://api.weatherapi.com/v1/current.json?key=${API_KEY}&q=${coords}&lang=es`);
-            const data = await res.json();
-            if (data.current) {
-                document.getElementById('temp').innerText = Math.round(data.current.temp_c);
-                document.getElementById('st-val').innerText = Math.round(data.current.feelslike_c);
-                document.getElementById('hum-display').innerText = `Hum: ${data.current.humidity}%`;
-                document.getElementById('city-display').innerText = ciudad;
-                
-                const icon = document.getElementById('weather-icon');
-                const code = data.current.condition.code;
-                if (code === 1000) icon.innerText = 'wb_sunny';
-                else if (code <= 1006) icon.innerText = 'cloud';
-                else icon.innerText = 'umbrella';
-            }
-        } catch (e) { console.log("Error clima"); }
-    }
+    // --- FUNCIÓN 1: CLIMA PRINCIPAL (SAN MARTÍN + EXTENDIDO) ---
+async function updateWeatherLocation(val) {
+    const parts = val.split(',');
+    const coords = `${parts[0]},${parts[1]}`;
+    const ciudad = parts[2];
+    const API_KEY = "7a3c696b0a174cbd8fd174435261004"; // Tu llave
 
-    async function actualizarMarquesina() {
-    const key = "7a3c696b0a174cbd8fd174435261004";
+    try {
+        // Pedimos pronóstico de 3 días para San Martín
+        const res = await fetch(`https://api.weatherapi.com/v1/forecast.json?key=${API_KEY}&q=${coords}&days=3&lang=es`);
+        const data = await res.json();
+
+        if (data.current) {
+            // Clima Actual
+            document.getElementById('temp').innerText = Math.round(data.current.temp_c);
+            document.getElementById('st-val').innerText = Math.round(data.current.feelslike_c);
+            document.getElementById('hum-display').innerText = `Hum: ${data.current.humidity}%`;
+            document.getElementById('city-display').innerText = ciudad;
+
+            // Icono
+            const icon = document.getElementById('weather-icon');
+            const code = data.current.condition.code;
+            if (code === 1000) icon.innerText = 'wb_sunny';
+            else if (code <= 1006) icon.innerText = 'cloud';
+            else icon.innerText = 'umbrella';
+
+            // --- PRONÓSTICO EXTENDIDO ---
+            if (data.forecast) {
+                // Mañana (índice 1)
+                const m = data.forecast.forecastday[1].day;
+                document.getElementById('max-manana').innerText = Math.round(m.maxtemp_c) + "°";
+                document.getElementById('min-manana').innerText = Math.round(m.mintemp_c) + "°";
+
+                // Pasado (índice 2)
+                const p = data.forecast.forecastday[2].day;
+                document.getElementById('max-pasado').innerText = Math.round(p.maxtemp_c) + "°";
+                document.getElementById('min-pasado').innerText = Math.round(p.mintemp_c) + "°";
+            }
+        }
+    } catch (e) { console.log("Error clima principal"); }
+}
+
+// --- FUNCIÓN 2: MARQUESINA (CIUDADES DEL MUNDO) ---
+async function actualizarMarquesina() {
+    const API_KEY = "7a3c696b0a174cbd8fd174435261004"; // Tu llave
     const container = document.getElementById('marquesina-dinamica');
     
-   // El listado actualizado con más presencia regional
-const ciudades = [
-    "CABA", "La Plata", "Córdoba", "Bahia Blanca", "Santa Fe", "Paraná", "Posadas", "Corrientes", "Formosa", "Resistencia", "Salta", "Tucumán", "San Juan", "San Luis", "Santa Rosa", "Neuquén", "Viedma", "Rawson", "Río Gallegos", "Ushuaia", "Rosario", 
-    "Mar del Plata", "Bariloche", "San Martín de los Andes", "Villa Mercedes", "Puerto Iguazú", "El Calafate", 
-    "——— 🌎 VECINOS Y MUNDO 🌎 ———", 
-    "Santiago", "Valparaíso", "Los Andes", // Chile bien presente
-    "Montevideo", "Punta del Este",       // Uruguay
-    "Asunción", "Encarnación",            // Paraguay
-    "Madrid", "Miami", "Nueva York", "Roma", "París", "Río de Janeiro", 
-    "México DF", "Bogotá", "Lima", "Tokio"
-];
+    const ciudades = [
+        "CABA", "La Plata", "Córdoba", "Bahia Blanca", "Santa Fe", "Paraná", "Posadas", "Corrientes", "Formosa", "Resistencia", "Salta", "Tucumán", "San Juan", "San Luis", "Santa Rosa", "Neuquén", "Viedma", "Rawson", "Río Gallegos", "Ushuaia", "Rosario", 
+        "Mar del Plata", "Bariloche", "San Martín de los Andes", "Puerto Iguazú", 
+        "——— 🌎 VECINOS Y MUNDO 🌎 ———", 
+        "Santiago", "Valparaíso", "Los Andes", "Montevideo", "Punta del Este", "Asunción", "Madrid", "Miami", "Nueva York", "Roma"
+    ];
 
     let htmlFinal = '';
 
-    // Para no saturar la API, pedimos los datos en tandas o simplemente los más importantes primero
-    // Aquí procesamos la lista completa con tu llave
     for (let c of ciudades) {
         if (c.includes('———')) {
-            htmlFinal += `<span class="marquesina-item" style="color:#55efc4">${c}</span>`;
+            htmlFinal += `<span class="marquesina-item" style="color:#55efc4; margin: 0 20px;">${c}</span>`;
             continue;
         }
 
         try {
-            const res = await fetch(`https://api.weatherapi.com/v1/current.json?key=${key}&q=${c}&lang=es`);
+            // USAMOS current.json para la marquesina (es más rápido y no falla)
+            const res = await fetch(`https://api.weatherapi.com/v1/current.json?key=${API_KEY}&q=${encodeURIComponent(c)}&lang=es`);
             const data = await res.json();
             
             if (data.current) {
                 const temp = Math.round(data.current.temp_c);
                 const code = data.current.condition.code;
+                let icono = 'wb_sunny';
+                if (code > 1000 && code <= 1006) icono = 'cloud';
+                if (code >= 1063) icono = 'umbrella';
                 
-                // --- LÓGICA DE ICONOS ---
-                let icono = 'wb_sunny'; // Por defecto sol
-                if (code > 1000 && code <= 1006) icono = 'cloud'; // Nublado
-                if (code >= 1063) icono = 'umbrella'; // Lluvia/Tormenta
-                
-                // Armamos el item con el icono adelante
                 htmlFinal += `
-                    <span class="marquesina-item">
-                        <span class="material-symbols-outlined" style="vertical-align: middle; font-size: 18px;">${icono}</span> 
-                        ${c.toUpperCase()}: <span>${temp}°</span>
+                    <span class="marquesina-item" style="margin: 0 15px; display: inline-flex; align-items: center;">
+                        <span class="material-symbols-outlined" style="font-size: 18px; margin-right: 5px;">${icono}</span> 
+                        ${c.toUpperCase()}: <span style="font-weight:bold; margin-left:5px;">${temp}°</span>
                     </span>`;
             }
-        } catch (e) {
-            console.log("Error en: " + c);
-        }
+        } catch (e) { console.log("Error marquesina en: " + c); }
     }
 
     if (htmlFinal !== '') {
@@ -1477,6 +1508,8 @@ function generarNumerosDeLaSuerte() {
 window.addEventListener('load', generarNumerosDeLaSuerte);
 </script>
 
+
+
 <script>
     function actualizarEstadoRiego() {
         const ahora = new Date();
@@ -1501,6 +1534,93 @@ window.addEventListener('load', generarNumerosDeLaSuerte);
     // Y revisamos cada 30 segundos por las dudas
     setInterval(actualizarEstadoRiego, 30000);
 </script>
+
+<script>
+   async function actualizarTodoElClima() {
+    try {
+        // Usamos forecast.json para tener el futuro, y mantenemos tus variables API_KEY y coords
+        const res = await fetch(`https://api.weatherapi.com/v1/forecast.json?key=${API_KEY}&q=${coords}&days=3&lang=es`);
+        const data = await res.json();
+
+        if (data.current) {
+            // 1. CLIMA ACTUAL (Lo que ya tenías)
+            document.getElementById('temp').innerText = Math.round(data.current.temp_c);
+            document.getElementById('st-val').innerText = Math.round(data.current.feelslike_c);
+            document.getElementById('hum-display').innerText = `Hum: ${data.current.humidity}%`;
+            document.getElementById('city-display').innerText = ciudad;
+
+            // Icono principal
+            const icon = document.getElementById('weather-icon');
+            const code = data.current.condition.code;
+            if (code === 1000) icon.innerText = 'wb_sunny';
+            else if (code <= 1006) icon.innerText = 'cloud';
+            else icon.innerText = 'umbrella';
+
+            // 2. PRONÓSTICO EXTENDIDO (Para que aparezcan los datos en las tarjetitas)
+            if (data.forecast) {
+                // Mañana
+                const m = data.forecast.forecastday[1].day;
+                document.getElementById('max-manana').innerText = Math.round(m.maxtemp_c) + "°";
+                document.getElementById('min-manana').innerText = Math.round(m.mintemp_c) + "°";
+
+                // Pasado
+                const p = data.forecast.forecastday[2].day;
+                document.getElementById('max-pasado').innerText = Math.round(p.maxtemp_c) + "°";
+                document.getElementById('min-pasado').innerText = Math.round(p.mintemp_c) + "°";
+            }
+            
+            // 3. AQUÍ ABAJO: Si tenías algún código para la MARQUESINA, 
+            // asegúrate de que siga aquí adentro para que use los mismos datos.
+        }
+    } catch (e) { 
+        console.log("Error en la conexión del búnker:", e); 
+    }
+}
+async function actualizarTodoElClima() {
+    try {
+        // Usamos forecast.json para tener el futuro, y mantenemos tus variables API_KEY y coords
+        const res = await fetch(`https://api.weatherapi.com/v1/forecast.json?key=${API_KEY}&q=${coords}&days=3&lang=es`);
+        const data = await res.json();
+
+        if (data.current) {
+            // 1. CLIMA ACTUAL (Lo que ya tenías)
+            document.getElementById('temp').innerText = Math.round(data.current.temp_c);
+            document.getElementById('st-val').innerText = Math.round(data.current.feelslike_c);
+            document.getElementById('hum-display').innerText = `Hum: ${data.current.humidity}%`;
+            document.getElementById('city-display').innerText = ciudad;
+
+            // Icono principal
+            const icon = document.getElementById('weather-icon');
+            const code = data.current.condition.code;
+            if (code === 1000) icon.innerText = 'wb_sunny';
+            else if (code <= 1006) icon.innerText = 'cloud';
+            else icon.innerText = 'umbrella';
+
+            // 2. PRONÓSTICO EXTENDIDO (Para que aparezcan los datos en las tarjetitas)
+            if (data.forecast) {
+                // Mañana
+                const m = data.forecast.forecastday[1].day;
+                document.getElementById('max-manana').innerText = Math.round(m.maxtemp_c) + "°";
+                document.getElementById('min-manana').innerText = Math.round(m.mintemp_c) + "°";
+
+                // Pasado
+                const p = data.forecast.forecastday[2].day;
+                document.getElementById('max-pasado').innerText = Math.round(p.maxtemp_c) + "°";
+                document.getElementById('min-pasado').innerText = Math.round(p.mintemp_c) + "°";
+            }
+            
+            // 3. AQUÍ ABAJO: Si tenías algún código para la MARQUESINA, 
+            // asegúrate de que siga aquí adentro para que use los mismos datos.
+        }
+    } catch (e) { 
+        console.log("Error en la conexión del búnker:", e); 
+    }
+}
+
+// Llamamos a la función
+actualizarTodoElClima();
+</script>
+
 </body>
 
 <div style="clear: both; margin: 20px auto; max-width: 300px; text-align: center; position: relative; z-index: 9999;">
