@@ -87,6 +87,20 @@ function ponerFechaActual() {
 // Ejecutar al cargar
 ponerFechaActual();
 
+/* Animación base */
+@keyframes rotarMolino {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+#molino-imagen {
+    width: 50px; /* Ajustalo a tu gusto */
+    height: auto;
+    display: inline-block;
+    vertical-align: middle;
+    /* Por defecto empieza quieto */
+    animation: rotarMolino 0s linear infinite; 
+}
 
 /* ARREGLO PARA QUE NO SE MONTEN LOS DEPARTAMENTOS */
 @media (max-width: 480px) {
@@ -405,7 +419,6 @@ vertical-align: middle;
     font-style: italic;
 }
 
-
 </style>
 </head>
 <body>
@@ -438,7 +451,16 @@ vertical-align: middle;
             <div class="clock-section">
                 <div id="clock">00:00</div><span id="ampm">--</span>
                 <div id="date" style="display: none;">--</div>
+<div class="indicadores-viento">
+    
+    <div class="seccion-molino">
+        <img id="molino-imagen" src="molino.gif" alt="Molino de viento">
+    </div>
+
+    
 </div>
+</div>
+
  
            
             <div class="weather-main-card">
@@ -1103,43 +1125,67 @@ async function updateWeatherLocation(val) {
     const parts = val.split(',');
     const coords = `${parts[0]},${parts[1]}`;
     const ciudad = parts[2];
-    const API_KEY = "7a3c696b0a174cbd8fd174435261004"; // Tu llave
+    const API_KEY = "7a3c696b0a174cbd8fd174435261004";
 
     try {
-        // Pedimos pronóstico de 3 días para San Martín
         const res = await fetch(`https://api.weatherapi.com/v1/forecast.json?key=${API_KEY}&q=${coords}&days=3&lang=es`);
         const data = await res.json();
 
         if (data.current) {
-            // Clima Actual
+            // 1. ACTUALIZAR TEXTOS (Lo que ya funcionaba)
             document.getElementById('temp').innerText = Math.round(data.current.temp_c);
             document.getElementById('st-val').innerText = Math.round(data.current.feelslike_c);
             document.getElementById('hum-display').innerText = `Hum: ${data.current.humidity}%`;
             document.getElementById('city-display').innerText = ciudad;
 
-            // Icono
+            // 2. ACTUALIZAR ICONO PRINCIPAL
             const icon = document.getElementById('weather-icon');
             const code = data.current.condition.code;
             if (code === 1000) icon.innerText = 'wb_sunny';
             else if (code <= 1006) icon.innerText = 'cloud';
             else icon.innerText = 'umbrella';
 
-            // --- PRONÓSTICO EXTENDIDO ---
+            // 3. LÓGICA DE LOS GIFS (MOLINO Y HOJAS)
+            // Usamos try/catch interno para que si falla el GIF, NO se rompa la temperatura
+            try {
+                const viento = data.current.wind_kph;
+                const molino = document.getElementById('molino-imagen');
+                const vientoHojas = document.getElementById('viento-imagen');
+
+                if (molino && vientoHojas) {
+                    if (viento < 5) {
+                        // CALMA: Los ocultamos o podrías poner una imagen quieta
+                        molino.style.display = 'none';
+                        vientoHojas.style.display = 'none';
+                    } else if (viento < 30) {
+                        // BRISA: Mostramos el molino normal
+                        molino.style.display = 'inline-block';
+                        vientoHojas.style.display = 'none'; // Solo el molino para no amontonar
+                    } else {
+                        // VIENTO FUERTE: Mostramos ambos y podrías ponerle un borde rojo
+                        molino.style.display = 'inline-block';
+                        vientoHojas.style.display = 'inline-block';
+                    }
+                }
+            } catch (errGif) {
+                console.log("Error en los gráficos de viento", errGif);
+            }
+
+            // 4. PRONÓSTICO EXTENDIDO
             if (data.forecast) {
-                // Mañana (índice 1)
                 const m = data.forecast.forecastday[1].day;
                 document.getElementById('max-manana').innerText = Math.round(m.maxtemp_c) + "°";
                 document.getElementById('min-manana').innerText = Math.round(m.mintemp_c) + "°";
 
-                // Pasado (índice 2)
                 const p = data.forecast.forecastday[2].day;
                 document.getElementById('max-pasado').innerText = Math.round(p.maxtemp_c) + "°";
                 document.getElementById('min-pasado').innerText = Math.round(p.mintemp_c) + "°";
             }
         }
-    } catch (e) { console.log("Error clima principal"); }
+    } catch (e) { 
+        console.log("Error clima principal", e); 
+    }
 }
-
 // --- FUNCIÓN 2: MARQUESINA (CIUDADES DEL MUNDO) ---
 async function actualizarMarquesina() {
     const API_KEY = "7a3c696b0a174cbd8fd174435261004"; // Tu llave
@@ -1701,6 +1747,24 @@ async function actualizarTodoElClima() {
 
 // Llamamos a la función
 actualizarTodoElClima();
+
+// --- CONTROL DEL MOLINO ÚNICO ---
+const molino = document.getElementById('molino-imagen');
+const viento = data.current.wind_kph;
+
+if (molino) {
+    if (viento < 5) {
+        // CALMA: El molino se queda quieto
+        molino.style.animationDuration = '0s';
+    } else if (viento <= 30) {
+        // HASTA 30 km/h: Movimiento tranquilo (una vuelta cada 4 segundos)
+        molino.style.animationDuration = '4s';
+    } else {
+        // MÁS DE 30 km/h (ZONDA): ¡A las chapas! (una vuelta por segundo)
+        molino.style.animationDuration = '1s';
+    }
+}
+
 </script>
 
 </body>
