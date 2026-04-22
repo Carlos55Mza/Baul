@@ -611,10 +611,10 @@ vertical-align: middle;
     <a href="https://wa.me/542634520709?text=Hola%20Fabián,%20vi%20su%20anuncio%20en%20Estacion%20Zuñiga" target="_blank" class="anuncio" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 10px; text-decoration: none; color: inherit;">
         <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ2yl4h5GYb8Xy4C2fYI7TLMvp-25FRGZxDJw&s" alt="Tornería Don Julián" style="height: 70px; width: auto; margin-bottom: 5px; border-radius: 4px; object-fit: contain;">
         <div style="font-size: 0.9em; font-weight: bold; color: #2c3e50; margin-bottom: 2px;">TORNERÍA DON JULIÁN</div>
-        <div style="font-size: 0.8em; color: #333; text-align: center; font-weight: bold;">Mecanizados de Precisión</div>
-        <div style="font-size: 0.7em; color: #666; text-align: center;">Trabajos en Control Numérico (CNC)</div>
+        <div style="font-size: 0.7em; color: #333; text-align: center; font-weight: bold;">Mecanizados de Precisión - Trabajos en Control Numérico (CNC)</div>
         <div style="font-size: 0.6em; color: #888; text-align: center;">San Martín, Mza.</div>
-        <div style="font-size: 0.75em; color: #25D366; font-weight: bold; margin-top: 5px;">Consultas al WhatsApp 📲</div>
+        <div style="font-size: 0.6em; color: #888; text-align: center;">Haga click aquí.</div>
+	<div style="font-size: 0.75em; color: #25D366; font-weight: bold; margin-top: 5px;">Consultas al WhatsApp 📲</div>
     </a>
 
 <a href="https://wa.me/542634277869?text=Hola%20Carlos,%20vi%20su%20anuncio%20en%20Estacion%20Zuñiga" target="_blank" class="anuncio" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 10px; text-decoration: none; color: inherit;">
@@ -1593,9 +1593,12 @@ function generarNumerosDeLaSuerte() {
 // Ejecutar al cargar
 window.addEventListener('load', generarNumerosDeLaSuerte);
 </script>
-
-
-
+<script>
+// Forzamos el UV a cero si la API no responde o para asegurar que refresque
+const uvActual = data.current.uv;
+document.getElementById('uv-val').innerText = uvActual;
+console.log("Actualizando UV a:", uvActual);
+</script>
 <script>
     function actualizarEstadoRiego() {
         const ahora = new Date();
