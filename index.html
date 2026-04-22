@@ -1594,6 +1594,70 @@ window.addEventListener('load', generarNumerosDeLaSuerte);
         console.log("Error en la conexión del búnker:", e); 
     }
 }
+
+// --- SISTEMA DE MONITOREO SÍSMICO - ESTACIÓN ZÚÑIGA ---
+
+async function monitorearSismos() {
+    const sonidoAlarma = new Audio('sismo.mp3'); // <--- Asegurate que el nombre coincida
+    
+    // Configuración del Búnker
+    const miLat = -33.0811; // San Martín
+    const miLon = -68.4681;
+    const radioKM = 500;    // Radio de cobertura
+    const magMinima = 4.0;  // Solo sismos que se sientan (4 grados para arriba)
+
+    try {
+        // Consultamos los sismos de las últimas 24 horas para estar seguros
+        const res = await fetch(`https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=${magMinima}`);
+        const data = await res.json();
+
+        // Buscamos el sismo más reciente en la lista
+        if (data.features.length > 0) {
+            const sismo = data.features[0]; 
+            const coords = sismo.geometry.coordinates;
+            const sismoLat = coords[1];
+            const sismoLon = coords[0];
+            const magnitud = sismo.properties.mag;
+            const lugar = sismo.properties.place;
+            const tiempoSismo = sismo.properties.time; // Hora del sismo en milisegundos
+
+            // Calculamos distancia aproximada
+            const distancia = Math.sqrt(Math.pow(miLat - sismoLat, 2) + Math.pow(miLon - sismoLon, 2)) * 111;
+
+            // Revisamos si es "NUEVO" (que haya pasado hace menos de 5 minutos)
+            const ahora = Date.now();
+            const diferenciaMinutos = (ahora - tiempoSismo) / 60000;
+
+            if (distancia <= radioKM && diferenciaMinutos <= 5) {
+                console.log("¡SISMO DETECTADO CERCA!");
+                
+                // 1. Hacemos sonar la alarma
+                sonidoAlarma.play().catch(e => console.log("Esperando interacción del usuario para sonar"));
+                
+                // 2. Apagamos la alarma a los 5 segundos
+                setTimeout(() => {
+                    sonidoAlarma.pause();
+                    sonidoAlarma.currentTime = 0;
+                }, 5000);
+
+                // 3. Avisamos con un cartel en pantalla
+                // Usamos un alert simple por ahora
+                alert(`⚠️ ALERTA SÍSMICA\nMagnitud: ${magnitud}\nLugar: ${lugar}\nDistancia: ${Math.round(distancia)} km`);
+            }
+        }
+    } catch (e) {
+        console.log("Error en el radar sísmico");
+    }
+}
+
+// El búnker vigila cada 2 minutos (120000 ms)
+setInterval(monitorearSismos, 120000);
+
+// Ejecutamos una vez al cargar
+monitorearSismos();
+
+}
+
 async function actualizarTodoElClima() {
     try {
         // Usamos forecast.json para tener el futuro, y mantenemos tus variables API_KEY y coords
