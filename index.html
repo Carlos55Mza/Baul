@@ -654,6 +654,14 @@ vertical-align: middle;
         <div style="font-size: 0.75em; color: #25D366; font-weight: bold; margin-top: 5px;">Consultas al WhatsApp 📲</div>
     </a>
 
+<a href="https://wa.me/542634656200?text=Hola%20Paula,%20vi%20su%20anuncio%20en%20Estacion%20Zuñiga" target="_blank" class="anuncio" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 10px; text-decoration: none; color: inherit;">
+    <img src="https://i.postimg.cc/75skCQhX/Whats-App-Image-2026-04-23-at-19-59-32.jpg" alt="Lubricentro Lourdes" style="height: 70px; width: auto; margin-bottom: 5px; border-radius: 4px; object-fit: contain;">
+        <div style="font-size: 0.9em; font-weight: bold; color: #2c3e50; margin-bottom: 2px;">LUBRICENTRO LOURDES</div>       
+	<div style="font-size: 0.8em; color: #333; text-align: center; font-weight: bold;">Cuidamos tu motor - Cuidamos tu camino</div>
+        <div style="font-size: 0.7em; color: #666; text-align: center;">San Martín - Mza</div>
+        <div style="font-size: 0.6em; color: #888; text-align: center;">Haga click aquí.</div>
+        <div style="font-size: 0.75em; color: #25D366; font-weight: bold; margin-top: 5px;">Consultas al WhatsApp 📲</div>
+    </a>
 
 
 </div>
@@ -874,58 +882,52 @@ async function actualizarUV() {
     const barra = document.getElementById('uv-progreso');
     const consejo = document.getElementById('uv-consejo');
 
-    // 1. OBTENEMOS LA HORA DE SAN MARTÍN AHORA MISMO
     const ahora = new Date();
     const horaActual = ahora.getHours();
 
     try {
-        // Agregamos un número aleatorio al final del link para que no use datos viejos (caché)
-        const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=-33.0811&longitude=-68.4681&daily=uv_index_max&timezone=auto&cachebuster=${ahora.getTime()}`);
+        // Usamos WeatherAPI que es la que ya tenés funcionando (usando tu API_KEY)
+        // Pedimos el clima actual de San Martín, Mendoza
+        const res = await fetch(`https://api.weatherapi.com/v1/current.json?key=${API_KEY}&q=-33.0811,-68.4681&lang=es`);
         const data = await res.json();
         
-        let uv = data.daily.uv_index_max[0];
+        // Sacamos el UV actual (no el máximo del día)
+        let uv = data.current.uv;
 
-        // 2. LA "REGLA DE HIERRO" DEL BÚNKER ZÚÑIGA
-        // Si son las 20:00 o más, o si es antes de las 08:00... ¡ES CERO!
+        // Regla de seguridad nocturna
         if (horaActual >= 20 || horaActual < 8) {
             uv = 0;
         }
 
-        // 3. ACTUALIZAMOS LA PANTALLA
+        // Actualizamos la pantalla
         valorTxt.innerText = uv.toFixed(1);
-        
         let porcentaje = (uv / 11) * 100;
         barra.style.width = Math.min(porcentaje, 100) + "%";
 
-        // 4. COLORES SEGÚN EL RIESGO (Incluyendo el Cero)
+        // Colores y consejos
         if (uv <= 0) {
-            barra.style.backgroundColor = "#2ecc71"; // Verde
-            barra.style.width = "0%"; // La barra desaparece si es cero
-            consejo.innerText = "Noche en San Martín. Sin radiación solar.";
+            barra.style.backgroundColor = "#2ecc71";
+            barra.style.width = "0%";
+            consejo.innerText = "Noche en San Martín. Sin radiación.";
         } else if (uv <= 2) {
             barra.style.backgroundColor = "#2ecc71"; 
-            consejo.innerText = "Riesgo bajo. Podes estar afuera.";
+            consejo.innerText = "Riesgo bajo. Podés estar afuera.";
         } else if (uv <= 5) {
             barra.style.backgroundColor = "#f1c40f"; 
-            consejo.innerText = "Riesgo moderado. Usa gorra.";
+            consejo.innerText = "Riesgo moderado. Usar gorra.";
         } else if (uv <= 7) {
             barra.style.backgroundColor = "#e67e22"; 
-            consejo.innerText = "Riesgo alto. Usa protector.";
-        } else if (uv <= 10) {
-            barra.style.backgroundColor = "#e74c3c"; 
-            consejo.innerText = "Riesgo muy alto. Sombra obligatoria.";
+            consejo.innerText = "Riesgo alto. Usar protector solar.";
         } else {
-            barra.style.backgroundColor = "#9b59b6"; 
-            consejo.innerText = "¡Extremo! Cuidado total.";
+            barra.style.backgroundColor = "#e74c3c"; 
+            consejo.innerText = "¡Cuidado! Buscá la sombra.";
         }
 
     } catch (e) {
         console.log("Error UV:", e);
-        // Si falla la API, por lo menos que en la noche marque 0
         if (horaActual >= 20 || horaActual < 8) {
             valorTxt.innerText = "0.0";
             barra.style.width = "0%";
-            consejo.innerText = "Noche. Sin radiación.";
         }
     }
 }
