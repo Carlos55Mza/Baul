@@ -528,10 +528,6 @@ vertical-align: middle;
         <div id="viento-leyenda" style="font-size: 12px; opacity: 0.8; text-transform: uppercase;">Calma</div>
     </div>
 </div>
-<div style="text-align: left; margin-left: 10px;">
-    <div id="fecha-zuniga" style="font-size: 1.4rem; font-weight: 900; color: #333; margin-bottom: 8px; font-family: sans-serif;">
-        </div>
-</div>
     
 </div>
 </div>
@@ -1037,7 +1033,47 @@ if (consejo) {
 
 actualizarUV();
 </script>
+<script>
+function embellecerReloj() {
+    const reloj = document.getElementById('clock');
+    const fecha = document.getElementById('date');
+    const ampm = document.getElementById('ampm');
 
+    // Si existen, les damos el toque "Bunker" sin moverlos de su sitio
+    if (reloj) {
+        reloj.style.color = "white";
+        reloj.style.textShadow = "0 0 15px #00ebff";
+        reloj.style.fontSize = "3rem"; // Si se estira mucho, bajale este número a 2.5
+    }
+    if (ampm) {
+        ampm.style.color = "#00ebff";
+        ampm.style.fontWeight = "bold";
+    }
+    if (fecha) {
+        fecha.style.color = "rgba(255,255,255,0.8)";
+        fecha.style.display = "block"; // Para que se vea
+        fecha.style.marginTop = "5px";
+	fecha.style.fontSize = "22px";
+    }
+}
+
+// Llamamos a la función una vez
+embellecerReloj();
+
+// Y acá el segundero de siempre para que no diga "Cargando"
+function ticTac() {
+    const ahora = new Date();
+    if(document.getElementById('clock')) {
+        document.getElementById('clock').innerText = ahora.toLocaleTimeString('es-AR', {hour12: false});
+    }
+    if(document.getElementById('date')) {
+        const opciones = { weekday: 'long', day: '2-digit', month: '2-digit' };
+        document.getElementById('date').innerText = ahora.toLocaleDateString('es-AR', opciones).toUpperCase();
+    }
+}
+setInterval(ticTac, 1000);
+ticTac();
+</script>
 </div>
 </div>
 <script>
