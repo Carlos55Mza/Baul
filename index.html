@@ -530,7 +530,10 @@ vertical-align: middle;
         <div id="viento-leyenda" style="font-size: 12px; opacity: 0.8; text-transform: uppercase;">Calma</div>
     </div>
 </div>
-
+<div style="text-align: left; margin-left: 10px;">
+    <div id="fecha-zuniga" style="font-size: 1.4rem; font-weight: 900; color: #333; margin-bottom: 8px; font-family: sans-serif;">
+        </div>
+</div>
     
 </div>
 </div>
@@ -593,10 +596,6 @@ vertical-align: middle;
         </div>
         <div class="main-content">
  
-<div style="text-align: left; margin-left: 10px;">
-    <div id="fecha-zuniga" style="font-size: 1.4rem; font-weight: 900; color: #333; margin-bottom: 8px; font-family: sans-serif;">
-        </div>
-</div>
           
 <div style="text-align: left; margin-left: 10px;">
     <div style="font-size: 1.4rem; font-weight: 900; color: #333; margin-bottom: 8px; font-family: sans-serif;">
@@ -1043,62 +1042,9 @@ actualizarUV();
 
 </div>
 </div>
-
-
-<div id="luna-container" style="background: rgba(0, 0, 0, 0.7); border: 2px solid rgba(255,255,255,0.2); border-radius: 20px; padding: 15px; color: white; text-align: center; margin-top: 15px; backdrop-filter: blur(10px); box-shadow: 0 8px 16px rgba(0,0,0,0.3); max-width: 320px;">
-    <h4 style="margin: 0 0 10px 0; font-size: 0.8rem; text-transform: uppercase; color: #fffa65; letter-spacing: 1px;">Fase Lunar Actual</h4>
-    
-    <div id="luna-emoji" style="font-size: 45px; margin-bottom: 5px; filter: drop-shadow(0 0 10px rgba(255,250,101,0.5));">🌑</div>
-    <div id="luna-nombre" style="font-size: 1.2rem; font-weight: 900; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">Luna Nueva</div>
-    
-    <div style="background: rgba(255,255,255,0.1); border-radius: 10px; padding: 8px; margin-top: 12px;">
-        <p id="titulo-proxima" style="font-size: 0.7rem; margin: 0; color: #ddd;">Próxima Fase:</p>
-        <p id="fecha-proxima" style="font-size: 0.9rem; margin: 2px 0 0 0; font-weight: bold; color: #fff;">Cargando...</p>
-    </div>
-</div>
-
 <script>
-    function actualizarLuna() {
-        const emoji = document.getElementById('luna-emoji');
-        const nombre = document.getElementById('luna-nombre');
-        const tituloProx = document.getElementById('titulo-proxima');
-        const fechaProx = document.getElementById('fecha-proxima');
-        
-        const hoy = new Date();
-        const dia = hoy.getDate();
-        const mes = hoy.getMonth() + 1; 
 
-        // LÓGICA AUTOMÁTICA PARA ABRIL/MAYO 2026
-        if (mes === 4) { // ABRIL
-            if (dia >= 17 && dia <= 25) {
-                emoji.innerHTML = "🌑";
-                nombre.innerHTML = "Luna Nueva";
-                tituloProx.innerHTML = "Próxima Luna Creciente:";
-                fechaProx.innerHTML = "27 de Abril";
-            } else if (dia >= 26) {
-                emoji.innerHTML = "🌓";
-                nombre.innerHTML = "Cuarto Creciente";
-                tituloProx.innerHTML = "Próxima Luna Llena:";
-                fechaProx.innerHTML = "4 de Mayo";
-            }
-        } else if (mes === 5) { // MAYO
-            if (dia <= 4) {
-                emoji.innerHTML = "🌓";
-                nombre.innerHTML = "Cuarto Creciente";
-                tituloProx.innerHTML = "Próxima Luna Llena:";
-                fechaProx.innerHTML = "4 de Mayo";
-            } else {
-                emoji.innerHTML = "🌕";
-                nombre.innerHTML = "Luna Llena";
-                tituloProx.innerHTML = "Próxima Fase:";
-                fechaProx.innerHTML = "En camino...";
-            }
-        }
-    }
-    actualizarLuna();
-</script>
-<script>
-    // Diccionario extendido de banderas
+   // Diccionario extendido de banderas
     function obtenerBanderaGlobal(lugar) {
         const texto = lugar.toUpperCase();
         if (texto.includes("ARGENTINA") || texto.includes("MENDOZA") || texto.includes("SAN JUAN")) return "🇦🇷";
