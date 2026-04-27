@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pronóstico Nacional - Estación Zúñiga</title>
+    <style>
+        body {
+            font-family: 'Courier New', Courier, monospace; /* Estilo máquina de escribir */
+            background-color: #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            margin: 0;
+        }
+        .btn-volver {
+            text-decoration: none;
+            color: white;
+            background: #2c3e50;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .hoja-informe {
+            background: #fff;
+            width: 100%;
+            max-width: 600px;
+            min-height: 80vh;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border-top: 10px solid #f1c40f;
+            position: relative;
+        }
+        .hoja-informe::before {
+            content: '';
+            position: absolute;
+            left: 30px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: rgba(255, 0, 0, 0.2); /* Margen de hoja */
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #2c3e50;
+            padding-bottom: 10px;
+            font-size: 1.5rem;
+            text-align: center;
+        }
+        .fecha-boletin {
+            text-align: right;
+            font-weight: bold;
+            margin-bottom: 30px;
+            color: #7f8c8d;
+        }
+        .texto-contenido {
+            line-height: 1.6;
+            font-size: 1.1rem;
+            color: #333;
+            white-space: pre-wrap; /* Respeta los "Enter" que vos des */
+        }
+    </style>
+</head>
+<body>
+
+    <a href="index.html" class="btn-volver">← Volver a la Estación</a>
+
+    <div class="hoja-informe">
+        <h1>BOLETÍN METEOROLÓGICO NACIONAL</h1>
+        <div class="fecha-boletin">Lunes 27 de Abril, 2026</div>
+        
+        <div class="texto-contenido">
+PRÓXIMAMENTE
+</div>
+    </div>
+
+</body>
+</html>
