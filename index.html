@@ -533,15 +533,74 @@ vertical-align: middle;
 
 </head>
 <body>
+<div style="clear: both; display: block; position: relative; z-index: 10000; background: #000; border: 2px solid #3498db; border-radius: 15px; padding: 15px; max-width: 380px; margin: 20px auto; text-align: center; font-family: Arial, sans-serif !important;">
     
+    <label style="color: #3498db; display: block; margin-bottom: 10px; font-weight: bold; text-transform: uppercase; font-size: 0.8rem;">Consultar Clima Nacional</label>
 
-<div class="marquesina-clima">
-        <div id="marquesina-dinamica" class="marquesina-content">
-            <span class="marquesina-item">Conectando Estación Zúñiga...</span>
-        </div>
+    <div style="display: flex; gap: 5px; justify-content: center;">
+        <input type="text" id="loc_zuniga" placeholder="Ciudad..." 
+        style="width: 60%; padding: 10px; border-radius: 5px; border: 1px solid #333; background: #111; color: white !important; outline: none;">
+        
+        <button type="button" onclick="window.climaZuniga()" style="background: #3498db; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; box-shadow: 2px 2px 5px #000;">
+            VER
+        </button>
     </div>
 
+    <div id="pantalla_zuniga" style="margin-top: 15px; padding: 10px; background: #0a0a0a; border-radius: 5px; color: #f1c40f; font-weight: bold; min-height: 25px;">
+        Esperando localidad...
+    </div>
+</div>
 
+<script>
+// Usamos window. para que ninguna otra parte del codigo lo bloquee
+window.climaZuniga = function() {
+    const input = document.getElementById('loc_zuniga');
+    const pantalla = document.getElementById('pantalla_zuniga');
+    const ciudad = input.value.trim();
+    const key = 'bd5e378503939ddaee76f12ad7a97608';
+
+    if (!ciudad) {
+        pantalla.innerHTML = "Escribí una ciudad";
+        return;
+    }
+
+    pantalla.innerHTML = "<span style='opacity:0.5'>Conectando con satélite...</span>";
+
+    fetch(`https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(ciudad)},AR&units=metric&lang=es&appid=${key}`)
+    .then(response => response.json())
+    .then(data => {
+        if (data.cod === 200) {
+            const temp = Math.round(data.main.temp);
+            const st = Math.round(data.main.feels_like);
+            const hum = data.main.humidity;
+            const viento = Math.round(data.wind.speed * 3.6); // Pasa de m/s a km/h
+            const desc = data.weather[0].description;
+            const icono = data.weather[0].icon;
+
+            pantalla.innerHTML = `
+                <div style="display: flex; align-items: center; justify-content: center; gap: 10px; border-bottom: 1px solid #222; padding-bottom: 10px; margin-bottom: 10px;">
+                    <img src="https://openweathermap.org/img/wn/${icono}@2x.png" style="width: 50px; filter: drop-shadow(2px 2px 2px #000);">
+                    <div style="text-align: left;">
+                        <div style="font-size: 1.4rem; color: #fff;">${temp}°C</div>
+                        <div style="font-size: 0.8rem; color: #f1c40f; text-transform: capitalize;">${desc}</div>
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.75rem; color: #bdc3c7; font-weight: normal;">
+                    <div style="text-align: left;">🌡️ ST: <b>${st}°C</b></div>
+                    <div style="text-align: right;">💧 Hum: <b>${hum}%</b></div>
+                    <div style="text-align: left;">🌬️ Viento: <b>${viento} km/h</b></div>
+                    <div style="text-align: right;">📍 <b>${data.name}</b></div>
+                </div>
+            `;
+        } else {
+            pantalla.innerHTML = "Ciudad no encontrada";
+        }
+    })
+    .catch(() => {
+        pantalla.innerHTML = "Error de conexión";
+    });
+};
+</script>
     <div style="width: 100%; display: block; clear: both; background: #000; border-bottom: 2px solid #ff4757; padding: 6px 0; position: relative; z-index: 999;">
         <div style="max-width: 1200px; margin: 0 auto; display: flex; align-items: center; overflow: hidden;">
             <div style="background: #ff4757; color: #fff; padding: 2px 8px; font-weight: bold; font-size: 0.7rem; margin-left: 10px; border-radius: 3px; z-index: 10; animation: parpadeo 1s infinite;">
