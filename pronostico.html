@@ -63,15 +63,45 @@
         }
     </style>
 </head>
+<script>
+// Recuperar al cargar
+    document.addEventListener("DOMContentLoaded", function() {
+        const notaGuardada = localStorage.getItem("nota_zuniga");
+        if (notaGuardada) {
+            document.getElementById("texto-postit").value = notaGuardada;
+        }
+    });
+
+    // Guardar en memoria
+    function guardarNota() {
+        const mensaje = document.getElementById("texto-postit").value;
+        localStorage.setItem("nota_zuniga", mensaje);
+        
+        // Efecto visual para saber que guardó (cambia el color del botón un segundo)
+        const btn = event.target;
+        const textoOriginal = btn.innerText;
+        btn.innerText = "¡LISTO!";
+        btn.style.background = "#4caf50";
+        
+        setTimeout(() => {
+            btn.innerText = textoOriginal;
+            btn.style.background = "#1a1a1a";
+        }, 1500);
+    }
+</script>
 <body>
 
     <a href="index.html" class="btn-volver">← Volver a la Estación</a>
 
-    <div class="hoja-informe">
-        <h1>BOLETÍN METEOROLÓGICO NACIONAL</h1>
-        <div class="fecha-boletin">Lunes 28 de Abril, 2026</div>
-        
-        <div class="texto-contenido">
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid rgba(0,0,0,0.1); margin-bottom: 10px; padding-bottom: 5px;">
+        <span style="font-weight: bold; font-size: 0.8rem; letter-spacing: 1px;">📌 RECORDATORIO</span>
+        <button onclick="guardarNota()" style="background: #1a1a1a; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; font-size: 0.65rem; cursor: pointer; font-weight: bold; transition: 0.3s;">GUARDAR</button>
+    </div>
+    
+    <textarea id="texto-postit" 
+    style="width: 100%; background: transparent; border: none; outline: none; font-family: inherit; font-size: 1.05rem; font-weight: 500; line-height: 1.4; color: #000; resize: none; height: 110px; padding: 0;" 
+    placeholder=""></textarea>
+</div>
 Holaaaa mi gente querida!! Como están?? si, si, acá estoy. Bueno, variadito el tema. vamos a ir por provincias desde el norte hasta el sur y va a comprender las temperaturas y condiciones para la semana. 
 Jujuy. En el norte mañanas muy frias y tardes templadas, despejado y sin vísperas de lluvias, condiciones de viento zonda. En el sur, un poco mas templadas las temperaturas pero con algunas lluvias. 
 Salta: En el oeste, dias despejados, frios por las mañana y templado por las tardes, tambien con condiciones ventosas. En el norte y este, dias mas templados y lluviosos, pero precipitaciones no importantes.
