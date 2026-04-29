@@ -71,23 +71,6 @@
     font-style: italic;
 }
 
-function ponerFechaActual() {
-    const ahora = new Date();
-    const opciones = { 
-        weekday: 'long', 
-        day: 'numeric', 
-        month: 'long' 
-    };
-    
-    // Formatea la fecha y la pone en Mayúsculas
-    let fechaHoy = ahora.toLocaleDateString('es-AR', opciones).toUpperCase();
-    
-    // La inyecta en el HTML
-    document.getElementById('fecha-dinamica').innerText = fechaHoy;
-}
-
-// Ejecutar al cargar
-ponerFechaActual();
 
 /* ARREGLO PARA QUE NO SE MONTEN LOS DEPARTAMENTOS */
 @media (max-width: 480px) {
@@ -217,11 +200,7 @@ ponerFechaActual();
         align-items: start; 
     }
     
-    .clock-section { text-align: left; line-height: 1.1; color: #2d3436; margin-bottom: 15px; }
-    #clock { font-size: 3.5rem; font-weight: 900; letter-spacing: -2px; }
-    #ampm { font-size: 1.2rem; font-weight: bold; color: var(--money); }
-    
-
+   
     /* CUADRO DE CLIMA: Más compacto y "amigable" con las publicidades */
     .weather-main-card {
         background: var(--glass); 
@@ -612,7 +591,31 @@ window.climaZuniga = function() {
             </marquee>
         </div>
     </div>
+  
+<div id="muro-zuniga" style="max-width: 400px; margin: 15px auto; background: #fff; border: 2px solid #2c3e50; border-radius: 12px; overflow: hidden; font-family: Arial, sans-serif; position: relative; z-index: 9999; pointer-events: auto;">
     
+    <div style="background: #2c3e50; color: white; padding: 8px; text-align: center; font-weight: bold;">
+        🎙️ El Muro del Vecino
+    </div>
+
+    <div style="padding: 10px;">
+        <input type="text" id="vecino-nombre" placeholder="Tu Apodo" style="width: 90%; padding: 8px; margin-bottom: 8px; border: 1px solid #ccc; border-radius: 5px;">
+        
+        <textarea id="vecino-mensaje" placeholder="¿Qué está pasando?" rows="2" style="width: 90%; padding: 8px; border: 1px solid #ccc; border-radius: 5px; resize: none;"></textarea>
+        
+        <button onclick="enviarAlMuro()" style="width: 100%; background: #e67e22; color: white; border: none; padding: 10px; margin-top: 8px; border-radius: 5px; font-weight: bold; cursor: pointer;">
+            POSTEAR MENSAJE
+        </button>
+
+        <hr style="margin: 15px 0; border: 0; border-top: 1px solid #eee;">
+
+        <div id="pizarra-mensajes" style="max-height: 250px; overflow-y: auto; font-size: 0.9em;">
+            <p style="text-align: center; color: #999;">Cargando comentarios...</p>
+        </div>
+    </div>
+</div>        </div>
+    </div>
+</div>
     <div class="overlay"></div>
     <div class="wrapper">
         <div class="top-grid">
@@ -887,7 +890,7 @@ window.climaZuniga = function() {
     <button id="btn-pausa" onclick="togglePausa()" style="position: absolute; top: 8px; right: 8px; z-index: 20; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; outline: none;">II</button>
 
     <a href="https://wa.me/542634520709?text=Hola%20Fabián,%20vi%20su%20anuncio%20en%20Estacion%20Zuñiga" target="_blank" class="anuncio" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 10px; text-decoration: none; color: inherit;">
-        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ2yl4h5GYb8Xy4C2fYI7TLMvp-25FRGZxDJw&s" alt="Tornería Don Julián" style="height: 60px; width: auto; margin-bottom: 5px; border-radius: 4px; object-fit: contain;">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ2yl4h5GYb8Xy4C2fYI7TLMvp-25FRGZxDJw&s" alt="Tornería Don Julián" style="height: 80px; width: auto; margin-bottom: 5px; border-radius: 4px; object-fit: contain;">
         <div style="font-size: 0.9em; font-weight: bold; color: #2c3e50; margin-bottom: 2px;">TORNERÍA DON JULIÁN</div>
         <div style="font-size: 0.7em; color: #333; text-align: center; font-weight: bold;">Mecanizados de Precisión - Trabajos en Control Numérico (CNC)</div>
         <div style="font-size: 0.6em; color: #888; text-align: center;">San Martín, Mza.</div>
@@ -989,10 +992,19 @@ window.climaZuniga = function() {
         <div style="font-size: 0.75em; color: #25D366; font-weight: bold; margin-top: 5px;">Consultas al WhatsApp 📲</div>
     </a>
  
-<a href="https://wa.me/542634277869?text=Hola%20Carlos,%20vi%20su%20anuncio%20en%20Estacion%20Zuñiga" target="_blank" class="anuncio" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 10px; text-decoration: none; color: inherit;">
-    <img src="https://i.postimg.cc/hXP0PXGR/publicite-aqui.jpg" alt="Taller de resina epóxica" style="height: 60px; width: auto; margin-bottom: 5px; border-radius: 4px; object-fit: contain;">
-        <div style="font-size: 0.9em; font-weight: bold; color: #2c3e50; margin-bottom: 2px;">PUBLICITE AQUI</div>       
-	<div style="font-size: 0.8em; color: #333; text-align: center; font-weight: bold;">Sus productos o servicios</div>
+<a href="https://wa.me/542612449339?text=Hola%20Leandro,%20vi%20su%20anuncio%20en%20Estacion%20Zuñiga" target="_blank" class="anuncio" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 10px; text-decoration: none; color: inherit;">
+    <img src="https://i.postimg.cc/bDdF5HvL/Whats-App-Image-2026-04-29-at-11-19-58.jpg" alt="Taller de tren delantero en general" style="height: 60px; width: auto; margin-bottom: 5px; border-radius: 4px; object-fit: contain;">
+        <div style="font-size: 0.9em; font-weight: bold; color: #2c3e50; margin-bottom: 2px;">CAR SUSPENSIÓN</div>       
+	<div style="font-size: 0.8em; color: #333; text-align: center; font-weight: bold;">Tren delantero en general - Suspensión - Alineación y balanceo</div>
+        <div style="font-size: 0.7em; color: #666; text-align: center;">San Martín - Mza</div>
+        <div style="font-size: 0.6em; color: #888; text-align: center;">Haga click aquí.</div>
+        <div style="font-size: 0.75em; color: #25D366; font-weight: bold; margin-top: 5px;">Consultas al WhatsApp 📲</div>
+    </a>
+
+<a href="https://wa.me/542634560528?text=Hola%20Andrés,%20vi%20su%20anuncio%20en%20Estacion%20Zuñiga" target="_blank" class="anuncio" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 10px; text-decoration: none; color: inherit;">
+    <img src="https://i.postimg.cc/CRBpQqvh/cab7fde32b9417310bd7e89b6ce5400c.jpg" alt="Mecánica del automotor" style="height: 60px; width: auto; margin-bottom: 5px; border-radius: 4px; object-fit: contain;">
+        <div style="font-size: 0.9em; font-weight: bold; color: #2c3e50; margin-bottom: 2px;">ANDRES VALERO</div>       
+	<div style="font-size: 0.8em; color: #333; text-align: center; font-weight: bold;">Mecánica del automotor - Diesel y nafteros - Todas las marcas</div>
         <div style="font-size: 0.7em; color: #666; text-align: center;">San Martín - Mza</div>
         <div style="font-size: 0.6em; color: #888; text-align: center;">Haga click aquí.</div>
         <div style="font-size: 0.75em; color: #25D366; font-weight: bold; margin-top: 5px;">Consultas al WhatsApp 📲</div>
@@ -1165,7 +1177,9 @@ window.climaZuniga = function() {
         🧮 CALCULADORA
     </a>
 
-</div><script>
+</div>
+
+<script>
     var acc = document.getElementsByClassName("boton-desplegable");
     for (var i = 0; i < acc.length; i++) {
         acc[i].addEventListener("click", function() {
@@ -1290,6 +1304,71 @@ if (consejo) {
 
 actualizarUV();
 </script>
+<script>
+const db = firebase.firestore();
+
+function enviarAlMuro() {
+    const nombre = document.getElementById('vecino-nombre').value || "Vecino Anónimo";
+    let mensaje = document.getElementById('vecino-mensaje').value;
+
+    // Lista de palabras que no queremos (podés agregar las que quieras)
+    const prohibidas = ["insulto1", "insulto2", "politica", "estafa"]; 
+    
+    // Revisamos si el mensaje tiene alguna de esas palabras
+    let contenidoLimpio = mensaje.toLowerCase();
+    let esOfensivo = prohibidas.some(palabra => contenidoLimpio.includes(palabra));
+
+    if (esOfensivo) {
+        alert("⚠️ ¡Epa! Vamos a mantener el respeto en el muro, por favor.");
+        return;
+    }
+
+    if (mensaje.trim() === "") return alert("¡Che, no dejes el mensaje vacío!");
+
+    // Si pasó el filtro, se envía
+    db.collection("muro_vecinal").add({
+        autor: nombre,
+        texto: mensaje,
+        fecha: firebase.firestore.FieldValue.serverTimestamp()
+    })
+    .then(() => {
+        document.getElementById('vecino-mensaje').value = "";
+    })
+    .catch((error) => console.error("Error: ", error));
+}
+// Escuchar cambios en tiempo real
+db.collection("muro_vecinal").orderBy("fecha", "desc").limit(15)
+    .onSnapshot((snapshot) => {
+        const pizarra = document.getElementById('pizarra-mensajes');
+        pizarra.innerHTML = "";
+
+        snapshot.forEach((doc) => {
+            const m = doc.data();
+            const hora = m.fecha ? new Date(m.fecha.seconds * 1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : "...";
+            
+            pizarra.innerHTML += `
+                <div style="background: #f1f2f6; padding: 12px; border-radius: 12px; position: relative;">
+                    <strong style="color: #2980b9; display: block; margin-bottom: 4px;">${m.autor} <span style="font-size: 0.7em; color: #7f8c8d; font-weight: normal;">• ${hora}</span></strong>
+                    <p style="margin: 0; color: #2c3e50; line-height: 1.4;">${m.texto}</p>
+                </div>
+            `;
+        });
+    });
+
+
+</script>
+<script>
+// Solicitar permiso para las notificaciones "Plan B"
+function solicitarPermisoNotificaciones() {
+    Notification.requestPermission().then((permission) => {
+        if (permission === 'granted') {
+            console.log('¡Perfecto! La Estación Zúñiga ahora tiene permiso para avisarte.');
+        }
+    });
+}
+// Llamamos a la función apenas carga la página
+solicitarPermisoNotificaciones();
+</script> 
 <script>
 function embellecerReloj() {
     const reloj = document.getElementById('clock');
@@ -2033,6 +2112,68 @@ monitorearSismos();
 
 }
 
+let ultimoSismoId = ""; // Memoria para que el robot no repita el mismo sismo
+
+async function actualizarMonitor() {
+    // Traemos los sismos de magnitud 3.0 para arriba
+    const url = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&minmagnitude=3.0&limit=20";
+    
+    try {
+        const res = await fetch(url);
+        const data = await res.json();
+        
+        // Limpiamos los circulitos viejos del mapa (Leaflet)
+        map.eachLayer((l) => { if (l instanceof L.CircleMarker) map.removeLayer(l); });
+
+        const sismoMasReciente = data.features[0];
+
+        data.features.forEach((sismo) => {
+            const p = sismo.properties;
+            const c = sismo.geometry.coordinates;
+            const mag = p.mag;
+            const dist = obtenerDistancia(c[1], c[0]); // Tu función de distancia
+            
+            // Colores según magnitud
+            let colorActual = "#3498db";
+            if (mag >= 6) colorActual = "#c0392b";
+            else if (mag >= 5) colorActual = "#e67e22";
+            else if (mag >= 4) colorActual = "#f1c40f";
+
+            // Dibujamos en el mapa
+            L.circleMarker([c[1], c[0]], {
+                color: colorActual, radius: mag * 3, weight: 2, fillOpacity: 0.5
+            }).addTo(map).bindPopup(`<b>${p.place}</b><br>Mag: ${mag.toFixed(1)}<br>${Math.round(dist)}km`);
+        });
+
+        // --- AQUÍ ENTRA EL ROBOT INFORMANTE ---
+        if (sismoMasReciente && sismoMasReciente.id !== ultimoSismoId) {
+            ultimoSismoId = sismoMasReciente.id;
+            const magReciente = sismoMasReciente.properties.mag;
+            const lugarReciente = sismoMasReciente.properties.place;
+
+            // Si es mayor a 4.0, el robot avisa al muro
+            if (magReciente >= 4.0) {
+                // Publicar en el muro de Firebase
+                db.collection("muro_vecinal").add({
+                    autor: "🤖 Robot Zúñiga",
+                    texto: `⚠️ ¡SISMO DETECTADO! Magnitud: ${magReciente.toFixed(1)} en ${lugarReciente}. ¿Lo sintieron en el barrio?`,
+                    fecha: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                // También dispara la notificación push si la tenés configurada
+                if (typeof enviarAlertaSismo === "function") {
+                    enviarAlertaSismo(magReciente, lugarReciente);
+                }
+            }
+        }
+
+    } catch (e) { 
+        console.log("Error al conectar con el monitor de sismos", e); 
+    }
+}
+
+// Para que el monitor se actualice cada 1 minuto solito
+setInterval(actualizarMonitor, 60000);
 async function actualizarTodoElClima() {
     try {
         // Usamos forecast.json para tener el futuro, y mantenemos tus variables API_KEY y coords
@@ -2181,6 +2322,22 @@ async function cargarTitulares() {
         contenedor.innerHTML = "No se pudieron cargar las noticias. Reintentá en un momento.";
     }
 }
+</script>
+
+<script>
+// Este código te va a mostrar TU TOKEN en la consola del navegador
+messaging.getToken({ vapidKey: '5jr9hABqGTIeeC1mzeedIz-fCW7lyNSuit_QA_uBmhk' }).then((currentToken) => {
+  if (currentToken) {
+    console.log("Este es tu Token de Registro:");
+    console.log(currentToken);
+    // Opcional: que te lo muestre en un cartelito para copiarlo fácil
+    // alert("Tu Token es: " + currentToken); 
+  } else {
+    console.log('No se pudo obtener el token. Revisá los permisos.');
+  }
+}).catch((err) => {
+    console.log('Error al obtener el token: ', err);
+});
 </script>
 </body>
 
