@@ -2367,12 +2367,12 @@ setInterval(actualizarReloj, 1000);
 </style>
 
 
-<div style="background: rgba(0, 0, 0, 0.3); border: 1px solid #444; padding: 15px; border-radius: 12px; margin: 20px 10px; font-family: sans-serif;">
+<div style="position: relative; z-index: 10000; pointer-events: auto; background: rgba(0, 0, 0, 0.3); border: 1px solid #444; padding: 15px; border-radius: 12px; margin: 20px 10px; font-family: sans-serif;">
+    
     <h3 style="color: #fbc02d; font-size: 1rem; margin: 0 0 10px 0; display: flex; align-items: center; gap: 8px;">
         <span class="material-symbols-outlined" style="font-size: 20px;">mail</span>
         Sugerencias para Estación Zúñiga
-    </h3>
-    
+    </h3>    
     <form id="form-sugerencias" action="https://formspree.io/f/mnjwabaj" method="POST">
         <textarea 
             name="mensaje" 
