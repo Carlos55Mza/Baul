@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Frase del Día - Estación Zúñiga</title>
+    <style>
+        body { 
+            font-family: 'Verdana', sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            color: white; 
+            height: 100vh; 
+            margin: 0; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            text-align: center;
+        }
+        .container { padding: 30px; }
+        .frase { font-size: 1.8rem; font-style: italic; margin-bottom: 20px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .autor { font-weight: bold; opacity: 0.8; }
+        .boton-nueva { 
+            margin-top: 30px; 
+            padding: 10px 20px; 
+            background: white; 
+            color: #764ba2; 
+            border-radius: 20px; 
+            cursor: pointer; 
+            font-weight: bold;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div id="frase-box" class="frase">"Cargando sabiduría..."</div>
+        <div id="autor-box" class="autor"></div>
+        <button class="boton-nueva" onclick="generarFrase()">Ver otra</button>
+    </div>
+
+    <script>
+        const frases = [
+            { texto: "En San Martín, si no vuela un vecino, vuela la gorra.", autor: "Dicho Popular" },
+            { texto: "No me chamuyes con el pronóstico, ¡mirá el cielo!", autor: "Estación Zúñiga" },
+            { texto: "Más perdido que gata de Loa en medio de la tormenta.", autor: "Anónimo" },
+            { texto: "El Zonda no es viento, es un estado de ánimo.", autor: "Sabiduría Mendocina" },
+            { texto: "Para un buen asado no hay mal clima.", autor: "Cacho" },
+            { texto: "Si hay sol, hay padel; si hay piedra, hay drama.", autor: "El Club de los Amigos" }
+        ];
+
+        function generarFrase() {
+            const indice = Math.floor(Math.random() * frases.length);
+            document.getElementById('frase-box').innerText = `"${frases[indice].texto}"`;
+            document.getElementById('autor-box').innerText = `- ${frases[indice].author || frases[indice].autor}`;
+        }
+
+        // Cargar una al inicio
+        generarFrase();
+    </script>
+</body>
+</html>
