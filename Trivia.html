@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trivia Master - Cultura General</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Outfit:wght@500;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="bg-orbs" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+    <div id="confetti-layer" aria-hidden="true"></div>
+    <main class="app">
+      <section id="start-screen" class="card screen active">
+        <h1>Trivia Master</h1>
+        <p class="subtitle">Banco ampliado (300+) - 1 o 2 jugadores - sonidos Web Audio API</p>
+        <div class="mode-row">
+          <label><input type="radio" name="mode" value="1" checked /> 1 jugador</label>
+          <label><input type="radio" name="mode" value="2" /> 2 jugadores local</label>
+        </div>
+        <div class="name-row">
+          <input id="p1-name" type="text" maxlength="18" placeholder="Jugador 1" value="Jugador 1" />
+          <input id="p2-name" type="text" maxlength="18" placeholder="Jugador 2" value="Jugador 2" />
+        </div>
+        <div class="instructions">
+          <h2>Como jugar</h2>
+          <ul>
+            <li>4 opciones por pregunta; respondiendo mas rapido ganas mas puntos.</li>
+            <li>3 vidas por jugador, cada error o timeout quita 1 vida.</li>
+            <li>Dificultad progresiva: Facil -> Medio -> Dificil -> Experto.</li>
+            <li>En modo 2 jugadores se alternan turnos en la misma pantalla.</li>
+            <li>Categorias: historia, ciencia, tecnologia, cine, musica, literatura, geografia, deportes, arte, naturaleza, gastronomia, mitologia y astronomia.</li>
+          </ul>
+        </div>
+        <button id="start-btn" class="btn btn-primary">Empezar partida</button>
+      </section>
+
+      <section id="game-screen" class="card screen">
+        <header class="hud">
+          <div class="hud-item">Turno: <span id="turn-player">Jugador 1</span></div>
+          <div class="hud-item">Pregunta <span id="q-index">1</span>/<span id="q-total">80</span></div>
+          <div class="hud-item">Dificultad: <span id="difficulty-tag">Facil</span></div>
+          <div class="hud-item">Tiempo: <span id="timer">20</span>s</div>
+        </header>
+        <div class="player-panels">
+          <div class="panel">
+            <h4 id="p1-label">Jugador 1</h4>
+            <p>Puntaje: <span id="p1-score">0</span></p>
+            <p>Vidas: <span id="p1-lives">@@@</span></p>
+          </div>
+          <div class="panel">
+            <h4 id="p2-label">Jugador 2</h4>
+            <p>Puntaje: <span id="p2-score">0</span></p>
+            <p>Vidas: <span id="p2-lives">@@@</span></p>
+          </div>
+        </div>
+        <div class="progress-wrap"><div id="time-bar" class="time-bar"></div></div>
+        <div class="question-wrap">
+          <p id="category" class="category"><span id="cat-icon">🧠</span> <span id="cat-text">Ciencia</span></p>
+          <h2 id="question-text">Pregunta</h2>
+        </div>
+        <div id="options" class="options"></div>
+        <p id="feedback" class="feedback" aria-live="polite"></p>
+      </section>
+
+      <section id="game-over-screen" class="card screen">
+        <h2>Fin de partida</h2>
+        <p id="winner-line" class="subtitle">Ganador: -</p>
+        <div class="stats">
+          <p id="p1-final">Jugador 1: 0 pts</p>
+          <p id="p2-final">Jugador 2: 0 pts</p>
+          <p id="final-answered">Preguntas respondidas: 0</p>
+          <p id="final-correct">Aciertos totales: 0</p>
+        </div>
+        <form id="score-form" class="score-form">
+          <label for="player-name">Nombre para high score</label>
+          <input id="player-name" type="text" maxlength="18" placeholder="Nombre" required />
+          <button type="submit" class="btn btn-primary">Guardar puntaje</button>
+        </form>
+        <div class="scores"><h3>High Scores</h3><ol id="score-list"></ol></div>
+        <button id="restart-btn" class="btn btn-secondary">Jugar de nuevo</button>
+      </section>
+    </main>
+    <script src="script.js"></script>
+  </body>
+</html>
