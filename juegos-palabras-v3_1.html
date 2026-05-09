@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Juegos de Palabras</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0f0f1a;--surface:#1a1a2e;--surface2:#16213e;
+  --accent:#e94560;--accent2:#0f3460;--gold:#f5a623;
+  --green:#2ecc71;--teal:#00b4d8;--text:#eaeaea;
+  --muted:#888;--border:#2a2a4a;--radius:14px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:3rem;}
+
+header{background:linear-gradient(135deg,#0f3460 0%,#16213e 50%,#0f0f1a 100%);padding:2rem 1rem 1.5rem;text-align:center;border-bottom:1px solid var(--border);position:relative;overflow:hidden;}
+header::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(233,69,96,0.15) 0%,transparent 70%);}
+header h1{font-family:'Fredoka One',cursive;font-size:clamp(2rem,6vw,3.2rem);letter-spacing:0.04em;background:linear-gradient(135deg,#f5a623,#e94560);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;position:relative;}
+header p{font-size:0.9rem;color:var(--muted);margin-top:6px;position:relative;}
+
+.top-controls{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;padding:1.2rem 1rem;background:var(--surface2);border-bottom:1px solid var(--border);}
+.tab-group{display:flex;gap:6px;align-items:center;}
+.tab-label{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-right:4px;}
+.tab-btn{font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;padding:7px 16px;border-radius:30px;border:1.5px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all 0.2s;}
+.tab-btn:hover{border-color:var(--accent);color:var(--text);}
+.tab-btn.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+.tab-btn.active-teal{background:var(--teal);border-color:var(--teal);color:#fff;}
+.tab-btn.active-gold{background:var(--gold);border-color:var(--gold);color:#0f0f1a;}
+.divider{width:1px;height:30px;background:var(--border);}
+
+.container{max-width:900px;margin:2rem auto;padding:0 1rem;}
+.panel{display:none;}.panel.active{display:block;}
+
+.stats-bar{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:1.5rem;}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:8px 20px;text-align:center;min-width:90px;}
+.stat-val{font-family:'Fredoka One',cursive;font-size:1.5rem;color:var(--gold);}
+.stat-lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;}
+
+.sopa-wrap{display:flex;flex-direction:column;align-items:center;gap:1.2rem;}
+#sopa-grid{display:inline-grid;gap:3px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;user-select:none;}
+.cell{width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;cursor:pointer;border-radius:6px;border:1px solid var(--border);background:var(--surface2);transition:all 0.1s;color:var(--text);}
+.cell:hover{border-color:var(--teal);}
+.cell.selected{background:#0f3460;border-color:var(--teal);color:var(--teal);transform:scale(1.1);}
+.cell.found{background:#0d3b2e;border-color:var(--green);color:var(--green);}
+
+.words-list{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:560px;}
+.word-chip{padding:5px 14px;border-radius:20px;font-size:12px;font-weight:700;background:var(--surface);border:1px solid var(--border);color:var(--muted);letter-spacing:0.05em;transition:all 0.2s;}
+.word-chip.found{background:#0d3b2e;border-color:var(--green);color:var(--green);text-decoration:line-through;}
+
+.cruz-wrap{display:flex;flex-direction:column;align-items:center;gap:1.2rem;}
+#cruz-grid{display:inline-grid;gap:2px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;}
+.cruz-cell{width:36px;height:36px;position:relative;}
+.cruz-cell.black{background:#0a0a14;border-radius:4px;}
+.cruz-cell input{width:100%;height:100%;text-align:center;font-family:'Nunito',sans-serif;font-size:15px;font-weight:700;text-transform:uppercase;border:1px solid var(--border);background:var(--surface2);color:var(--text);border-radius:4px;padding:0;outline:none;transition:all 0.15s;}
+.cruz-cell input:focus{border-color:var(--teal);background:#0a1f30;color:var(--teal);}
+.cruz-cell input.correct{background:#0d3b2e;border-color:var(--green);color:var(--green);}
+.cruz-cell input.wrong{background:#2e0f18;border-color:var(--accent);color:var(--accent);}
+.num-badge{position:absolute;top:2px;left:3px;font-size:8px;font-weight:800;color:var(--muted);pointer-events:none;line-height:1;z-index:1;}
+
+.clues-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem 1.5rem;width:100%;max-width:700px;}
+.clues{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;}
+.clue-group h3{font-size:11px;font-weight:800;color:var(--accent);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid var(--accent2);}
+.clue-item{font-size:13px;margin-bottom:6px;cursor:pointer;padding:4px 8px;border-radius:6px;transition:background 0.15s;line-height:1.4;}
+.clue-item:hover{background:var(--surface2);}
+.clue-item.done{color:var(--muted);text-decoration:line-through;}
+.clue-num{font-weight:800;color:var(--teal);margin-right:2px;}
+
+.actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:0.5rem;}
+.btn{font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;padding:9px 22px;border-radius:30px;border:1.5px solid var(--border);background:transparent;color:var(--text);cursor:pointer;transition:all 0.2s;letter-spacing:0.03em;}
+.btn:hover{background:var(--surface);border-color:var(--muted);}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff;}
+.btn.primary:hover{opacity:0.85;}
+.btn.secondary{border-color:var(--teal);color:var(--teal);}
+.btn.secondary:hover{background:rgba(0,180,216,0.1);}
+.btn.gold{background:var(--gold);border-color:var(--gold);color:#0f0f1a;}
+.btn.gold:hover{opacity:0.85;}
+
+.status-msg{font-size:14px;font-weight:700;color:var(--muted);text-align:center;min-height:22px;}
+.win-msg{color:var(--green);font-size:16px;animation:pop 0.4s ease;}
+@keyframes pop{0%{transform:scale(0.8);opacity:0}100%{transform:scale(1);opacity:1}}
+
+.tema-badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--gold);background:rgba(245,166,35,0.12);border:1px solid rgba(245,166,35,0.3);border-radius:20px;padding:4px 12px;margin-bottom:1rem;}
+
+/* WIN MODAL */
+.modal-bg{display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.88);align-items:center;justify-content:center;}
+.modal-bg.show{display:flex;}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:2rem;width:min(400px,92vw);animation:slideUp 0.35s ease;}
+@keyframes slideUp{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-trophy{font-size:3rem;text-align:center;margin-bottom:0.5rem;}
+.modal h2{font-family:'Fredoka One',cursive;font-size:1.6rem;text-align:center;color:var(--gold);margin-bottom:0.3rem;}
+.modal-time{font-family:'Fredoka One',cursive;font-size:2.2rem;color:var(--teal);text-align:center;margin:0.4rem 0;}
+.modal-score{font-family:'Fredoka One',cursive;font-size:2.8rem;color:var(--gold);text-align:center;}
+.modal-score-lbl{font-size:12px;color:var(--muted);text-align:center;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:1.2rem;}
+.modal-form{display:flex;flex-direction:column;gap:10px;margin-bottom:1rem;}
+.modal-form input{width:100%;padding:10px 14px;border-radius:10px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;outline:none;}
+.modal-form input:focus{border-color:var(--teal);}
+.modal-form input::placeholder{color:var(--muted);font-weight:400;}
+.modal-btns{display:flex;gap:8px;flex-direction:column;}
+.modal-msg{font-size:13px;color:var(--green);text-align:center;min-height:18px;font-weight:700;}
+
+/* RANKING PAGE */
+.ranking-section{margin-top:1rem;}
+.ranking-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:8px;}
+.ranking-header h2{font-family:'Fredoka One',cursive;font-size:1.4rem;color:var(--gold);}
+.filter-tabs{display:flex;gap:6px;flex-wrap:wrap;}
+.ftb{font-size:12px;font-weight:700;padding:5px 14px;border-radius:20px;border:1.5px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all 0.15s;}
+.ftb:hover{border-color:var(--teal);color:var(--text);}
+.ftb.on{background:var(--teal);border-color:var(--teal);color:#fff;}
+
+.podio{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.2rem;}
+.pod{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1rem;text-align:center;}
+.pod.p1{border-color:var(--gold);background:rgba(245,166,35,0.08);}
+.pod.p2{border-color:#888;}
+.pod.p3{border-color:#cd7f32;}
+.pod-medal{font-size:1.8rem;margin-bottom:4px;}
+.pod-name{font-size:13px;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.pod-pts{font-family:'Fredoka One',cursive;font-size:1.4rem;color:var(--gold);}
+.pod-meta{font-size:11px;color:var(--muted);margin-top:2px;}
+
+.rank-table{width:100%;border-collapse:collapse;}
+.rank-table th{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;padding:6px 10px;text-align:left;border-bottom:1px solid var(--border);}
+.rank-table td{font-size:13px;padding:10px 10px;border-bottom:1px solid rgba(42,42,74,0.5);color:var(--text);}
+.rank-table tr:hover td{background:rgba(255,255,255,0.03);}
+.rank-pos{font-weight:800;color:var(--muted);width:30px;}
+.rank-name{font-weight:700;}
+.badge{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:700;}
+.b-sopa{background:rgba(0,180,216,0.15);color:var(--teal);}
+.b-cruz{background:rgba(233,69,96,0.15);color:var(--accent);}
+.b-facil{background:rgba(46,204,113,0.15);color:var(--green);}
+.b-medio{background:rgba(245,166,35,0.15);color:var(--gold);}
+.b-dificil{background:rgba(233,69,96,0.15);color:var(--accent);}
+.rank-pts{font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--gold);}
+.rank-time{color:var(--muted);font-size:12px;}
+.empty-state{text-align:center;padding:3rem;color:var(--muted);}
+.empty-state p{font-size:1rem;margin-top:0.5rem;}
+
+@media(max-width:520px){
+  .clues{grid-template-columns:1fr;}
+  .cell{width:26px;height:26px;font-size:11px;}
+  .cruz-cell{width:30px;height:30px;}
+  .cruz-cell input{font-size:12px;}
+  .divider{display:none;}
+  .podio{grid-template-columns:1fr 1fr 1fr;}
+  .pod-pts{font-size:1.1rem;}
+  .rank-table th:nth-child(4),.rank-table td:nth-child(4){display:none;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🎮 Juegos de Palabras</h1>
+  <p>Sopa de letras · Crucigrama · Ranking global</p>
+</header>
+
+<div class="top-controls">
+  <div class="tab-group">
+    <span class="tab-label">Juego</span>
+    <button class="tab-btn active" onclick="switchGame('sopa')">Sopa de letras</button>
+    <button class="tab-btn" id="tab-cruz" onclick="switchGame('cruz')">Crucigrama</button>
+    <button class="tab-btn" id="tab-rank" onclick="switchGame('ranking')">🏆 Ranking</button>
+  </div>
+  <div class="divider"></div>
+  <div class="tab-group" id="game-controls">
+    <span class="tab-label">Temática</span>
+    <button class="tab-btn active-teal" id="tema-naturaleza" onclick="setTema('naturaleza')">🌿 Naturaleza</button>
+    <button class="tab-btn" id="tema-animales" onclick="setTema('animales')">🦁 Animales</button>
+    <button class="tab-btn" id="tema-cine" onclick="setTema('cine')">🎬 Cine</button>
+    <button class="tab-btn" id="tema-deportes" onclick="setTema('deportes')">⚽ Deportes</button>
+    <button class="tab-btn" id="tema-geografia" onclick="setTema('geografia')">🌍 Geografía</button>
+  </div>
+  <div class="divider" id="div2"></div>
+  <div class="tab-group" id="dif-controls">
+    <span class="tab-label">Dificultad</span>
+    <button class="tab-btn active-gold" id="dif-facil" onclick="setDif('facil')">Fácil</button>
+    <button class="tab-btn" id="dif-medio" onclick="setDif('medio')">Medio</button>
+    <button class="tab-btn" id="dif-dificil" onclick="setDif('dificil')">Difícil</button>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- SOPA -->
+  <div id="panel-sopa" class="panel active">
+    <div class="sopa-wrap">
+      <div class="stats-bar">
+        <div class="stat-card"><div class="stat-val" id="s-encontradas">0</div><div class="stat-lbl">Encontradas</div></div>
+        <div class="stat-card"><div class="stat-val" id="s-total">0</div><div class="stat-lbl">Total</div></div>
+        <div class="stat-card"><div class="stat-val" id="s-tiempo">0:00</div><div class="stat-lbl">Tiempo</div></div>
+        <div class="stat-card"><div class="stat-val" id="s-pts">—</div><div class="stat-lbl">Puntos</div></div>
+      </div>
+      <div class="tema-badge" id="sopa-tema-badge">🌿 Naturaleza</div>
+      <div id="sopa-grid"></div>
+      <div class="words-list" id="words-list"></div>
+      <div class="actions">
+        <button class="btn primary" onclick="newGame()">🔄 Nueva partida</button>
+      </div>
+      <div class="status-msg" id="sopa-status"></div>
+    </div>
+  </div>
+
+  <!-- CRUCIGRAMA -->
+  <div id="panel-cruz" class="panel">
+    <div class="cruz-wrap">
+      <div class="stats-bar">
+        <div class="stat-card"><div class="stat-val" id="c-correctas">0</div><div class="stat-lbl">Correctas</div></div>
+        <div class="stat-card"><div class="stat-val" id="c-total">0</div><div class="stat-lbl">Total</div></div>
+        <div class="stat-card"><div class="stat-val" id="c-tiempo">0:00</div><div class="stat-lbl">Tiempo</div></div>
+        <div class="stat-card"><div class="stat-val" id="c-pts">—</div><div class="stat-lbl">Puntos</div></div>
+      </div>
+      <div class="tema-badge" id="cruz-tema-badge">🌿 Naturaleza</div>
+      <div id="cruz-grid"></div>
+      <div class="clues-box"><div class="clues" id="clues"></div></div>
+      <div class="actions">
+        <button class="btn secondary" onclick="checkCruz()">✅ Verificar</button>
+        <button class="btn" onclick="revealCruz()">💡 Revelar</button>
+        <button class="btn primary" onclick="newGame()">🔄 Nueva partida</button>
+      </div>
+      <div class="status-msg" id="cruz-status"></div>
+    </div>
+  </div>
+
+  <!-- RANKING -->
+  <div id="panel-ranking" class="panel">
+    <div class="ranking-section">
+      <div class="ranking-header">
+        <h2>🏆 Ranking global</h2>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <div class="filter-tabs">
+            <button class="ftb on" onclick="filterRank('todos',this)">Todos</button>
+            <button class="ftb" onclick="filterRank('sopa',this)">Sopa</button>
+            <button class="ftb" onclick="filterRank('crucigrama',this)">Crucigrama</button>
+          </div>
+          <button class="btn" style="padding:5px 14px;font-size:12px;" onclick="loadRanking()">🔄 Actualizar</button>
+        </div>
+      </div>
+      <div class="podio" id="podio"></div>
+      <table class="rank-table">
+        <thead><tr>
+          <th>#</th><th>Nombre</th><th>Juego</th><th>Dificultad</th><th>Tiempo</th><th>Puntos</th>
+        </tr></thead>
+        <tbody id="rank-body"></tbody>
+      </table>
+      <div class="empty-state" id="rank-empty" style="display:none;">
+        <div style="font-size:2.5rem;">🎮</div>
+        <p>¡Todavía no hay puntajes! Jugá una partida y sé el primero en el ranking.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- WIN MODAL -->
+<div class="modal-bg" id="modal-bg">
+  <div class="modal">
+    <div class="modal-trophy">🏆</div>
+    <h2 id="modal-title">¡Ganaste!</h2>
+    <div class="modal-time" id="modal-time">0:00</div>
+    <div class="modal-score" id="modal-score">0</div>
+    <div class="modal-score-lbl">puntos</div>
+    <div class="modal-form">
+      <input type="text" id="modal-name" placeholder="Tu nombre para el ranking" maxlength="20">
+    </div>
+    <div class="modal-btns">
+      <button class="btn gold" style="width:100%;padding:12px;" onclick="saveScore()">🏅 Guardar en el ranking</button>
+      <button class="btn" style="width:100%;padding:10px;" onclick="closeModal();newGame()">🔄 Jugar de nuevo</button>
+      <button class="btn secondary" style="width:100%;padding:10px;" onclick="closeModal();switchGame('ranking')">🏆 Ver ranking</button>
+    </div>
+    <div class="modal-msg" id="modal-msg"></div>
+  </div>
+</div>
+
+<script>
+const TEMAS={
+  naturaleza:{emoji:'🌿',label:'Naturaleza',
+    sopa:{facil:['LUNA','SOL','MAR','RIO','NUBE','FLOR','LAGO','VIENTO'],medio:['VOLCAN','SELVA','DESIERTO','OCEANO','TUNDRA','PRADERA','BOSQUE','ARROYO','MESETA'],dificil:['ECOSISTEMA','BIODIVERSIDAD','FOTOSINTESIS','ESTRATOSFERA','PRECIPITACION','HIBERNACION','EVAPORACION','TERMOCLINA']},
+    cruz:{
+      facil:{size:9,words:[{word:'SELVA',r:0,c:0,dir:'h',num:1,clue:'Bosque tropical denso'},{word:'SOL',r:0,c:0,dir:'v',num:1,clue:'Estrella de nuestro sistema'},{word:'LAGO',r:2,c:2,dir:'h',num:2,clue:'Gran masa de agua interior'},{word:'LUNA',r:0,c:4,dir:'v',num:3,clue:'Satélite de la Tierra'},{word:'NUBE',r:4,c:1,dir:'h',num:4,clue:'Masa de vapor en el cielo'},{word:'OLAS',r:6,c:3,dir:'h',num:5,clue:'Movimiento del mar'}]},
+      medio:{size:11,words:[{word:'VOLCAN',r:0,c:0,dir:'h',num:1,clue:'Montaña que expulsa lava'},{word:'VERTIENTE',r:0,c:0,dir:'v',num:1,clue:'Ladera de una montaña'},{word:'CORAL',r:2,c:4,dir:'h',num:2,clue:'Animal marino que forma arrecifes'},{word:'ARROYO',r:4,c:1,dir:'h',num:3,clue:'Pequeño río de agua corriente'},{word:'NEVADO',r:1,c:7,dir:'v',num:4,clue:'Pico cubierto de nieve'},{word:'PAMPA',r:7,c:3,dir:'h',num:5,clue:'Llanura extensa de Sudamérica'},{word:'EROSION',r:3,c:3,dir:'v',num:6,clue:'Desgaste del suelo por agua o viento'}]},
+      dificil:{size:13,words:[{word:'ECOSISTEMA',r:0,c:0,dir:'h',num:1,clue:'Sistema de organismos y su ambiente'},{word:'EVAPORACION',r:0,c:0,dir:'v',num:1,clue:'Paso del agua líquida a vapor'},{word:'TERMOCLINA',r:2,c:2,dir:'h',num:2,clue:'Capa del océano con cambio brusco de temp.'},{word:'MANANTIAL',r:5,c:0,dir:'h',num:3,clue:'Brote natural de agua subterránea'},{word:'SEDIMENTO',r:0,c:9,dir:'v',num:4,clue:'Material depositado por el agua'},{word:'MIGRACION',r:8,c:2,dir:'h',num:5,clue:'Desplazamiento de animales por temporadas'},{word:'CIRCULACION',r:3,c:3,dir:'v',num:6,clue:'Movimiento de corrientes oceánicas'}]}
+    }
+  },
+  animales:{emoji:'🦁',label:'Animales',
+    sopa:{facil:['LEON','TIGRE','ORCA','LOBO','CEBRA','PANDA','KOALA','AGUILA'],medio:['ELEFANTE','DELFIN','COCODRILO','FLAMENCO','CAMELLO','TORTUGA','CANGURO','LEOPARDO','ALBATROS'],dificil:['ORNITORRINCO','RINOCERONTE','CHIMPANCE','ORANGUTAN','ANACONDA','ALBATROS','MANATEE','HIPOPOTAMO']},
+    cruz:{
+      facil:{size:9,words:[{word:'TIGRE',r:0,c:0,dir:'h',num:1,clue:'Felino de rayas anaranjadas'},{word:'TORTUGA',r:0,c:0,dir:'v',num:1,clue:'Reptil con caparazón duro'},{word:'PANDA',r:2,c:2,dir:'h',num:2,clue:'Oso blanco y negro de China'},{word:'AGUILA',r:0,c:6,dir:'v',num:3,clue:'Ave rapaz de gran envergadura'},{word:'LOBO',r:5,c:1,dir:'h',num:4,clue:'Cánido salvaje en manada'},{word:'ORCA',r:7,c:3,dir:'h',num:5,clue:'Ballena asesina blanca y negra'}]},
+      medio:{size:11,words:[{word:'ELEFANTE',r:0,c:0,dir:'h',num:1,clue:'Mamífero terrestre más grande'},{word:'ESCORPION',r:0,c:0,dir:'v',num:1,clue:'Arácnido con aguijón venenoso'},{word:'DELFIN',r:3,c:3,dir:'h',num:2,clue:'Cetáceo inteligente y juguetón'},{word:'CAMELLO',r:1,c:8,dir:'v',num:3,clue:'Animal del desierto con joroba'},{word:'JAGUAR',r:6,c:1,dir:'h',num:4,clue:'Gran felino de América'},{word:'FLAMENCO',r:3,c:2,dir:'v',num:5,clue:'Ave rosada de patas largas'},{word:'TORTUGA',r:8,c:3,dir:'h',num:6,clue:'Reptil longevo con caparazón'}]},
+      dificil:{size:13,words:[{word:'RINOCERONTE',r:0,c:0,dir:'h',num:1,clue:'Mamífero con cuerno en el hocico'},{word:'REPTILES',r:0,c:0,dir:'v',num:1,clue:'Vertebrados de sangre fría'},{word:'CHIMPANCE',r:3,c:2,dir:'h',num:2,clue:'Primate africano muy inteligente'},{word:'ANACONDA',r:2,c:9,dir:'v',num:3,clue:'Serpiente más grande del mundo'},{word:'HIPOPOTAMO',r:6,c:1,dir:'h',num:4,clue:'Enorme mamífero semiacuático africano'},{word:'MARABUNTA',r:0,c:5,dir:'v',num:5,clue:'Gran colonia de hormigas'},{word:'PANGOLIN',r:9,c:3,dir:'h',num:6,clue:'Mamífero cubierto de escamas'}]}
+    }
+  },
+  cine:{emoji:'🎬',label:'Cine',
+    sopa:{facil:['ACTOR','GUION','ESCENA','CAMARA','CORTE','PLANO','EXTRA','TOMA'],medio:['DIRECTOR','PELICULA','MONTAJE','EFECTOS','RODAJE','ESTRENO','FESTIVAL','CARTEL','OSCARS'],dificil:['CINEMATOGRAFIA','POSTPRODUCCION','CONTRAPLANO','TRAVELLING','FOTOGRAMA','ESCENOGRAFIA','ILUMINACION','CONTINUIDAD']},
+    cruz:{
+      facil:{size:9,words:[{word:'ACTOR',r:0,c:0,dir:'h',num:1,clue:'Persona que interpreta un papel'},{word:'ARTE',r:0,c:0,dir:'v',num:1,clue:'Expresión creativa humana'},{word:'CAMARA',r:2,c:1,dir:'h',num:2,clue:'Dispositivo que filma'},{word:'TOMA',r:0,c:6,dir:'v',num:3,clue:'Cada registro de una escena'},{word:'GUION',r:5,c:0,dir:'h',num:4,clue:'Texto base de una película'},{word:'PLANO',r:7,c:2,dir:'h',num:5,clue:'Encuadre de la cámara'}]},
+      medio:{size:11,words:[{word:'DIRECTOR',r:0,c:0,dir:'h',num:1,clue:'Responsable artístico de la película'},{word:'DOBLAJE',r:0,c:0,dir:'v',num:1,clue:'Grabación de voces en otro idioma'},{word:'MONTAJE',r:3,c:2,dir:'h',num:2,clue:'Edición y ensamble de escenas'},{word:'RODAJE',r:1,c:7,dir:'v',num:3,clue:'Proceso de filmación'},{word:'ESTRENO',r:6,c:0,dir:'h',num:4,clue:'Primera proyección pública'},{word:'EFECTOS',r:2,c:4,dir:'v',num:5,clue:'Trucaje visual o sonoro'},{word:'OSCARS',r:8,c:3,dir:'h',num:6,clue:'Premios más importantes del cine'}]},
+      dificil:{size:13,words:[{word:'CINEMATOGRAFIA',r:0,c:0,dir:'h',num:1,clue:'Arte de la fotografía en movimiento'},{word:'CONTINUIDAD',r:0,c:0,dir:'v',num:1,clue:'Coherencia visual entre escenas'},{word:'TRAVELLING',r:3,c:3,dir:'h',num:2,clue:'Movimiento de cámara sobre rieles'},{word:'FOTOGRAMA',r:2,c:10,dir:'v',num:3,clue:'Imagen individual de una película'},{word:'CONTRALUZ',r:6,c:1,dir:'h',num:4,clue:'Técnica de iluminación posterior'},{word:'SINCRONIA',r:4,c:5,dir:'v',num:6,clue:'Coincidencia de imagen y sonido'}]}
+    }
+  },
+  deportes:{emoji:'⚽',label:'Deportes',
+    sopa:{facil:['GOL','PASE','TIRO','FALTA','ARCO','PENAL','FUERA','JUEZ'],medio:['ARBITRO','PORTERO','DELANTERO','DEFENSA','ESQUINA','BALON','CANCHA','TRIBUNA'],dificil:['OFFSIDE','PENALTI','CONTRAGOLPE','MEDIAPUNTA','POSESION','MARCACION','FORMACION']},
+    cruz:{
+      facil:{size:9,words:[{word:'ARCO',r:0,c:0,dir:'h',num:1,clue:'Estructura donde se anota el gol'},{word:'ATLETA',r:0,c:0,dir:'v',num:1,clue:'Deportista de alto rendimiento'},{word:'GOL',r:2,c:3,dir:'h',num:2,clue:'Punto anotado en fútbol'},{word:'TIRO',r:0,c:6,dir:'v',num:3,clue:'Disparo al arco'},{word:'PASE',r:5,c:1,dir:'h',num:4,clue:'Envío del balón a un compañero'},{word:'FALTA',r:7,c:2,dir:'h',num:5,clue:'Infracción al reglamento'}]},
+      medio:{size:11,words:[{word:'PORTERO',r:0,c:0,dir:'h',num:1,clue:'Jugador que defiende el arco'},{word:'PRESION',r:0,c:0,dir:'v',num:1,clue:'Táctica de acoso al rival'},{word:'ARBITRO',r:3,c:2,dir:'h',num:2,clue:'Juez que dirige el partido'},{word:'ESQUINA',r:1,c:8,dir:'v',num:3,clue:'Tiro de córner'},{word:'CANCHA',r:6,c:0,dir:'h',num:4,clue:'Campo de juego'},{word:'DEFENSA',r:2,c:4,dir:'v',num:5,clue:'Línea que protege el arco'},{word:'TRIBUNA',r:8,c:3,dir:'h',num:6,clue:'Zona de los espectadores'}]},
+      dificil:{size:13,words:[{word:'CONTRAGOLPE',r:0,c:0,dir:'h',num:1,clue:'Ataque rápido tras recuperar el balón'},{word:'CLASIFICACION',r:0,c:0,dir:'v',num:1,clue:'Proceso para avanzar en un torneo'},{word:'MARCACION',r:3,c:3,dir:'h',num:2,clue:'Seguimiento defensivo de un jugador'},{word:'FORMACION',r:2,c:9,dir:'v',num:3,clue:'Disposición táctica del equipo'},{word:'POSESION',r:6,c:1,dir:'h',num:4,clue:'Control colectivo del balón'},{word:'OFFSIDE',r:9,c:2,dir:'h',num:5,clue:'Posición adelantada ilegal'},{word:'PENALTI',r:4,c:6,dir:'v',num:6,clue:'Tiro libre desde el punto penal'}]}
+    }
+  },
+  geografia:{emoji:'🌍',label:'Geografía',
+    sopa:{facil:['PARIS','LIMA','CHILE','BRASIL','NILO','ANDES','EUROPA','ASIA'],medio:['AMAZON','SAHARA','HIMALAYA','PATAGONIA','ISLANDIA','PAKISTAN','NIGERIA','COLOMBIA'],dificil:['MESOPOTAMIA','ANTARTIDA','KILIMANJARO','YELLOWSTONE','SERENGETI','CAUCASICO']},
+    cruz:{
+      facil:{size:9,words:[{word:'PARIS',r:0,c:0,dir:'h',num:1,clue:'Capital de Francia'},{word:'PERU',r:0,c:0,dir:'v',num:1,clue:'País de Machu Picchu'},{word:'NILO',r:2,c:2,dir:'h',num:2,clue:'Río más largo del mundo'},{word:'ASIA',r:0,c:6,dir:'v',num:3,clue:'Continente más grande'},{word:'LIMA',r:5,c:1,dir:'h',num:4,clue:'Capital del Perú'},{word:'CHILE',r:7,c:2,dir:'h',num:5,clue:'País largo y angosto de Sudamérica'}]},
+      medio:{size:11,words:[{word:'HIMALAYA',r:0,c:0,dir:'h',num:1,clue:'Cadena montañosa con el Everest'},{word:'HELSINKI',r:0,c:0,dir:'v',num:1,clue:'Capital de Finlandia'},{word:'SAHARA',r:3,c:3,dir:'h',num:2,clue:'Mayor desierto caliente del mundo'},{word:'AMAZON',r:1,c:8,dir:'v',num:3,clue:'Río más caudaloso del mundo'},{word:'NIGERIA',r:6,c:0,dir:'h',num:4,clue:'País más poblado de África'},{word:'ISLANDIA',r:2,c:2,dir:'v',num:5,clue:'Isla volcánica del Atlántico Norte'},{word:'PATAGONIA',r:8,c:1,dir:'h',num:6,clue:'Región austral de Argentina y Chile'}]},
+      dificil:{size:13,words:[{word:'MESOPOTAMIA',r:0,c:0,dir:'h',num:1,clue:'Región entre el Tigris y el Éufrates'},{word:'MEDITERRANEO',r:0,c:0,dir:'v',num:1,clue:'Mar interior entre Europa y África'},{word:'KILIMANJARO',r:3,c:1,dir:'h',num:2,clue:'Volcán más alto de África'},{word:'YELLOWSTONE',r:2,c:9,dir:'v',num:3,clue:'Parque nacional con géiseres en EE.UU.'},{word:'ANTARTIDA',r:6,c:2,dir:'h',num:4,clue:'Continente helado del polo sur'},{word:'SERENGETI',r:9,c:1,dir:'h',num:5,clue:'Llanura africana de gran migración'},{word:'CAUCASICO',r:4,c:6,dir:'v',num:6,clue:'Relativo al Cáucaso'}]}
+    }
+  }
+};
+
+const DIF_MULT={facil:1000,medio:2000,dificil:3000};
+const MEDALS=['🥇','🥈','🥉'];
+const SOPA_SIZES={facil:11,medio:13,dificil:15};
+
+let currentGame='sopa',currentTema='naturaleza',currentDif='facil';
+let sopaGrid=[],sopaPlaced=[],sopaSelected=[],sopaFoundWords=new Set();
+let isDragging=false,timerInterval=null,timerSeconds=0;
+let pendingScore=null,rankFilter='todos';
+
+function calcScore(dif,secs){return Math.max(50,DIF_MULT[dif]-Math.round(secs*8));}
+function fmt(s){const m=Math.floor(s/60),ss=s%60;return m+':'+(ss<10?'0':'')+ss;}
+
+// ===== TABS =====
+function switchGame(g){
+  currentGame=g;
+  ['sopa','cruz','rank'].forEach(id=>{
+    const btn=document.getElementById('tab-'+(id==='rank'?'rank':id));
+    if(btn) btn.classList.remove('active');
+  });
+  document.querySelectorAll('.top-controls .tab-btn')[0].classList.toggle('active',g==='sopa');
+  document.getElementById('tab-cruz').classList.toggle('active',g==='cruz');
+  document.getElementById('tab-rank').classList.toggle('active',g==='ranking');
+  ['panel-sopa','panel-cruz','panel-ranking'].forEach(id=>document.getElementById(id).classList.remove('active'));
+  document.getElementById('panel-'+g).classList.add('active');
+  const gc=document.getElementById('game-controls');
+  const dc=document.getElementById('dif-controls');
+  const dv=document.getElementById('div2');
+  if(g==='ranking'){gc.style.display='none';dc.style.display='none';dv.style.display='none';loadRanking();}
+  else{gc.style.display='';dc.style.display='';dv.style.display='';}
+  if(g!=='ranking') newGame();
+}
+
+function setTema(t){
+  currentTema=t;
+  document.querySelectorAll('[id^="tema-"]').forEach(b=>{b.className='tab-btn'+(b.id==='tema-'+t?' active-teal':'');});
+  newGame();
+}
+function setDif(d){
+  currentDif=d;
+  document.querySelectorAll('[id^="dif-"]').forEach(b=>{b.className='tab-btn'+(b.id==='dif-'+d?' active-gold':'');});
+  newGame();
+}
+function newGame(){
+  clearInterval(timerInterval);timerSeconds=0;pendingScore=null;
+  if(currentGame==='sopa') initSopa();
+  else initCruz();
+  timerInterval=setInterval(()=>{
+    timerSeconds++;
+    const str=fmt(timerSeconds);
+    if(currentGame==='sopa'){document.getElementById('s-tiempo').textContent=str;document.getElementById('s-pts').textContent=calcScore(currentDif,timerSeconds).toLocaleString();}
+    else{document.getElementById('c-tiempo').textContent=str;document.getElementById('c-pts').textContent=calcScore(currentDif,timerSeconds).toLocaleString();}
+  },1000);
+}
+
+// ===== WIN MODAL =====
+function showWin(title){
+  clearInterval(timerInterval);
+  const score=calcScore(currentDif,timerSeconds);
+  pendingScore={game:currentGame==='sopa'?'sopa':'crucigrama',tema:currentTema,dif:currentDif,secs:timerSeconds,score};
+  document.getElementById('modal-title').textContent=title;
+  document.getElementById('modal-time').textContent=fmt(timerSeconds);
+  document.getElementById('modal-score').textContent=score.toLocaleString();
+  document.getElementById('modal-msg').textContent='';
+  document.getElementById('modal-name').value='';
+  document.getElementById('modal-bg').classList.add('show');
+}
+function closeModal(){document.getElementById('modal-bg').classList.remove('show');}
+
+// ===== GUARDAR PUNTAJE =====
+function saveScore(){
+  const name=(document.getElementById('modal-name').value||'').trim();
+  if(!name){document.getElementById('modal-msg').textContent='Ingresá tu nombre primero.';return;}
+  if(!pendingScore) return;
+  const entry={...pendingScore,name,ts:Date.now()};
+  try{
+    const all=JSON.parse(localStorage.getItem('jp_scores')||'[]');
+    all.push(entry);
+    localStorage.setItem('jp_scores',JSON.stringify(all));
+    document.getElementById('modal-msg').textContent='¡Guardado! '+entry.score.toLocaleString()+' puntos 🎉';
+    setTimeout(()=>{closeModal();switchGame('ranking');},1400);
+  }catch(e){document.getElementById('modal-msg').textContent='Error al guardar.';}
+}
+
+// ===== RANKING =====
+function loadRanking(){
+  try{
+    const all=JSON.parse(localStorage.getItem('jp_scores')||'[]');
+    const sorted=all.sort((a,b)=>b.score-a.score);
+    renderRanking(sorted);
+  }catch(e){renderRanking([]);}
+}
+function filterRank(val,btn){
+  rankFilter=val;
+  document.querySelectorAll('.ftb').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  loadRanking();
+}
+function renderRanking(all){
+  const data=rankFilter==='todos'?all:all.filter(s=>s.game===rankFilter);
+  const podioEl=document.getElementById('podio');
+  const bodyEl=document.getElementById('rank-body');
+  const emptyEl=document.getElementById('rank-empty');
+  if(!data.length){
+    podioEl.innerHTML='';bodyEl.innerHTML='';emptyEl.style.display='block';return;
+  }
+  emptyEl.style.display='none';
+  const emoji={naturaleza:'🌿',animales:'🦁',cine:'🎬',deportes:'⚽',geografia:'🌍'};
+  podioEl.innerHTML=data.slice(0,3).map((s,i)=>`
+    <div class="pod ${['p1','p2','p3'][i]||''}">
+      <div class="pod-medal">${MEDALS[i]}</div>
+      <div class="pod-name">${s.name}</div>
+      <div class="pod-pts">${s.score.toLocaleString()}</div>
+      <div class="pod-meta">${emoji[s.tema]||''} ${fmt(s.secs)}</div>
+    </div>
+  `).join('');
+  bodyEl.innerHTML=data.slice(3).map((s,i)=>`
+    <tr>
+      <td class="rank-pos">${i+4}</td>
+      <td class="rank-name">${s.name}</td>
+      <td><span class="badge ${s.game==='sopa'?'b-sopa':'b-cruz'}">${s.game==='sopa'?'Sopa':'Crucigrama'}</span></td>
+      <td><span class="badge b-${s.dif}">${s.dif}</span></td>
+      <td class="rank-time">${fmt(s.secs)}</td>
+      <td class="rank-pts">${s.score.toLocaleString()}</td>
+    </tr>
+  `).join('');
+}
+
+// ===== SOPA =====
+function initSopa(){
+  const words=[...TEMAS[currentTema].sopa[currentDif]].sort(()=>Math.random()-0.5);
+  const size=SOPA_SIZES[currentDif];
+  sopaGrid=Array.from({length:size},()=>Array(size).fill(''));
+  sopaPlaced=[];sopaFoundWords=new Set();sopaSelected=[];
+  const dirs=[[0,1],[1,0],[1,1],[0,-1],[-1,0],[-1,-1],[1,-1],[-1,1]];
+  words.forEach(w=>{
+    let placed=false,tries=0;
+    while(!placed&&tries<400){
+      tries++;
+      const[dr,dc]=dirs[Math.floor(Math.random()*dirs.length)];
+      const r=Math.floor(Math.random()*size),c=Math.floor(Math.random()*size);
+      const er=r+dr*(w.length-1),ec=c+dc*(w.length-1);
+      if(er<0||er>=size||ec<0||ec>=size) continue;
+      let ok=true;
+      for(let i=0;i<w.length;i++) if(sopaGrid[r+dr*i][c+dc*i]&&sopaGrid[r+dr*i][c+dc*i]!==w[i]){ok=false;break;}
+      if(ok){for(let i=0;i<w.length;i++) sopaGrid[r+dr*i][c+dc*i]=w[i];sopaPlaced.push({word:w,r,c,dr,dc});placed=true;}
+    }
+  });
+  const alpha='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  for(let r=0;r<size;r++) for(let c=0;c<size;c++) if(!sopaGrid[r][c]) sopaGrid[r][c]=alpha[Math.floor(Math.random()*26)];
+  document.getElementById('sopa-tema-badge').textContent=TEMAS[currentTema].emoji+' '+TEMAS[currentTema].label+' · '+currentDif;
+  document.getElementById('s-total').textContent=sopaPlaced.length;
+  document.getElementById('s-encontradas').textContent=0;
+  document.getElementById('s-pts').textContent=DIF_MULT[currentDif].toLocaleString();
+  renderSopa(sopaPlaced.map(p=>p.word));
+}
+
+function renderSopa(words){
+  const size=SOPA_SIZES[currentDif];
+  const cw=Math.min(32,Math.floor((Math.min(window.innerWidth,860)-60)/size));
+  const g=document.getElementById('sopa-grid');
+  g.style.gridTemplateColumns=`repeat(${size},${cw}px)`;
+  g.innerHTML='';
+  for(let r=0;r<size;r++) for(let c=0;c<size;c++){
+    const el=document.createElement('div');
+    el.className='cell';el.textContent=sopaGrid[r][c];
+    el.style.cssText=`width:${cw}px;height:${cw}px;font-size:${Math.max(10,cw-18)}px`;
+    el.dataset.r=r;el.dataset.c=c;
+    el.addEventListener('mousedown',e=>{isDragging=true;sopaSelected=[[r,c]];renderCells();e.preventDefault();});
+    el.addEventListener('mouseover',()=>{if(isDragging){extendSelect(r,c);renderCells();}});
+    el.addEventListener('mouseup',()=>{if(isDragging){isDragging=false;checkSopaWord();}});
+    el.addEventListener('touchstart',e=>{isDragging=true;sopaSelected=[[r,c]];renderCells();e.preventDefault();},{passive:false});
+    el.addEventListener('touchmove',e=>{const t=e.touches[0],el2=document.elementFromPoint(t.clientX,t.clientY);if(el2&&el2.classList.contains('cell')){extendSelect(+el2.dataset.r,+el2.dataset.c);renderCells();}e.preventDefault();},{passive:false});
+    el.addEventListener('touchend',()=>{if(isDragging){isDragging=false;checkSopaWord();}});
+    g.appendChild(el);
+  }
+  const wl=document.getElementById('words-list');
+  wl.innerHTML='';
+  words.forEach(w=>{const ch=document.createElement('span');ch.className='word-chip';ch.textContent=w;ch.id='chip-'+w;wl.appendChild(ch);});
+  document.getElementById('sopa-status').textContent='';
+}
+
+function extendSelect(r,c){
+  if(!sopaSelected.length){sopaSelected=[[r,c]];return;}
+  const[r0,c0]=sopaSelected[0];
+  const dr=r-r0,dc=c-c0,len=Math.max(Math.abs(dr),Math.abs(dc));
+  if(len===0){sopaSelected=[[r0,c0]];return;}
+  let sr=dr?dr/Math.abs(dr):0,sc=dc?dc/Math.abs(dc):0;
+  if(Math.abs(dr)!==Math.abs(dc)&&dr!==0&&dc!==0) return;
+  sopaSelected=[];
+  for(let i=0;i<=len;i++) sopaSelected.push([r0+sr*i,c0+sc*i]);
+}
+
+function renderCells(){
+  document.querySelectorAll('.cell').forEach(el=>{
+    const r=+el.dataset.r,c=+el.dataset.c;
+    const isSel=sopaSelected.some(([sr,sc])=>sr===r&&sc===c);
+    const isFound=sopaPlaced.some(p=>{if(!sopaFoundWords.has(p.word))return false;for(let i=0;i<p.word.length;i++)if(p.r+p.dr*i===r&&p.c+p.dc*i===c)return true;return false;});
+    el.className='cell'+(isFound?' found':isSel?' selected':'');
+  });
+}
+
+function checkSopaWord(){
+  const letters=sopaSelected.map(([r,c])=>sopaGrid[r][c]).join('');
+  const rev=letters.split('').reverse().join('');
+  const matched=sopaPlaced.find(p=>p.word===letters||p.word===rev);
+  if(matched&&!sopaFoundWords.has(matched.word)){
+    sopaFoundWords.add(matched.word);
+    const chip=document.getElementById('chip-'+matched.word);
+    if(chip) chip.className='word-chip found';
+    document.getElementById('s-encontradas').textContent=sopaFoundWords.size;
+    if(sopaFoundWords.size===sopaPlaced.length) showWin('¡Encontraste todas las palabras!');
+  }
+  sopaSelected=[];renderCells();
+}
+
+// ===== CRUCIGRAMA =====
+function initCruz(){
+  const data=TEMAS[currentTema].cruz[currentDif];
+  document.getElementById('cruz-tema-badge').textContent=TEMAS[currentTema].emoji+' '+TEMAS[currentTema].label+' · '+currentDif;
+  const grid=document.getElementById('cruz-grid');
+  grid.style.gridTemplateColumns=`repeat(${data.size},36px)`;
+  grid.innerHTML='';
+  const cells={},numbers={};
+  data.words.forEach(({word,r,c,dir,num})=>{
+    for(let i=0;i<word.length;i++){const cr=dir==='h'?r:r+i,cc=dir==='h'?c+i:c,key=cr+','+cc;cells[key]=word[i];if(i===0) numbers[key]=(numbers[key]||new Set()).add(num);}
+  });
+  let total=0;
+  for(let r=0;r<data.size;r++) for(let c=0;c<data.size;c++){
+    const d=document.createElement('div');d.className='cruz-cell';
+    const key=r+','+c;
+    if(cells[key]){
+      total++;
+      if(numbers[key]){const nb=document.createElement('span');nb.className='num-badge';nb.textContent=[...numbers[key]].join('/');d.appendChild(nb);}
+      const inp=document.createElement('input');
+      inp.maxLength=1;inp.dataset.r=r;inp.dataset.c=c;inp.dataset.ans=cells[key];inp.id='ci-'+key;
+      inp.addEventListener('input',()=>{inp.value=inp.value.toUpperCase().slice(-1);inp.className='';moveFocus(r,c,inp.value);});
+      inp.addEventListener('keydown',e=>{if(e.key==='Backspace'&&!inp.value) moveFocusBack(r,c);});
+      d.appendChild(inp);
+    } else {d.classList.add('black');}
+    grid.appendChild(d);
+  }
+  document.getElementById('c-total').textContent=total;
+  document.getElementById('c-correctas').textContent=0;
+  document.getElementById('c-pts').textContent=DIF_MULT[currentDif].toLocaleString();
+  document.getElementById('cruz-status').textContent='';
+  renderClues(data.words);
+}
+
+function moveFocus(r,c,val){if(!val)return;for(const[nr,nc] of [[r,c+1],[r+1,c]]){const el=document.getElementById('ci-'+nr+','+nc);if(el){el.focus();break;}}}
+function moveFocusBack(r,c){for(const[nr,nc] of [[r,c-1],[r-1,c]]){const el=document.getElementById('ci-'+nr+','+nc);if(el){el.focus();break;}}}
+
+function renderClues(words){
+  const cl=document.getElementById('clues');
+  const across=words.filter(w=>w.dir==='h'),down=words.filter(w=>w.dir==='v');
+  cl.innerHTML=`<div><h3>→ Horizontal</h3>${across.map(w=>`<div class="clue-item" id="clue-h-${w.num}"><span class="clue-num">${w.num}.</span> ${w.clue}</div>`).join('')}</div><div><h3>↓ Vertical</h3>${down.map(w=>`<div class="clue-item" id="clue-v-${w.num}"><span class="clue-num">${w.num}.</span> ${w.clue}</div>`).join('')}</div>`;
+}
+
+function checkCruz(){
+  const data=TEMAS[currentTema].cruz[currentDif];
+  let correct=0,total=0,allDone=true;
+  data.words.forEach(({word,r,c,dir,num})=>{
+    let wordOk=true;
+    for(let i=0;i<word.length;i++){
+      const cr=dir==='h'?r:r+i,cc=dir==='h'?c+i:c;
+      const inp=document.getElementById('ci-'+cr+','+cc);
+      if(!inp)continue;total++;
+      if(inp.value===inp.dataset.ans){inp.className='correct';correct++;}
+      else{inp.className='wrong';wordOk=false;allDone=false;}
+    }
+    const clueEl=document.getElementById('clue-'+(dir==='h'?'h':'v')+'-'+num);
+    if(clueEl)clueEl.classList.toggle('done',wordOk);
+  });
+  document.getElementById('c-correctas').textContent=correct;
+  if(allDone) showWin('¡Crucigrama completo!');
+  else document.getElementById('cruz-status').textContent=`✔ ${correct} de ${total} letras correctas.`;
+}
+
+function revealCruz(){
+  const data=TEMAS[currentTema].cruz[currentDif];
+  data.words.forEach(({word,r,c,dir})=>{
+    for(let i=0;i<word.length;i++){const cr=dir==='h'?r:r+i,cc=dir==='h'?c+i:c;const inp=document.getElementById('ci-'+cr+','+cc);if(inp){inp.value=word[i];inp.className='correct';}}
+  });
+  document.getElementById('cruz-status').innerHTML='<span class="win-msg">💡 Respuestas reveladas.</span>';
+  document.querySelectorAll('.clue-item').forEach(el=>el.classList.add('done'));
+}
+
+document.addEventListener('mouseup',()=>{if(isDragging){isDragging=false;checkSopaWord();}});
+newGame();
+</script>
+</body>
+</html>
