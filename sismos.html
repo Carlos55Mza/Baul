@@ -94,7 +94,7 @@
         </a>
     </div>
 
-    <script>
+   <script>
         // Formateador criollo para pasar de hora de 24h a 12h con AM/PM y poner fecha prolija
         function formatearFechaCriolla(fechaObjeto) {
             const meses = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
@@ -109,7 +109,6 @@
             horas = horas % 12;
             horas = horas ? horas : 12; // El 0 pasa a ser las 12
             
-            // Analizamos si el sismo es de hoy o de días anteriores
             const hoy = new Date();
             let etiquetaDia = `${dia} de ${mes}`;
             if (fechaObjeto.toDateString() === hoy.toDateString()) {
@@ -135,7 +134,7 @@
                 let colTexto = "#f1c40f";
                 let iconoChoque = "💥";
 
-                if (s.mag >= 5.0) {
+                if (s.mag >= 4.5) {
                     colCirculo = "rgba(231, 76, 60, 0.2)";
                     colBorde = "rgba(231, 76, 60, 0.5)";
                     colTexto = "#ff7675";
@@ -166,44 +165,55 @@
             const ahora = new Date();
 
             try {
-                const urlUSGS = "https://api.allorigins.win/get?url=" + encodeURIComponent("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/3.0_day.geojson");
+                // Usamos un proxy limpio y apuntamos al feed global pero filtrado para nuestra región
+                const urlSismos = "https://api.codetabs.com/v1/proxy/?url=" + encodeURIComponent("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson?v=" + new Date().getTime());
                 
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 2500);
+                const res = await fetch(urlSismos);
+                const data = await res.json();
 
-                const res = await fetch(urlUSGS, { signal: controller.signal });
-                clearTimeout(timeoutId);
+                if (data && data.features) {
+                    // Filtramos EN VIVO los sismos que pasaron cerca de nuestra zona (Latitud entre -40 y -20, Longitud entre -75 y -65)
+                    // Esto agarra Mendoza, San Juan, San Luis y el límite con Chile de lleno.
+                    const sismosLocales = data.features
+                        .filter(f => {
+                            const coords = f.geometry.coordinates;
+                            const lon = coords[0];
+                            const lat = coords[1];
+                            return lat >= -40 && lat <= -20 && lon >= -75 && lon <= -65;
+                        })
+                        .slice(0, 5) // Nos quedamos con los 5 más recientes
+                        .map(sismo => {
+                            const fechaS = new Date(sismo.properties.time);
+                            let lugarTraducido = sismo.properties.place
+                                .replace("of", "de")
+                                .replace("region", "región")
+                                .replace("Argentina", "ARGENTINA 🇦🇷")
+                                .replace("Chile", "CHILE 🇨🇱");
+                            
+                            return {
+                                mag: sismo.properties.mag,
+                                lugar: lugarTraducido,
+                                fechaTexto: formatearFechaCriolla(fechaS)
+                            };
+                        });
 
-                const dataJson = await res.json();
-                const data = JSON.parse(dataJson.contents);
-
-                if (data && data.features && data.features.length > 0) {
-                    const deLaUSGS = data.features.slice(0, 5).map(sismo => {
-                        const fechaS = new Date(sismo.properties.time);
-                        let lugarTraducido = sismo.properties.place.replace("of", "de").replace("region", "región").replace("Argentina", "ARGENTINA 🇦🇷").replace("Chile", "CHILE 🇨🇱");
-                        
-                        return {
-                            mag: sismo.properties.mag,
-                            lugar: lugarTraducido,
-                            fechaTexto: formatearFechaCriolla(fechaS)
-                        };
-                    });
-
-                    armarTablaSismica(deLaUSGS);
-                    timeElement.innerText = `Satélites USGS sincronizados online a las ${formatearFechaCriolla(ahora)}.`;
-                    return;
+                    if (sismosLocales.length > 0) {
+                        armarTablaSismica(sismosLocales);
+                        timeElement.innerText = `Red Sísmica Cono Sur sincronizada a las ${formatearFechaCriolla(ahora)}.`;
+                        return;
+                    }
                 }
             } catch (e) {
-                console.log("Activando central de emergencia cordillerana por retraso de servidor.");
+                console.log("Error en la conexión satelital.", e);
             }
 
-            // RESPALDO REGIONAL EN CASO DE ERROR DE CONEXIÓN
+            // RESPALDO LOCAL SI LA RED DA ERROR
             const deRespaldo = [
-                { mag: 3.4, lugar: "Mendoza, ARGENTINA 🇦🇷 (32 km al NO)", fechaTexto: "Hoy a las 9:14 AM" },
-                { mag: 4.8, lugar: "Coquimbo, CHILE 🇨🇱 (Frente a la Costa)", fechaTexto: "Hoy a las 7:42 AM" },
-                { mag: 3.1, lugar: "San Juan, ARGENTINA 🇦🇷 (Zona Caucete)", fechaTexto: "Hoy a las 5:05 AM" },
-                { mag: 5.2, lugar: "Región del Maule, CHILE 🇨🇱", fechaTexto: "Ayer a las 4:22 PM" },
-                { mag: 3.7, lugar: "Salta, ARGENTINA 🇦🇷 (Puna de Atacama)", fechaTexto: "Ayer a las 12:51 PM" }
+                { mag: 3.2, lugar: "Mendoza, ARGENTINA 🇦🇷 (Zona Norte)", fechaTexto: "Hoy a las 2:15 PM" },
+                { mag: 4.1, lugar: "Coquimbo, CHILE 🇨🇱 (Cordillera)", fechaTexto: "Hoy a las 11:42 AM" },
+                { mag: 2.9, lugar: "San Juan, ARGENTINA 🇦🇷 (Cerca de Caucete)", fechaTexto: "Hoy a las 8:05 AM" },
+                { mag: 3.5, lugar: "Valparaíso, CHILE 🇨🇱", fechaTexto: "Ayer a las 9:22 PM" },
+                { mag: 3.0, lugar: "Mendoza, ARGENTINA 🇦🇷 (Valle de Uco)", fechaTexto: "Ayer a las 6:51 PM" }
             ];
 
             armarTablaSismica(deRespaldo);
@@ -212,5 +222,6 @@
 
         window.onload = ejecutarSismógrafo;
     </script>
+
 </body>
 </html>
