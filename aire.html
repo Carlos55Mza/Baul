@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calidad del Aire - Estación Zúñiga</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <style>
+        body {
+            background: #0b0e14;
+            color: white;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .caja-aire {
+            max-width: 480px;
+            width: 100%;
+            border: 2px solid rgba(165, 177, 194, 0.3);
+            border-radius: 24px;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+            box-sizing: border-box;
+            text-align: center;
+        }
+        .numero-ica {
+            font-size: 5rem;
+            font-weight: 900;
+            line-height: 1;
+            margin: 15px 0 5px 0;
+        }
+        .tag-estado {
+            padding: 10px 18px;
+            border-radius: 12px;
+            font-weight: 900;
+            text-transform: uppercase;
+            font-size: 1rem;
+            display: inline-block;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+        }
+        .bloque-sensor {
+            background: rgba(0,0,0,0.25);
+            padding: 12px;
+            border-radius: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            border: 1px solid rgba(255,255,255,0.04);
+        }
+        .btn-volver {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 15px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            padding: 10px 18px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            transition: background 0.2s;
+        }
+        .btn-volver:hover { background: rgba(255,255,255,0.2); }
+    </style>
+</head>
+<body>
+
+    <div class="caja-aire">
+        <h2 style="margin-top:0; font-size: 1.3rem; letter-spacing: 1px; color: #a5b1c2; display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <span class="material-symbols-outlined" style="font-size: 28px;">airwave</span> PUREZA DEL AIRE (ICA)
+        </h2>
+        <div style="font-size: 0.75rem; color: #a0a0a0; font-weight: bold; letter-spacing: 0.5px;">MONITOREO DE SMOG Y POLVO EN SAN MARTÍN</div>
+        <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.15); margin: 15px 0;">
+
+        <div id="display-ica" class="numero-ica">--</div>
+        <div id="display-tag" class="tag-estado" style="background: #333; color: white;">Analizando Atmósfera...</div>
+
+        <div style="margin-bottom: 20px;">
+            <div class="bloque-sensor">
+                <div style="text-align: left;">
+                    <div style="font-size: 0.85rem; font-weight: bold; color: white;">Partículas Finas (PM2.5)</div>
+                    <div style="font-size: 0.65rem; color: #8a99a6;">Humo, esmog, hollín del ambiente.</div>
+                </div>
+                <div id="val-pm25" style="font-size: 1.1rem; font-weight: 900; color: #74b9ff;">-- µg/m³</div>
+            </div>
+
+            <div class="bloque-sensor">
+                <div style="text-align: left;">
+                    <div style="font-size: 0.85rem; font-weight: bold; color: white;">Partículas Gruesas (PM10)</div>
+                    <div style="font-size: 0.65rem; color: #8a99a6;">Polvo en suspensión, tierra, polen.</div>
+                </div>
+                <div id="val-pm10" style="font-size: 1.1rem; font-weight: 900; color: #74b9ff;">-- µg/m³</div>
+            </div>
+        </div>
+
+        <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 14px; text-align: left; border: 1px solid rgba(255,255,255,0.05);">
+            <div style="font-size: 0.7rem; color: #8a99a6; font-weight: bold; text-transform: uppercase; margin-bottom: 5px;">Análisis de Oxigenación:</div>
+            <div id="display-consejo" style="font-size: 0.85rem; line-height: 1.4; font-weight: bold; color: #e0e0e0;">
+                Leyendo sensores de partículas en tiempo real...
+            </div>
+        </div>
+
+        <a href="index.html" class="btn-volver">
+            <span class="material-symbols-outlined" style="font-size: 18px;">arrow_back</span> Volver a la Estación
+        </a>
+    </div>
+
+    <script>
+        async function consultarCalidadAire() {
+            const lat = "-33.08";
+            const lon = "-68.47";
+
+            try {
+                // Consultamos el índice europeo de calidad del aire (european_aqi) y partículas a la API ambiental
+                const urlAire = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&current=european_aqi,pm10,pm2_5&timezone=auto`;
+                const res = await fetch(urlAire);
+                const data = await res.json();
+
+                if (data && data.current) {
+                    const ica = data.current.european_aqi;
+                    const pm25 = data.current.pm2_5;
+                    const pm10 = data.current.pm10;
+
+                    let estado = "EXCELENTE 🟢";
+                    let consejo = "Aire limpio y puro en San Martín. Ideal para hacer deportes al aire libre, caminar y ventilar el búnker.";
+                    let colorBkg = "#2ecc71"; // Verde
+                    let colorTxt = "#ffffff";
+
+                    // Escala Internacional de Calidad del Aire (AQI)
+                    if (ica > 20 && ica <= 40) {
+                        estado = "MODERADO 🟡";
+                        consejo = "Calidad aceptable. Las personas extremadamente sensibles alérgeticas podrían tener leves molestias. Se puede salir con normalidad.";
+                        colorBkg = "#f1c40f"; // Amarillo
+                        colorTxt = "#000000";
+                    } else if (ica > 40 && ica <= 60) {
+                        estado = "REGULAR 🟠";
+                        consejo = "Aire con esmog o polvo concentrado. Grupos de riesgo (asmáticos o adultos mayores) deberían reducir el esfuerzo físico prolongado al exterior.";
+                        colorBkg = "#e67e22"; // Naranja
+                        colorTxt = "#ffffff";
+                    } else if (ica > 60 && ica <= 80) {
+                        estado = "DEFICIENTE 🔴";
+                        consejo = "Aire insalubre. Tierra o humo suspendido. Se recomienda evitar actividades físicas al aire libre y mantener las ventanas cerradas.";
+                        colorBkg = "#e74c3c"; // Rojo
+                        colorTxt = "#ffffff";
+                    } else if (ica > 80) {
+                        estado = "⚠️ ALERTA ATMÓSFERA ⛔";
+                        consejo = "¡Condición crítica! Típico de ráfagas fuertes de viento Zonda pesado. Tierra extrema en suspensión. Riesgo general, resguardarse en interiores.";
+                        colorBkg = "#9b59b6"; // Violeta
+                        colorTxt = "#ffffff";
+                    }
+
+                    // Inyectamos valores reales
+                    document.getElementById('display-ica').innerText = Math.round(ica);
+                    document.getElementById('display-ica').style.color = colorBkg;
+                    
+                    const tag = document.getElementById('display-tag');
+                    tag.innerText = estado;
+                    tag.style.background = colorBkg;
+                    tag.style.color = colorTxt;
+
+                    document.getElementById('val-pm25').innerText = `${pm25.toFixed(1)} µg/m³`;
+                    document.getElementById('val-pm10').innerText = `${pm10.toFixed(1)} µg/m³`;
+                    document.getElementById('display-consejo').innerText = consejo;
+                }
+            } catch (e) {
+                document.getElementById('display-ica').innerText = "??";
+                document.getElementById('display-tag').innerText = "ERROR SENSOR";
+                document.getElementById('display-consejo').innerText = "Imposible sincronizar con las estaciones de monitoreo atmosférico en este momento.";
+            }
+        }
+
+        window.onload = consultarCalidadAire;
+    </script>
+</body>
+</html>

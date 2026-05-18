@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cotizaciones - Estación Zúñiga</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <style>
+        body {
+            background: #091016;
+            color: white;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .caja-finanzas {
+            max-width: 480px;
+            width: 100%;
+            border: 2px solid rgba(46, 204, 113, 0.3);
+            border-radius: 24px;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+            box-sizing: border-box;
+            text-align: center;
+        }
+        .tabla-divisas {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 10px;
+            margin: 15px 0;
+        }
+        .fila-divisa {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            transition: background 0.2s;
+        }
+        .fila-divisa:hover { background: rgba(255, 255, 255, 0.1); }
+        .fila-divisa td { padding: 12px; font-weight: bold; }
+        .fila-divisa td:first-child {
+            border-top-left-radius: 12px;
+            border-bottom-left-radius: 12px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .fila-divisa td:last-child {
+            border-top-right-radius: 12px;
+            border-bottom-right-radius: 12px;
+            text-align: right;
+            font-size: 1.1rem;
+        }
+        .precio-compra { color: #a0a0a0; font-size: 0.9rem; margin-right: 10px; }
+        .precio-venta { color: #2ecc71; font-weight: 900; }
+        .btn-volver {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 15px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            padding: 10px 18px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            transition: background 0.2s;
+        }
+        .btn-volver:hover { background: rgba(255,255,255,0.2); }
+    </style>
+</head>
+<body>
+
+    <div class="caja-finanzas">
+        <h2 style="margin-top:0; font-size: 1.3rem; letter-spacing: 1px; color: #2ecc71; display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <span class="material-symbols-outlined" style="font-size: 28px;">payments</span> PIZARRA DE COTIZACIONES
+        </h2>
+        <div style="font-size: 0.75rem; color: #a0a0a0; font-weight: bold; letter-spacing: 0.5px;">VALORES EN PESOS ARGENTINOS (ARS)</div>
+        <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.15); margin: 15px 0;">
+
+        <table class="tabla-divisas">
+            <tr class="fila-divisa">
+                <td>🇺🇸 Dólar Blue</td>
+                <td>
+                    <span class="precio-compra" id="blue-compra">C: $--</span>
+                    <span class="precio-venta" id="blue-venta">V: $--</span>
+                </td>
+            </tr>
+            <tr class="fila-divisa">
+                <td>🏛️ Dólar Oficial</td>
+                <td>
+                    <span class="precio-compra" id="oficial-compra">C: $--</span>
+                    <span class="precio-venta" id="oficial-venta">V: $--</span>
+                </td>
+            </tr>
+            <tr class="fila-divisa">
+                <td>🇪🇺 Euro</td>
+                <td>
+                    <span class="precio-compra" id="euro-compra">C: $--</span>
+                    <span class="precio-venta" id="euro-venta">V: $--</span>
+                </td>
+            </tr>
+            <tr class="fila-divisa">
+                <td>🇧🇷 Real (BRL)</td>
+                <td>
+                    <span class="precio-compra" id="real-compra">C: $--</span>
+                    <span class="precio-venta" id="real-venta">V: $--</span>
+                </td>
+            </tr>
+            <tr class="fila-divisa">
+                <td>🇨🇱 1.000 Chilenos (CLP)</td>
+                <td>
+                    <span class="precio-compra" id="chile-compra">C: $--</span>
+                    <span class="precio-venta" id="chile-venta">V: $--</span>
+                </td>
+            </tr>
+        </table>
+
+        <div style="font-size: 0.7rem; color: #8a99a6; font-style: italic; margin-top: 10px;" id="update-time">
+            Sincronizando con los mercados financieros en vivo...
+        </div>
+
+        <a href="index.html" class="btn-volver">
+            <span class="material-symbols-outlined" style="font-size: 18px;">arrow_back</span> Volver a la Estación
+        </a>
+    </div>
+
+    <script>
+        async function cargarCotizaciones() {
+            const timeElement = document.getElementById('update-time');
+            
+            // 1. CARGA DE DÓLARES
+            try {
+                const resDolar = await fetch('https://dolarapi.com/v1/dolares');
+                if (resDolar.ok) {
+                    const dataDolar = await resDolar.json();
+                    const blue = dataDolar.find(d => d.casa === 'blue');
+                    if(blue) {
+                        document.getElementById('blue-compra').innerText = `C: $${Math.round(blue.compra)}`;
+                        document.getElementById('blue-venta').innerText = `V: $${Math.round(blue.venta)}`;
+                    }
+                    const oficial = dataDolar.find(d => d.casa === 'oficial');
+                    if(oficial) {
+                        document.getElementById('oficial-compra').innerText = `C: $${Math.round(oficial.compra)}`;
+                        document.getElementById('oficial-venta').innerText = `V: $${Math.round(oficial.venta)}`;
+                    }
+                }
+            } catch(e) { console.log("Fallo Dólares"); }
+
+            // 2. CARGA DE EURO (Con formato corregido eur)
+            try {
+                let resEuro = await fetch('https://dolarapi.com/v1/cotizaciones/euro');
+                if(!resEuro.ok) resEuro = await fetch('https://dolarapi.com/v1/cotizaciones/eur');
+                
+                if (resEuro.ok) {
+                    const dataEuro = await resEuro.json();
+                    document.getElementById('euro-compra').innerText = `C: $${Math.round(dataEuro.compra)}`;
+                    document.getElementById('euro-venta').innerText = `V: $${Math.round(dataEuro.venta)}`;
+                }
+            } catch(e) { console.log("Fallo Euro"); }
+
+            // 3. CARGA DE REAL BRASILEÑO (Con formato corregido brl)
+            try {
+                let resReal = await fetch('https://dolarapi.com/v1/cotizaciones/real');
+                if(!resReal.ok) resReal = await fetch('https://dolarapi.com/v1/cotizaciones/brl');
+                
+                if (resReal.ok) {
+                    const dataReal = await resReal.json();
+                    document.getElementById('real-compra').innerText = `C: $${Math.round(dataReal.compra)}`;
+                    document.getElementById('real-venta').innerText = `V: $${Math.round(dataReal.venta)}`;
+                }
+            } catch(e) { console.log("Fallo Real"); }
+
+            // 4. CARGA DE PESO CHILENO (Con formato corregido clp)
+            try {
+                let resChile = await fetch('https://dolarapi.com/v1/cotizaciones/chileno');
+                if(!resChile.ok) resChile = await fetch('https://dolarapi.com/v1/cotizaciones/clp');
+                
+                if (resChile.ok) {
+                    const dataChile = await resChile.json();
+                    if (dataChile && dataChile.compra && dataChile.venta) {
+                        document.getElementById('chile-compra').innerText = `C: $${Math.round(dataChile.compra * 1000)}`;
+                        document.getElementById('chile-venta').innerText = `V: $${Math.round(dataChile.venta * 1000)}`;
+                    }
+                }
+            } catch(e) { console.log("Fallo Chileno"); }
+
+            const ahora = new Date();
+            timeElement.innerText = `Valores oficiales actualizados a las ${ahora.getHours().toString().padStart(2, '0')}:${ahora.getMinutes().toString().padStart(2, '0')} hs.`;
+        }
+
+        window.onload = cargarCotizaciones;
+    </script>
+</body>
+</html>

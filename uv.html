@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Índice UV - Estación Zúñiga</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <style>
+        body {
+            background: #0f111a;
+            color: white;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .caja-uv {
+            max-width: 450px;
+            width: 100%;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            border-radius: 24px;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+            box-sizing: border-box;
+            text-align: center;
+        }
+        #uv-numero {
+            font-size: 5.5rem;
+            font-weight: 900;
+            line-height: 1;
+            margin: 15px 0 5px 0;
+            text-shadow: 0 0 20px rgba(255,255,255,0.1);
+        }
+        .alerta-bloque {
+            padding: 10px 15px;
+            border-radius: 12px;
+            font-weight: 900;
+            text-transform: uppercase;
+            font-size: 1.1rem;
+            display: inline-block;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+        .btn-volver {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 25px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            transition: background 0.2s;
+        }
+        .btn-volver:hover { background: rgba(255,255,255,0.2); }
+    </style>
+</head>
+<body>
+
+    <div class="caja-uv">
+        <h2 style="margin-top:0; font-size: 1.2rem; letter-spacing: 1px; color: #ced4da;">☀️ MONITOR DE RADIACIÓN UV</h2>
+        <div style="font-size: 0.8rem; color: #a0a0a0; font-weight: bold;">SAN MARTÍN, MENDOZA</div>
+        <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.15); margin: 15px 0;">
+
+        <div id="uv-numero">--</div>
+        <div id="uv-nivel" class="alerta-bloque" style="background: #333; color: white;">Cargando...</div>
+        
+        <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 14px; text-align: left; border: 1px solid rgba(255,255,255,0.05);">
+            <div style="font-size: 0.7rem; color: #8a99a6; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Recomendación médica:</div>
+            <div id="uv-consejo" style="font-size: 0.85rem; line-height: 1.4; font-weight: bold; color: #e0e0e0;">
+                Sincronizando con los sensores solares satelitales...
+            </div>
+        </div>
+
+        <a href="index.html" class="btn-volver">
+            <span class="material-symbols-outlined" style="font-size: 18px;">arrow_back</span> Volver al Panel
+        </a>
+    </div>
+
+    <script>
+        async function consultarRayosUV() {
+            const lat = "-33.08";
+            const lon = "-68.47";
+
+            try {
+                // MODIFICADO: Consultamos el "current" para saber el UV de la hora exacta actual
+                const urlUV = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=uv_index&timezone=auto`;
+                const res = await fetch(urlUV);
+                const data = await res.json();
+
+                if (data && data.current) {
+                    // Tomamos el valor en tiempo real
+                    const uv = data.current.uv_index;
+                    
+                    let nivel = "BAJO";
+                    let consejo = "El sol está tranquilo. Riesgo bajo para la mayoría de las personas. Podés disfrutar del aire libre de forma segura.";
+                    let colorBkg = "#2ecc71"; // Verde
+                    let colorTxt = "#ffffff";
+
+                    // Escala oficial de la OMS
+                    if (uv >= 3 && uv <= 5) {
+                        nivel = "MODERADO ⚠️";
+                        consejo = "Protección recomendada. Mantenete a la sombra en las horas centrales del día. Usá gorro, anteojos y protector solar factor 15+.";
+                        colorBkg = "#f1c40f"; // Amarillo
+                        colorTxt = "#000000";
+                    } else if (uv >= 6 && uv <= 7) {
+                        nivel = "ALTO 💥";
+                        consejo = "Protección obligatoria. Reducí el tiempo expuesto al sol entre las 11 y las 16 hs. Usá protector solar factor 30+ y ropa de manga larga.";
+                        colorBkg = "#e67e22"; // Naranja
+                        colorTxt = "#ffffff";
+                    } else if (uv >= 8 && uv <= 10) {
+                        nivel = "MUY ALTO 🚨";
+                        consejo = "Riesgo extra. Evitá exponerte al sol sin protección. Buscá la sombra de forma imperativa. Protector solar factor 50 y remera clara.";
+                        colorBkg = "#e74c3c"; // Rojo
+                        colorTxt = "#ffffff";
+                    } else if (uv >= 11) {
+                        nivel = "EXTREMO ⛔";
+                        consejo = "¡Peligro extremo! La piel desprotegida se puede quemar en minutos. Evitá salir al sol directo. Resguardate en interiores.";
+                        colorBkg = "#9b59b6"; // Violeta
+                        colorTxt = "#ffffff";
+                    }
+
+                    // Si es de noche (UV es 0), tiramos un consejo acorde para el búnker
+                    if (uv === 0) {
+                        nivel = "NOCTURNO 🌙";
+                        consejo = "Radiación solar nula en este momento. Ideal para descansar el búnker o disfrutar de la noche mendocina.";
+                        colorBkg = "#1e272e"; // Gris oscuro/Azulado nocturno
+                        colorTxt = "#ffffff";
+                    }
+
+                    // Inyección real en pantalla
+                    document.getElementById('uv-numero').innerText = uv.toFixed(1);
+                    document.getElementById('uv-numero').style.color = (uv === 0) ? "#ced4da" : colorBkg;
+                    
+                    const block = document.getElementById('uv-nivel');
+                    block.innerText = nivel;
+                    block.style.background = colorBkg;
+                    block.style.color = colorTxt;
+                    
+                    document.getElementById('uv-consejo').innerText = consejo;
+                }
+            } catch (e) {
+                document.getElementById('uv-numero').innerText = "??";
+                document.getElementById('uv-nivel').innerText = "ERROR";
+                document.getElementById('uv-consejo').innerText = "No se pudo conectar con el satélite solar.";
+            }
+        }
+
+        window.onload = consultarRayosUV;
+    </script>
+</body>
+</html>

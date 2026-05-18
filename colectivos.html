@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transporte Local - Estación Zúñiga</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <style>
+        body {
+            background: #091016;
+            color: white;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .caja-colectivos {
+            max-width: 480px;
+            width: 100%;
+            border: 2px solid rgba(241, 196, 15, 0.3);
+            border-radius: 24px;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+            box-sizing: border-box;
+            text-align: center;
+        }
+        .grilla-transporte {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 20px 0;
+        }
+        .btn-transporte {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            padding: 15px 20px;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+        .btn-transporte:hover {
+            background: rgba(255, 255, 255, 0.12);
+            transform: translateX(4px);
+        }
+        .btn-volver {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            padding: 10px 18px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            transition: background 0.2s;
+        }
+        .btn-volver:hover { background: rgba(255,255,255,0.2); }
+    </style>
+</head>
+<body>
+
+    <div class="caja-colectivos">
+        <h2 style="margin-top:0; font-size: 1.3rem; letter-spacing: 1px; color: #f1c40f; display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <span class="material-symbols-outlined" style="font-size: 28px;">commute</span> TRANSPORTE REGIONAL
+        </h2>
+        <div style="font-size: 0.75rem; color: #a0a0a0; font-weight: bold; letter-spacing: 0.5px;">HORARIOS Y SERVICIOS EN TIEMPO REAL</div>
+        <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.15); margin: 15px 0;">
+
+        <div class="grilla-transporte">
+            <a href="https://mendotran.oba.visionblo.com/" target="_blank" class="btn-transporte" style="border-left: 5px solid #e74c3c;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span class="material-symbols-outlined" style="color: #e74c3c;">map</span>
+                    <span>Mendotran (Recorridos)</span>
+                </div>
+                <span class="material-symbols-outlined" style="font-size: 18px; color: #8a99a6;">open_in_new</span>
+            </a>
+
+            <a href="https://www.argentina.gob.ar/sube" target="_blank" class="btn-transporte" style="border-left: 5px solid #3498db;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span class="material-symbols-outlined" style="color: #3498db;">credit_card</span>
+                    <span>Tarjeta SUBE (Saldo)</span>
+                </div>
+                <span class="material-symbols-outlined" style="font-size: 18px; color: #8a99a6;">open_in_new</span>
+            </a>
+
+            <a href="https://nuevageneracion-este.site/" target="_blank" class="btn-transporte" style="border-left: 5px solid #2ecc71;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span class="material-symbols-outlined" style="color: #2ecc71;">directions_bus</span>
+                    <span>Nueva Generación S.A.</span>
+                </div>
+                <span class="material-symbols-outlined" style="font-size: 18px; color: #8a99a6;">open_in_new</span>
+            </a>
+
+            <a href="https://dicetourssrl.com/" target="_blank" class="btn-transporte" style="border-left: 5px solid #e67e22;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span class="material-symbols-outlined" style="color: #e67e22;">alt_route</span>
+                    <span>Dicetur (Media Distancia)</span>
+                </div>
+                <span class="material-symbols-outlined" style="font-size: 18px; color: #8a99a6;">open_in_new</span>
+            </a>
+        </div>
+
+        <div style="font-size: 0.7rem; color: #8a99a6; font-style: italic; margin-bottom: 10px;">
+            Hacé clic en cualquier plataforma para consultar frecuencias vigentes.
+        </div>
+
+        <a href="index.html" class="btn-volver">
+            <span class="material-symbols-outlined" style="font-size: 18px;">arrow_back</span> Volver a la Estación
+        </a>
+    </div>
+
+</body>
+</html>

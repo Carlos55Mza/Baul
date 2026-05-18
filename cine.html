@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Videoteca Privada - Estación Zúñiga</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <style>
+        body {
+            background: #091016;
+            color: white;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .caja-cine {
+            max-width: 500px;
+            width: 100%;
+            border: 2px solid rgba(232, 67, 147, 0.3);
+            border-radius: 24px;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+            box-sizing: border-box;
+            text-align: center;
+        }
+        .grilla-peliculas {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 20px 0;
+        }
+        .tarjeta-pelicula {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 15px;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            transition: all 0.2s ease;
+        }
+        .tarjeta-pelicula:hover {
+            background: rgba(232, 67, 147, 0.05);
+            border-color: rgba(232, 67, 147, 0.3);
+        }
+        .btn-reproducir {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: #e84393;
+            color: white;
+            text-decoration: none;
+            padding: 10px 15px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            text-align: center;
+            transition: background 0.2s;
+        }
+        .btn-reproducir:hover { background: #b83273; }
+        
+        .btn-volver {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            padding: 10px 18px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            transition: background 0.2s;
+        }
+        .btn-volver:hover { background: rgba(255,255,255,0.2); }
+    </style>
+</head>
+<body>
+
+    <div class="caja-cine">
+        <h2 style="margin-top:0; font-size: 1.3rem; letter-spacing: 1px; color: #e84393; display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <span class="material-symbols-outlined" style="font-size: 28px;">movie</span> CINE EN LA ESTACIÓN
+        </h2>
+        <div style="font-size: 0.75rem; color: #a0a0a0; font-weight: bold; letter-spacing: 0.5px;">TU SELECCIÓN EXCLUSIVA DE PELÍCULAS LIBRES</div>
+        <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.15); margin: 15px 0;">
+
+        <div class="grilla-peliculas">
+            
+            <div class="tarjeta-pelicula">
+                <div>
+                    <div style="font-size: 1.05rem; font-weight: 900; color: #fff;">1. Hot Dog 🎬</div>
+                    <div style="font-size: 0.75rem; color: #a0a0a0; font-weight: bold; margin-top: 2px;">GÉNERO: Acción / Comedia | DURACIÓN: 100 min</div>
+                </div>
+                <div style="font-size: 0.85rem; color: #cbd5e1; line-height: 1.3;">Dos policías de unidades tácticas de diferentes ámbitos de la vida se reúnen para rescatar a la hija de un embajador. Las dificultades y rivalidades entre ellos los metieron en muchos problemas durante la misión.</div>
+                <a href="https://drive.google.com/file/d/1IGc8qv-OIQ9oK-OGy-5PYHyfTx40bCR8/view?usp=sharing" target="_blank" class="btn-reproducir">
+                    <span class="material-symbols-outlined" style="font-size: 20px;">play_circle</span> Reproducir Película
+                </a>
+            </div>
+
+            <div class="tarjeta-pelicula">
+                <div>
+                    <div style="font-size: 1.05rem; font-weight: 900; color: #fff;">2. Un pequeño cambio 🍿</div>
+                    <div style="font-size: 0.75rem; color: #a0a0a0; font-weight: bold; margin-top: 2px;">GÉNERO: Acción, Cine romántico, Comedia cinematográfica, Drama, Melodrama, Deportes | DURACIÓN: 121 min</div>
+                </div>
+                <div style="font-size: 0.85rem; color: #cbd5e1; line-height: 1.3;">Cuando Kassie cumple los cuarenta decide no esperar más y recurre a la inseminación artificial para tener un bebé. Cuando siete años más tarde regresa a Nueva York, vuelve a ver a su amigo Wally, que se siente fuertemente vinculado al hijo de Kassie.</div>
+                <a href="https://drive.google.com/file/d/1lwFAQsOZn5aDoAEC-TbHJ2n0f4yWmGCD/view?usp=sharing" target="_blank" class="btn-reproducir">
+                    <span class="material-symbols-outlined" style="font-size: 20px;">play_circle</span> Reproducir Película
+                </a>
+            </div>
+
+<div class="tarjeta-pelicula">
+                <div>
+                    <div style="font-size: 1.05rem; font-weight: 900; color: #fff;">3. Por siempre te amaré 🎬</div>
+                    <div style="font-size: 0.75rem; color: #a0a0a0; font-weight: bold; margin-top: 2px;">GÉNERO: Romance | DURACIÓN: 95 min</div>
+                </div>
+                <div style="font-size: 0.85rem; color: #cbd5e1; line-height: 1.3;">Atrapado en el limbo después de morir en un accidente automovilístico, un joven trasciende la vida y la muerte al encontrar una manera de retomar el contacto con la mujer que ama.</div>
+                <a href="https://drive.google.com/file/d/1yev_2RKMO_AiUopSTbfxTnT1-Ofblwwb/view?usp=sharing" target="_blank" class="btn-reproducir">
+                    <span class="material-symbols-outlined" style="font-size: 20px;">play_circle</span> Reproducir Película
+                </a>
+            </div>
+
+            <div class="tarjeta-pelicula">
+                <div>
+                    <div style="font-size: 1.05rem; font-weight: 900; color: #fff;">4. Riesgo bajo cero 🍿</div>
+                    <div style="font-size: 0.75rem; color: #a0a0a0; font-weight: bold; margin-top: 2px;">GÉNERO: Acción, Thriller de acción, Drama, Aventura, Suspenso, Catástrofe, Thriller, Película de misterio | DURACIÓN: 103 min</div>
+                </div>
+                <div style="font-size: 0.85rem; color: #cbd5e1; line-height: 1.3;">Un conductor, especializado en terrenos helados, comanda la misión de rescate de los trabajadores que quedaron atrapados en una mina de diamantes al norte de Canadá. El experto camionero enfrenta un océano de hielo, el peligro del agua del deshielo y un riesgo que nadie supo prever.</div>
+                <a href="https://drive.google.com/file/d/1CRnZlH6OjwXARce90suNdy9raY3zz0en/view?usp=sharing" target="_blank" class="btn-reproducir">
+                    <span class="material-symbols-outlined" style="font-size: 20px;">play_circle</span> Reproducir Película
+                </a>
+            </div>
+
+<div class="tarjeta-pelicula">
+                <div>
+                    <div style="font-size: 1.05rem; font-weight: 900; color: #fff;">5. Asesino sin memoria 🎬</div>
+                    <div style="font-size: 0.75rem; color: #a0a0a0; font-weight: bold; margin-top: 2px;">GÉNERO: Acción, Aventura, Suspenso, Thriller, Policial, Película de misterio | DURACIÓN: 114 min</div>
+                </div>
+                <div style="font-size: 0.85rem; color: #cbd5e1; line-height: 1.3;">Alex, un sicario, se convierte en el objetivo de su organización por negarse a cumplir un trabajo. Mientras huye de ellos, el FBI y el servicio de inteligencia mexicano siguen sus pasos, alertados por el reguero de cadáveres que deja por donde va.</div>
+                <a href="https://drive.google.com/file/d/1l-GZUGEiOwgJoLtMxZBv8pzzkvEoZSpO/view?usp=sharing" target="_blank" class="btn-reproducir">
+                    <span class="material-symbols-outlined" style="font-size: 20px;">play_circle</span> Reproducir Película
+                </a>
+            </div>
+
+            <div class="tarjeta-pelicula">
+                <div>
+                    <div style="font-size: 1.05rem; font-weight: 900; color: #fff;">6. En tierra de santos y pecadores 🍿</div>
+                    <div style="font-size: 0.75rem; color: #a0a0a0; font-weight: bold; margin-top: 2px;">GÉNERO: Acción, Crimen, Wéstern, Drama, Suspenso, Thriller | DURACIÓN: 106 min</div>
+                </div>
+                <div style="font-size: 0.85rem; color: #cbd5e1; line-height: 1.3;">Finbar es un asesino retirado que lucha por su redención después de toda una vida de pecados y culpas.</div>
+                <a href="https://drive.google.com/file/d/16bqdXc6oupqtONa_b5E_3Eil3S7WDz9G/view?usp=sharing" target="_blank" class="btn-reproducir">
+                    <span class="material-symbols-outlined" style="font-size: 20px;">play_circle</span> Reproducir Película
+                </a>
+            </div>
+
+<div class="tarjeta-pelicula">
+                <div>
+                    <div style="font-size: 1.05rem; font-weight: 900; color: #fff;">7. Tierras perdidas 🎬</div>
+                    <div style="font-size: 0.75rem; color: #a0a0a0; font-weight: bold; margin-top: 2px;">GÉNERO: Acción, Aventura, Fantasía y Terror | DURACIÓN: 101 min</div>
+                </div>
+                <div style="font-size: 0.85rem; color: #cbd5e1; line-height: 1.3;">Una hechicera viaja a las Tierras Perdidas en busca de un poder mágico que permita a una persona transformarse en hombre lobo.</div>
+                <a href="https://drive.google.com/file/d/1VieLAD36pyC4jV723nMZn-rxaiDyywWK/view?usp=sharing" target="_blank" class="btn-reproducir">
+                    <span class="material-symbols-outlined" style="font-size: 20px;">play_circle</span> Reproducir Película
+                </a>
+            </div>
+
+            <div class="tarjeta-pelicula">
+                <div>
+                    <div style="font-size: 1.05rem; font-weight: 900; color: #fff;">8. El quinto elemento 🍿</div>
+                    <div style="font-size: 0.75rem; color: #a0a0a0; font-weight: bold; margin-top: 2px;">GÉNERO: Ciencia ficción, Acción | DURACIÓN: 126 min</div>
+                </div>
+                <div style="font-size: 0.85rem; color: #cbd5e1; line-height: 1.3;">Cada 5.000 años se abre una puerta entre dos dimensiones. En una dimensión existe el Universo y la vida y en la otra un elemento que no está hecho ni de tierra, ni de fuego, ni de aire, ni de agua, sino que es una antienergía: El quinto elemento.</div>
+                <a href="https://drive.google.com/file/d/1mP42hm6eOPX1Z-pCNuZQMVY8p-z83PyW/view?usp=sharing" target="_blank" class="btn-reproducir">
+                    <span class="material-symbols-outlined" style="font-size: 20px;">play_circle</span> Reproducir Película
+                </a>
+            </div>
+
+<div class="tarjeta-pelicula">
+                <div>
+                    <div style="font-size: 1.05rem; font-weight: 900; color: #fff;">9. Locuras en el bosque 🍿</div>
+                    <div style="font-size: 0.75rem; color: #a0a0a0; font-weight: bold; margin-top: 2px;">GÉNERO: Cine de terror, Acción, Animación  | DURACIÓN: 92 min</div>
+                </div>
+                <div style="font-size: 0.85rem; color: #cbd5e1; line-height: 1.3;">Los animales del bosque inician una guerra en contra del terrateniente cuyo proyecto más reciente amenaza a su hábitat.</div>
+                <a href="https://drive.google.com/file/d/1l1nTZ-QmNUkq804Y6YjNC2kzBKnDkQ-z/view?usp=sharing" target="_blank" class="btn-reproducir">
+                    <span class="material-symbols-outlined" style="font-size: 20px;">play_circle</span> Reproducir Película
+                </a>
+            </div>
+
+            <div class="tarjeta-pelicula">
+                <div>
+                    <div style="font-size: 1.05rem; font-weight: 900; color: #fff;">10. Lo imposible 🍿</div>
+                    <div style="font-size: 0.75rem; color: #a0a0a0; font-weight: bold; margin-top: 2px;">GÉNERO: Catástrofe, Drama | DURACIÓN: 114 min</div>
+                </div>
+                <div style="font-size: 0.85rem; color: #cbd5e1; line-height: 1.3;">María, Henry y sus tres hijos pequeños vuelan desde Japón a Tailandia para pasar las vacaciones de Navidad en la playa. La mañana después de Navidad, mientras se bañan en la piscina, un tsunami colosal destroza el hotel y gran parte de la costa del sudeste asiático. La familia tendrá que luchar para sobrevivir y reencontrarse.</div>
+                <a href="https://drive.google.com/file/d/1OUEgAj470aj92c_OX0AXihet_KJk97Ib/view?usp=sharing" target="_blank" class="btn-reproducir">
+                    <span class="material-symbols-outlined" style="font-size: 20px;">play_circle</span> Reproducir Película
+                </a>
+            </div>
+
+        </div>
+
+        <div style="font-size: 0.65rem; color: #8a99a6; font-style: italic; margin-bottom: 15px;">
+            Nota: Las películas abren en una pestaña nueva listos para reproducir.
+        </div>
+
+        <a href="index.html" class="btn-volver">
+            <span class="material-symbols-outlined" style="font-size: 18px;">arrow_back</span> Volver a la Estación
+        </a>
+    </div>
+
+</body>
+</html>

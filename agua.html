@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cuidado del Agua - Estación Zúñiga</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <style>
+        body {
+            background: #0a0f1d;
+            color: white;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .caja-agua {
+            max-width: 500px;
+            width: 100%;
+            border: 2px solid rgba(52, 152, 219, 0.3);
+            border-radius: 24px;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+            box-sizing: border-box;
+            text-align: center;
+        }
+        .estado-alerta {
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-weight: 900;
+            text-transform: uppercase;
+            font-size: 1.1rem;
+            display: inline-block;
+            margin: 15px 0;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        .bloque-seccion {
+            background: rgba(0,0,0,0.25);
+            padding: 15px;
+            border-radius: 14px;
+            text-align: left;
+            border: 1px solid rgba(255,255,255,0.05);
+            margin-bottom: 15px;
+        }
+        .seccion-titulo-interna {
+            font-size: 0.75rem;
+            color: #74b9ff;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .consejo-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            margin-bottom: 8px;
+        }
+        .btn-volver {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 15px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            padding: 10px 18px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            transition: background 0.2s;
+        }
+        .btn-volver:hover { background: rgba(255,255,255,0.2); }
+    </style>
+</head>
+<body>
+
+    <div class="caja-agua">
+        <h2 style="margin-top:0; font-size: 1.3rem; letter-spacing: 1px; color: #74b9ff; display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <span class="material-symbols-outlined" style="font-size: 28px;">water_drop</span> CONCIENCIA HÍDRICA MENDOZA
+        </h2>
+        <div style="font-size: 0.75rem; color: #a0a0a0; font-weight: bold; letter-spacing: 0.5px;">ESTACIÓN WEATHER ZÚÑIGA</div>
+        <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.15); margin: 15px 0;">
+
+        <div class="bloque-seccion" style="border-left: 4px solid #f1c40f;">
+            <div class="seccion-titulo-interna" style="color: #f1c40f;">
+                <span class="material-symbols-outlined" style="font-size: 18px;">schedule</span> Dictamen General de Irrigación
+            </div>
+            <div style="font-size: 0.9rem; font-weight: bold; color: #ffffff; margin-bottom: 6px; background: rgba(241, 196, 15, 0.15); padding: 6px; border-radius: 6px; text-align: center;">
+                HORARIO DE VEDA: 08:00 a 22:00 hs 🚫💦
+            </div>
+            <div class="consejo-item">
+                <span class="material-symbols-outlined" style="color: #f1c40f; font-size: 18px;">gavel</span>
+                <div>Está **prohibido** el riego de jardines, veredas y lavado de autos con manguera en esa franja horaria los 365 días del año. Las inspecciones aplican multas directas.</div>
+            </div>
+            <div class="consejo-item">
+                <span class="material-symbols-outlined" style="color: #f1c40f; font-size: 18px;">wb_twilight</span>
+                <div><b>Riego Permitido:</b> Únicamente de **22:00 a 08:00 hs**, utilizando balde o sistemas de riego por goteo eficientes para evitar la evaporación inmediata.</div>
+            </div>
+        </div>
+
+        <div id="alerta-nivel" class="estado-alerta" style="background: #34495e; color: white;">Evaluando Entorno...</div>
+
+        <div class="bloque-seccion" id="bloque-dinamico">
+            <div class="seccion-titulo-interna">
+                <span class="material-symbols-outlined" style="font-size: 18px;">analytics</span> Estado de Consumo en Tiempo Real
+            </div>
+            <div id="contenedor-consejos">
+                </div>
+        </div>
+
+        <a href="index.html" class="btn-volver">
+            <span class="material-symbols-outlined" style="font-size: 18px;">arrow_back</span> Volver al Panel
+        </a>
+    </div>
+
+    <script>
+        async function evaluarCrisisHidrica() {
+            const lat = "-33.08";
+            const lon = "-68.47";
+
+            try {
+                const urlWeather = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,precipitation&timezone=auto`;
+                const res = await fetch(urlWeather);
+                const data = await res.json();
+
+                let alerta = "ESTABLE 🟢";
+                let colorBkg = "#2ecc71";
+                let colorTxt = "#ffffff";
+                
+                let consejos = [
+                    "<b>Uso Solidario:</b> El sistema de agua potable de la zona está operando estable. Mantener consumos medidos.",
+                    "<b>Balde obligatorio:</b> Acordate de repasar la vereda del patio únicamente con balde, nunca dejes la manguera corriendo."
+                ];
+
+                if (data && data.current) {
+                    const temp = data.current.temperature_2m;
+                    const llueve = data.current.precipitation;
+
+                    if (temp >= 32 && llueve === 0) {
+                        alerta = "ALERTA MÁXIMA 🔴";
+                        colorBkg = "#e74c3c";
+                        consejos = [
+                            "<b>Derroche Cero:</b> Máxima presión sobre la red pública. Queda terminantemente prohibido cualquier uso de mangueras abiertas en San Martín.",
+                            "<b>Arbolado Público:</b> Si tenés árboles en el frente, tírale el agua recuperada de lavar las verduras o el lavarropas después de las 22hs.",
+                            "<b>Piletas al resguardo:</b> Usá pastillas de cloro y lona cobertora. Irrigación prohíbe el llenado sistemático con agua potable."
+                        ];
+                    } else if (temp >= 24 && temp < 32) {
+                        alerta = "ALTA DEMANDA ⚠️";
+                        colorBkg = "#e67e22";
+                        consejos = [
+                            "<b>Evaporación Activa:</b> Debido a la temperatura actual, cualquier riego diurno es desperdicio puro. Aguantá a la noche.",
+                            "<b>Duchas Ejecutivas:</b> Reducir el tiempo bajo el agua cuida directamente los tanques de reserva del vecindario."
+                        ];
+                    }
+                }
+
+                const block = document.getElementById('alerta-nivel');
+                block.innerText = alerta;
+                block.style.background = colorBkg;
+                block.style.color = colorTxt;
+
+                const listaHtml = consejos.map(c => `
+                    <div class="consejo-item">
+                        <span class="material-symbols-outlined" style="color: ${colorBkg}; font-size: 18px; margin-top: 1px;">check_circle</span>
+                        <div>${c}</div>
+                    </div>
+                `).join('');
+                
+                document.getElementById('contenedor-consejos').innerHTML = listaHtml;
+
+            } catch (e) {
+                document.getElementById('alerta-nivel').innerText = "ALERTA GRAL 💧";
+                document.getElementById('contenedor-consejos').innerHTML = `
+                    <div class="consejo-item">
+                        <span class="material-symbols-outlined" style="color: #3498db; font-size: 18px;">info</span>
+                        <div>Cuidá las reservas del hogar. Respeta siempre los horarios oficiales de Irrigación para evitar multas.</div>
+                    </div>
+                `;
+            }
+        }
+
+        window.onload = evaluarCrisisHidrica;
+    </script>
+</body>
+</html>

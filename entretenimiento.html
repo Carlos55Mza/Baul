@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Multimedia - Estación Zúñiga</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <style>
+        body {
+            background: #091016;
+            color: white;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .caja-multimedia {
+            max-width: 480px;
+            width: 100%;
+            border: 2px solid rgba(253, 121, 168, 0.3);
+            border-radius: 24px;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+            box-sizing: border-box;
+            text-align: center;
+        }
+        
+        /* Estilos del menú desplegable estilo acordeón */
+        .boton-desplegable {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 14px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            text-align: left;
+            border-radius: 14px;
+            cursor: pointer;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s ease;
+        }
+        .boton-desplegable:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(253, 121, 168, 0.4);
+        }
+        .boton-desplegable span.flecha {
+            font-size: 0.8rem;
+            transition: transform 0.3s;
+        }
+        .boton-desplegable.activo span.flecha {
+            transform: rotate(180deg);
+        }
+        
+        /* Contenedor oculto que se estira al activarse */
+        .contenido-menu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding: 0 10px;
+            margin-bottom: 8px;
+        }
+        .contenido-menu a {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: #cbd5e1;
+            text-decoration: none;
+            padding: 10px 15px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.2s;
+        }
+        .contenido-menu a:hover {
+            background: rgba(253, 121, 168, 0.15);
+            color: white;
+            padding-left: 20px;
+        }
+
+        .btn-volver {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 15px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            padding: 10px 18px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            transition: background 0.2s;
+        }
+        .btn-volver:hover { background: rgba(255,255,255,0.2); }
+    </style>
+</head>
+<body>
+
+    <div class="caja-multimedia">
+        <h2 style="margin-top:0; font-size: 1.3rem; letter-spacing: 1px; color: #fd79a8; display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <span class="material-symbols-outlined" style="font-size: 28px;">subscriptions</span> CENTRAL MULTIMEDIA
+        </h2>
+        <div style="font-size: 0.75rem; color: #a0a0a0; font-weight: bold; letter-spacing: 0.5px;">ENTRETENIMIENTO, SERVICIOS Y MEDIOS EN UN SOLO LUGAR</div>
+        <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.15); margin: 15px 0;">
+
+        <button class="boton-desplegable">DIARIOS 🗞️ <span class="flecha">▼</span></button>
+        <div class="contenido-menu">
+            <a href="https://www.losandes.com.ar/" target="_blank">Los Andes <span>📰</span></a>
+            <a href="https://www.diariouno.com.ar/" target="_blank">Diario Uno <span>📰</span></a>
+            <a href="https://www.memo.com.ar/" target="_blank">Memo Mendoza <span>📰</span></a>
+            <a href="https://www.infobae.com/" target="_blank">Infobae <span>📰</span></a>
+            <a href="https://www.cronica.com.ar/" target="_blank">Diario Crónica <span>📰</span></a>
+            <a href="https://www.ole.com.ar/" target="_blank">Diario Olé <span>⚽</span></a>
+            <a href="https://www.pagina12.com.ar/" target="_blank">Página 12 <span>📰</span></a>
+            <a href="https://www.elsol.com.ar/" target="_blank">El Sol <span>📰</span></a>
+            <a href="https://www.tiempoar.com.ar/" target="_blank">Tiempo Argentino <span>📰</span></a>
+        </div>
+
+        <button class="boton-desplegable">TV (En vivo) 📺 <span class="flecha">▼</span></button>
+        <div class="contenido-menu">
+            <a href="https://youtu.be/Vh8xmLBJtR8" target="_blank">Canal 7 Mza. (En Vivo) <span>🔴</span></a>
+            <a href="https://youtu.be/DVZ2rJQb_0g" target="_blank">La Nación+ (En Vivo) <span>🔴</span></a>
+            <a href="https://cordoba.mitelefe.com/telefe-cordoba-en-vivo/" target="_blank">Telefe Cba (En Vivo) <span>🔴</span></a>
+            <a href="https://youtu.be/cb12KmMMDJA" target="_blank">TN (En Vivo) <span>🔴</span></a>
+            <a href="https://www.canal26.com/canal26-en-vivo/" target="_blank">Canal 26 (En Vivo) <span>🔴</span></a>
+            <a href="https://www.americatv.com.ar/" target="_blank">América TV (En Vivo) <span>🔴</span></a>
+            <a href="https://youtu.be/V6RlyFXQu6I" target="_blank">Canal 9 (En Vivo) <span>🔴</span></a>
+            <a href="https://youtu.be/ArKbAx1K-2U" target="_blank">A24 (En Vivo) <span>🔴</span></a>
+            <a href="https://www.youtube.com/watch?v=BRh2GV400OA" target="_blank">Infobae (En Vivo) <span>🔴</span></a>
+            <a href="https://youtu.be/Zrmkc-2yRAM" target="_blank">Canal 8 de Tucumán (En Vivo) <span>🔴</span></a>
+            <a href="https://youtu.be/5ABLiIbQchA" target="_blank">Telefe Rosario (En Vivo) <span>🔴</span></a>
+            <a href="https://youtu.be/vGNglKWqwcQ" target="_blank">Quiero Música (En Vivo) <span>🎵</span></a>
+        </div>
+
+          <button class="boton-desplegable">DEPORTES ⚽ <span class="flecha">▼</span></button>
+        <div class="contenido-menu">
+            <a href="https://www.promiedos.com.ar/" target="_blank">Promiedos (Resultados) <span>⚽</span></a>
+            <a href="https://www.ascensodelinterior.com.ar/" target="_blank">Ascenso del Interior <span>⚽</span></a>
+            <a href="https://www.formula1.com/" target="_blank">Fórmula 1 Oficial <span>🏎️</span></a>
+            <a href="https://www.espn.com.ar/" target="_blank">ESPN Deportes <span>📺</span></a>
+            <a href="https://www.tycsports.com/" target="_blank">TyC Sports <span>📺</span></a>
+            <a href="https://www.elgrafico.com.ar/" target="_blank">Revista El Gráfico <span>📖</span></a>
+        </div>
+
+        <button class="boton-desplegable">CINE Y SERIES 🍿 <span class="flecha">▼</span></button>
+        <div class="contenido-menu">
+            <a href="https://video.freetv.com/" target="_blank">Free TV <span>🎬</span></a>
+            <a href="https://pluto.tv/latam/live-tv?lang=es" target="_blank">Pluto TV Gratis <span>🎬</span></a>
+            <a href="https://vix.com/es-es/canales" target="_blank">VIX Cine y Series <span>🎬</span></a>
+            <a href="https://www.canela.tv/" target="_blank">Canela TV <span>📺</span></a>
+            <a href="https://urbanaplay.com/" target="_blank">Urbana Play 104.3 <span>📻</span></a>
+            <a href="https://www.runtime.tv/" target="_blank">Runtime TV <span>🎬</span></a>
+            <a href="https://www.vivalivetv.com/channel/infinita-tv-premium" target="_blank">Infinita TV Premium <span>📺</span></a>
+            <a href="https://www.rakuten.tv/es" target="_blank">Rakuten TV <span>🎬</span></a>
+            <a href="https://www.plex.tv/es/tv-gratis/" target="_blank">Plex TV Libre <span>📺</span></a>
+            <a href="https://remezclamas.com/" target="_blank">Butaca TV <span>🎬</span></a>
+        </div>
+
+        <button class="boton-desplegable">KIDS & ANIMACIÓN 🧸 <span class="flecha">▼</span></button>
+        <div class="contenido-menu">
+            <a href="https://www.minijuegos.com/" target="_blank">Minijuegos <span>🎮</span></a>
+            <a href="https://poki.com/es" target="_blank">Poki Juegos <span>🎮</span></a>
+            <a href="https://minigame.com/" target="_blank">Minigames Online <span>🎮</span></a>
+            <a href="https://youtu.be/Nhz-szvWvC8" target="_blank">Rápido y Peludo <span>🦊</span></a>
+            <a href="https://youtu.be/hzU3if2egBk" target="_blank">Las Aventuras de las Narices Frías <span>🐶</span></a>
+            <a href="https://youtu.be/PImJkLfdmIw" target="_blank">Un Joven Pez <span>🐟</span></a>
+            <a href="https://youtu.be/nMo4htdaWYg" target="_blank">El Pato Lucas <span>🦆</span></a>
+            <a href="https://youtu.be/8JuVMoGj6fE" target="_blank">El Coyote y el Correcaminos <span>🌵</span></a>
+            <a href="https://youtu.be/CEWUnNXKFtM" target="_blank">La Pantera Rosa <span>🐆</span></a>
+            <a href="https://youtu.be/K8fKPLV_83g" target="_blank">Tom y Jerry <span>🐱🖱️</span></a>
+        </div>
+
+        <br>
+        <a href="index.html" class="btn-volver">
+            <span class="material-symbols-outlined" style="font-size: 18px;">arrow_back</span> Volver a la Estación
+        </a>
+    </div>
+
+    <script>
+        const listaBotones = document.querySelectorAll('.boton-desplegable');
+
+        listaBotones.forEach(boton => {
+            boton.addEventListener('click', function() {
+                // Alternamos la clase activa para girar la flechita
+                this.classList.toggle('activo');
+                
+                const contenido = this.nextElementSibling;
+                
+                if (contenido.style.maxHeight && contenido.style.maxHeight !== "0px") {
+                    // Si está abierto, lo cerramos
+                    contenido.style.maxHeight = "0px";
+                } else {
+                    // Si está cerrado, calculamos su altura real para estirarlo suavemente
+                    contenido.style.maxHeight = contenido.scrollHeight + "px";
+                }
+            });
+        });
+    </script>
+</body>
+</html>

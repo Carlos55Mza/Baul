@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Radar Multifunción - Estación Zúñiga</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        body { background: #000; color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 10px; text-align: center; }
+        .caja-estacion { 
+            max-width: 750px; 
+            margin: auto; 
+            border: 4px solid #f1c40f; 
+            border-radius: 25px; 
+            padding: 10px; 
+            background: #0a0a0a;
+            box-shadow: 0 0 50px rgba(241, 196, 15, 0.2);
+        }
+        #mapa { width: 100%; height: 550px; border-radius: 15px; background: #000; }
+
+        /* REFUERZO DE COLOR PARA LAS CAPAS */
+        .capa-clima-fuerte {
+            filter: saturate(4) contrast(1.5) brightness(1.1) !important;
+        }
+        
+        .satelite-fondo { filter: brightness(0.6) contrast(1.1); }
+
+        /* Estilo para el selector de capas (Leaflet) */
+        .leaflet-control-layers {
+            background: #222 !important;
+            color: white !important;
+            border: 2px solid #f1c40f !important;
+            font-weight: bold;
+        }
+
+        .btn-volver { 
+            display: block; margin-top: 15px; padding: 18px; 
+            background: linear-gradient(to bottom, #3498db, #2980b9); 
+            color: white; text-decoration: none; border-radius: 15px; font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="caja-estacion">
+    <h2 style="color: #f1c40f; margin: 5px 0;">🛰️ MONITOR MULTICAPA ZÚÑIGA</h2>
+    
+    <div id="mapa"></div>
+
+    <p style="font-size: 0.8rem; color: #888; margin-top: 10px;">Seleccioná la capa en el menú arriba a la derecha ↗️</p>
+
+    <a href="index.html" class="btn-volver">⬅ VOLVER A LA CENTRAL</a>
+</div>
+
+<script>
+    var apiKey = "bd5e378503939ddaee76f12ad7a97608";
+
+    // 1. Capas Base
+    var satelite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        className: 'satelite-fondo'
+    });
+
+    var calles = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png');
+
+    // 2. Capas de Clima (API)
+    var lluvia = L.tileLayer(`https://tile.openweathermap.org/map/precipitation_new/{z}/{x}/{y}.png?appid=${apiKey}`, {
+        className: 'capa-clima-fuerte', opacity: 0.9
+    });
+
+    var nubes = L.tileLayer(`https://tile.openweathermap.org/map/clouds_new/{z}/{x}/{y}.png?appid=${apiKey}`, {
+        className: 'capa-clima-fuerte', opacity: 0.8
+    });
+
+    var temperatura = L.tileLayer(`https://tile.openweathermap.org/map/temp_new/{z}/{x}/{y}.png?appid=${apiKey}`, {
+        className: 'capa-clima-fuerte', opacity: 0.7
+    });
+
+    // 3. Inicializar Mapa
+    var map = L.map('mapa', {
+        center: [-33.085, -68.468],
+        zoom: 9,
+        layers: [satelite, calles, lluvia] // Capas que aparecen al inicio
+    });
+
+    // 4. EL SELECTOR (Aquí sucede la magia)
+    var capasBase = {
+        "Vista Satelital": satelite
+    };
+
+    var capasClima = {
+        "⛈️ Lluvia": lluvia,
+        "☁️ Nubes": nubes,
+        "🌡️ Temperatura": temperatura
+    };
+
+    // Agregamos el control al mapa
+    L.control.layers(capasBase, capasClima, { collapsed: false }).addTo(map);
+
+    // 5. Marcador San Martín
+    L.circleMarker([-33.085, -68.468], {
+        radius: 7, fillColor: "#f1c40f", color: "#fff", weight: 2, fillOpacity: 1
+    }).addTo(map).bindPopup('<b>Estación Zúñiga</b>');
+</script>
+
+</body>
+</html>

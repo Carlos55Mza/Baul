@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estado del Paso - Estación Zúñiga</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <style>
+        body {
+            background: #0d131a;
+            color: white;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .caja-paso {
+            max-width: 500px;
+            width: 100%;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            border-radius: 24px;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            box-sizing: border-box;
+        }
+        .btn-volver {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 25px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            transition: background 0.2s;
+        }
+        .btn-volver:hover { background: rgba(255,255,255,0.2); }
+    </style>
+</head>
+<body>
+
+    <div class="caja-paso">
+        <h2 style="margin-top:0; font-size: 1.3rem; letter-spacing: 1px; color: #ced4da;">🏔️ REPORTE ALTA MONTAÑA</h2>
+        <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.15); margin-bottom: 20px;">
+
+        <div style="display: flex; align-items: center; justify-content: space-around; margin: 20px 0;">
+            <span id="paso-icono" class="material-symbols-outlined" style="font-size: 45px; color: #2ecc71;">sync</span>
+            <div style="text-align: left; flex: 1; padding-left: 15px;">
+                <div id="paso-estado" style="font-size: 1.3rem; font-weight: 900; color: #2ecc71; text-transform: uppercase;">Sincronizando...</div>
+                <div id="paso-detalle" style="font-size: 0.85rem; color: #ced4da; margin-top: 4px;">Leyendo sensores en Cristo Redentor...</div>
+            </div>
+        </div>
+
+        <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 14px; margin-top: 20px; display: flex; justify-content: space-around; text-align: center;">
+            <div>
+                <div style="font-size: 0.7rem; color: #8a99a6; font-weight: bold; text-transform: uppercase;">Temperatura</div>
+                <div id="paso-temp" style="font-size: 1.4rem; font-weight: 900; color: #74b9ff; margin-top: 2px;">--°C</div>
+            </div>
+            <div style="border-left: 1px solid rgba(255,255,255,0.1); padding-left: 20px;">
+                <div style="font-size: 0.7rem; color: #8a99a6; font-weight: bold; text-transform: uppercase;">Zona Límite</div>
+                <div style="font-size: 0.9rem; font-weight: bold; color: white; margin-top: 6px;">Las Cuevas</div>
+            </div>
+        </div>
+
+        <a href="index.html" class="btn-volver">
+            <span class="material-symbols-outlined" style="font-size: 18px;">arrow_back</span> Volver a la Estación
+        </a>
+    </div>
+
+    <script>
+        async function consultarAltaMontana() {
+            const latPaso = "-32.815";
+            const lonPaso = "-70.081";
+
+            try {
+                const urlPaso = `https://api.open-meteo.com/v1/forecast?latitude=${latPaso}&longitude=${lonPaso}&current=temperature_2m,weather_code&timezone=auto`;
+                const res = await fetch(urlPaso);
+                const data = await res.json();
+
+                if (data && data.current) {
+                    const tempAltaMontana = Math.round(data.current.temperature_2m);
+                    const codigoClima = data.current.weather_code;
+                    
+                    let estado = "HABILITADO 🟢";
+                    let detalle = "Paso abierto. Buen tiempo en cordillera.";
+                    let colorEstado = "#2ecc71";
+                    let icono = "gavel";
+
+                    if (codigoClima >= 71 && codigoClima <= 77) {
+                        estado = "PRECAUCIÓN ⚠️";
+                        detalle = "Nevadas débiles. Uso obligatorio de cadenas.";
+                        colorEstado = "#f1c40f";
+                        icono = "ac_unit";
+                    } else if (codigoClima >= 85 || codigoClima >= 20 || tempAltaMontana < -6) {
+                        estado = "CERRADO 🔴";
+                        detalle = "Temporal de nieve o hielo pesado en calzada.";
+                        colorEstado = "#ff7675";
+                        icono = "block";
+                    } else if (tempAltaMontana <= 0 && tempAltaMontana >= -5) {
+                        estado = "PRECAUCIÓN ⚠️";
+                        detalle = "Calzada congelada. Portar cadenas.";
+                        colorEstado = "#f1c40f";
+                        icono = "severe_cold";
+                    }
+
+                    document.getElementById('paso-estado').innerText = estado;
+                    document.getElementById('paso-estado').style.color = colorEstado;
+                    document.getElementById('paso-detalle').innerText = detalle;
+                    document.getElementById('paso-temp').innerText = `${tempAltaMontana}°C`;
+                    
+                    const iconElement = document.getElementById('paso-icono');
+                    iconElement.innerText = icono;
+                    iconElement.style.color = colorEstado;
+                }
+            } catch (e) {
+                document.getElementById('paso-estado').innerText = "CONSULTAR 🗺️";
+                document.getElementById('paso-detalle').innerText = "Servidor de reporte de frontera demorado.";
+            }
+        }
+
+        window.onload = consultarAltaMontana;
+    </script>
+</body>
+</html>

@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estación Zúñiga 🛰️ Nueva Era</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <style>
+        :root {
+            --glass: rgba(255, 255, 255, 0.15);
+            --glass-border: rgba(255, 255, 255, 0.3);
+            --text-light: #ffffff;
+        }
+
+        body {
+            background-image: url("Sin título.jpg"); 
+            background-color: #1e3c72;
+            background-size: cover;
+            background-position: center center;
+            background-attachment: fixed;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-light);
+            min-height: 100vh;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.15);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .wrapper {
+            position: relative;
+            z-index: 10;
+            width: 95%;
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 25px 0;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 900;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.6);
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+        }
+
+        .card-unica {
+            background: var(--glass);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 2px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 20px;
+            box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.4);
+            box-sizing: border-box;
+        }
+
+        .city-selector select {
+            background: rgba(255, 255, 255, 0.95);
+            color: #222;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            padding: 8px 12px;
+            font-weight: bold;
+            outline: none;
+            width: 90%;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            cursor: pointer;
+        }
+
+        .weather-info {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            margin: 10px 0 15px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            padding-bottom: 15px;
+        }
+
+        .temp-compact {
+            font-size: 2.8rem; 
+            font-weight: 900;
+            line-height: 1;
+            text-shadow: 2px 3px 6px rgba(0,0,0,0.4);
+        }
+
+        .st-box {
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #ffbe76;
+            margin-top: 3px;
+        }
+
+        .box-extendido {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px;
+            border-radius: 12px;
+            text-align: center;
+            width: 46%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-sizing: border-box;
+        }
+
+        .seccion-titulo {
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #ced4da;
+            margin-bottom: 10px;
+        }
+@keyframes pulse {
+    0% { opacity: 0.4; }
+    50% { opacity: 1; }
+    100% { opacity: 0.4; }
+}
+    </style>
+</head>
+<body>
+
+    <div class="overlay"></div>
+
+    <div class="wrapper">
+        <h1>ESTACIÓN ZÚÑIGA</h1>
+
+        <div class="card-unica">
+            
+            <div style="margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.15);">
+                <div id="reloj-digital" style="font-size: 1.8rem; font-weight: 900; letter-spacing: 2px; color: #74b9ff; text-shadow: 0 0 10px rgba(116, 185, 255, 0.4); line-height: 1;">--:--:--</div>
+                <div id="fecha-digital" style="font-size: 0.8rem; font-weight: bold; color: #ced4da; text-transform: uppercase; letter-spacing: 1px; margin-top: 5px;">--------, -- de --------</div>
+            </div>
+
+            <div class="city-selector">
+                <select id="departamentos" onchange="updateWeatherLocation(this.value)">
+                    <option value="-33.08,-68.47,SAN MARTÍN">San Martín</option>
+                    <option value="-32.89,-68.84,MENDOZA CAP.">Mendoza Cap.</option>
+                    <option value="-32.92,-68.81,GODOY CRUZ">Godoy Cruz</option>
+                    <option value="-32.90,-68.78,GUAYMALLÉN">Guaymallén</option>
+                    <option value="-32.85,-68.83,LAS HERAS">Las Heras</option>
+                    <option value="-33.00,-68.87,LUJÁN DE CUYO">Luján de Cuyo</option>
+                    <option value="-32.98,-68.76,MAIPÚ">Maipú</option>
+                    <option value="-33.15,-68.48,JUNÍN">Junín</option>
+                    <option value="-33.19,-68.46,RIVADAVIA">Rivadavia</option>
+                    <option value="-33.25,-68.15,SANTA ROSA">Santa Rosa</option>
+                    <option value="-33.46,-67.55,LA PAZ">La Paz</option>
+                    <option value="-33.58,-69.01,TUNUYÁN">Tunuyán</option>
+                    <option value="-33.37,-69.14,TUPUNGATO">Tupungato</option>
+                    <option value="-33.77,-69.04,SAN CARLOS">San Carlos</option>
+                    <option value="-34.61,-68.33,SAN RAFAEL">San Rafael</option>
+                    <option value="-34.97,-67.69,GRAL. ALVEAR">Gral. Alvear</option>
+                    <option value="-35.47,-69.58,MALARGÜE">Malargüe</option>
+                    <option value="-32.72,-68.59,LAVALLE">Lavalle</option>
+                </select>
+            </div>
+
+            <div class="weather-info">
+                <span id="weather-icon" class="material-symbols-outlined" style="font-size: 45px; color: #fbc02d; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.4));">wb_sunny</span>
+                <div>
+                    <div class="temp-compact" id="temp-display"><span id="temp">--</span>°</div>
+                    <div class="st-box">ST: <span id="st-val">--</span>°C</div>
+                </div>
+                <div style="text-align: right;">
+                    <div id="city-display" style="font-weight: 900; font-size: 0.9rem; color: #54a0ff; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">SAN MARTÍN</div>
+                    <div id="hum-display" style="font-size: 0.8rem; color: #e0e0e0; font-weight: bold; margin-top: 2px;">Hum: --%</div>
+                </div>
+            </div>
+
+            <div id="contenedor-viento" style="border-bottom: 1px solid rgba(255, 255, 255, 0.15); padding-bottom: 15px; margin-bottom: 15px;"></div>
+
+            <div class="seccion-titulo">Pronóstico Extendido</div>
+            <div style="display: flex; justify-content: space-between; gap: 10px; margin-bottom: 20px;">
+                <div class="box-extendido">
+                    <div style="font-size: 0.7rem; color: #ced4da; font-weight: bold;">Mañana</div>
+                    <div id="icono-manana" style="font-size: 1.3rem; margin: 3px 0;">☀️</div>
+                    <div style="font-size: 0.85rem; font-weight: bold;">
+                        <span id="max-manana" style="color: #ff7675;">--°</span> / <span id="min-manana" style="color: #74b9ff;">--°</span>
+                    </div>
+                </div>
+                <div class="box-extendido">
+                    <div style="font-size: 0.7rem; color: #ced4da; font-weight: bold;">Pasado</div>
+                    <div id="icono-pasado" style="font-size: 1.3rem; margin: 3px 0;">🌤️</div>
+                    <div style="font-size: 0.85rem; font-weight: bold;">
+                        <span id="max-pasado" style="color: #ff7675;">--°</span> / <span id="min-pasado" style="color: #74b9ff;">--°</span>
+                    </div>
+                </div>
+            </div>
+
+            <div style="border-top: 1px solid rgba(255, 255, 255, 0.15); padding-top: 15px; display: flex; flex-direction: column; align-items: center; gap: 10px;">
+                <a href="satelite.html" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: rgba(255, 255, 255, 0.12); border: 1px solid var(--glass-border); color: white; text-decoration: none; padding: 10px 20px; border-radius: 14px; font-weight: bold; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; width: 85%; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: all 0.2s ease;" onmouseover="this.style.background='rgba(255,255,255,0.25)';" onmouseout="this.style.background='rgba(255,255,255,0.12)';">
+                    <span class="material-symbols-outlined" style="color: #74b9ff; font-size: 20px;">satellite_alt</span>
+                    Estación Satelital Zúñiga
+                </a>
+                <a href="paso.html" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: rgba(255, 255, 255, 0.12); border: 1px solid var(--glass-border); color: white; text-decoration: none; padding: 10px 20px; border-radius: 14px; font-weight: bold; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; width: 85%; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: all 0.2s ease;" onmouseover="this.style.background='rgba(255,255,255,0.25)';" onmouseout="this.style.background='rgba(255,255,255,0.12)';">
+                    <span class="material-symbols-outlined" style="color: #ffbe76; font-size: 20px;">filter_hdr</span>
+                    Estado Paso a Chile
+                </a>
+                <a href="uv.html" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: rgba(255, 255, 255, 0.12); border: 1px solid var(--glass-border); color: white; text-decoration: none; padding: 10px 20px; border-radius: 14px; font-weight: bold; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; width: 85%; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: all 0.2s ease;" onmouseover="this.style.background='rgba(255,255,255,0.25)';" onmouseout="this.style.background='rgba(255,255,255,0.12)';">
+                    <span class="material-symbols-outlined" style="color: #f1c40f; font-size: 20px;">wb_sunny</span>
+                    Radiación Sol y UV
+                </a>
+            </div>
+
+            <div style="margin-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.15); padding-top: 15px;">
+                <a href="agua.html" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: rgba(52, 152, 219, 0.25); border: 1px solid #3498db; color: white; text-decoration: none; padding: 12px 24px; border-radius: 50px; font-weight: 900; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; width: 85%; box-shadow: 0 6px 20px rgba(52, 152, 219, 0.3); transition: all 0.3s ease;" onmouseover="this.style.background='rgba(52, 152, 219, 0.45)'; this.style.transform='scale(1.03)';" onmouseout="this.style.background='rgba(52, 152, 219, 0.25)'; this.style.transform='scale(1)';">
+                    <span class="material-symbols-outlined" style="color: #74b9ff; font-size: 22px;">water_drop</span>
+                    Cuidado del Agua 💧
+                </a>
+            </div>
+
+        </div> <div style="margin-top: 30px; margin-bottom: 25px;">
+            <a href="finanzas.html" style="
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                background: rgba(0, 0, 0, 0.6);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                border: 2px solid rgba(46, 204, 113, 0.5);
+                color: white;
+                text-decoration: none;
+                padding: 14px 28px;
+                border-radius: 16px;
+                font-weight: 900;
+                font-size: 0.95rem;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                width: 85%;
+                max-width: 360px;
+                box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+                transition: all 0.3s ease;
+            "
+            onmouseover="this.style.background='rgba(46, 204, 113, 0.25)'; this.style.transform='scale(1.04)';" 
+            onmouseout="this.style.background='rgba(0, 0, 0, 0.6)'; this.style.transform='scale(1)';">
+                <span class="material-symbols-outlined" style="color: #2ecc71; font-size: 24px;">payments</span>
+                Pizarra Financiera en Vivo 📈
+            </a>
+        </div>
+
+        <div style="margin-bottom: 30px;">
+            <a href="aire.html" style="
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                background: rgba(0, 0, 0, 0.6); /* Fondo oscuro independiente */
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                border: 2px solid rgba(165, 177, 194, 0.5); /* Borde color plomo/aire */
+                color: white;
+                text-decoration: none;
+                padding: 14px 28px;
+                border-radius: 16px;
+                font-weight: 900;
+                font-size: 0.95rem;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                width: 85%;
+                max-width: 360px;
+                box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+                transition: all 0.3s ease;
+            "
+            onmouseover="this.style.background='rgba(165, 177, 194, 0.25)'; this.style.transform='scale(1.04)';" 
+            onmouseout="this.style.background='rgba(0, 0, 0, 0.6)'; this.style.transform='scale(1)';"
+            id="boton-aire">
+                <span class="material-symbols-outlined" style="color: #a5b1g4; font-size: 24px;">airwave</span>
+                Calidad del Aire en Vivo 🍃
+            </a>
+        </div>
+
+<div style="margin-top: 15px; margin-bottom: 5px; display: flex; justify-content: center; width: 100%;">
+            <a href="https://www.mendoza.gov.ar/contingencias/radar/" target="_blank" style="
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                background: rgba(0, 0, 0, 0.6);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.15); /* Mismo borde que Radiación */
+                color: white;
+                text-decoration: none;
+                padding: 12px 24px;
+                border-radius: 14px;
+                font-weight: 900;
+                font-size: 0.9rem;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                width: 85%;
+                max-width: 340px;
+                box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+                transition: all 0.3s ease;
+            "
+            onmouseover="this.style.background='rgba(255, 255, 255, 0.08)'; this.style.transform='scale(1.03)';" 
+            onmouseout="this.style.background='rgba(0, 0, 0, 0.6)'; this.style.transform='scale(1)';"
+            id="boton-radar-contingencias">
+                <span class="material-symbols-outlined" style="color: #00ce9f; font-size: 24px;">radar</span> Radar Contingencias 🛰️
+            </a>
+        </div>
+
+   <div style="margin-bottom: 12px;">
+            <a href="vuelos.html" style="
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                background: rgba(0, 0, 0, 0.6);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                border: 2px solid rgba(52, 152, 219, 0.5); /* Azul Aeronáutico */
+                color: white;
+                text-decoration: none;
+                padding: 14px 28px;
+                border-radius: 16px;
+                font-weight: 900;
+                font-size: 0.95rem;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                width: 85%;
+                max-width: 360px;
+                box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+                transition: all 0.3s ease;
+            "
+            onmouseover="this.style.background='rgba(52, 152, 219, 0.25)'; this.style.transform='scale(1.04)';" 
+            onmouseout="this.style.background='rgba(0, 0, 0, 0.6)'; this.style.transform='scale(1)';">
+                <span class="material-symbols-outlined" style="color: #3498db; font-size: 24px;">flight_takeoff</span>
+                Vuelos El Plumerillo ✈️
+            </a>
+        </div>
+
+        <div style="margin-bottom: 30px;">
+            <a href="terminal.html" style="
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                background: rgba(0, 0, 0, 0.6);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                border: 2px solid rgba(230, 126, 34, 0.5); /* Naranja Ómnibus */
+                color: white;
+                text-decoration: none;
+                padding: 14px 28px;
+                border-radius: 16px;
+                font-weight: 900;
+                font-size: 0.95rem;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                width: 85%;
+                max-width: 360px;
+                box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+                transition: all 0.3s ease;
+            "
+            onmouseover="this.style.background='rgba(230, 126, 34, 0.25)'; this.style.transform='scale(1.04)';" 
+            onmouseout="this.style.background='rgba(0, 0, 0, 0.6)'; this.style.transform='scale(1)';">
+                <span class="material-symbols-outlined" style="color: #e67e22; font-size: 24px;">directions_bus</span>
+                Terminal de Ómnibus 🚌
+            </a>
+        </div>
+
+    </div> <script src="clima.js"></script>
+
+<div style="
+            margin: 30px auto;
+            width: 95%;
+            max-width: 360px;
+            background: rgba(0, 0, 0, 0.6); /* Fondo oscuro independiente como los botones */
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            padding: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            box-sizing: border-box;
+        ">
+            <div style="font-size: 0.65rem; color: #a5b1c2; font-weight: bold; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; text-align: center;">
+                Espacio Publicitario / Auspiciantes 📌
+            </div>
+            
+            <div id="contenedor-publicidad-activa" style="
+                width: 100%;
+                min-height: 160px;
+                overflow: hidden;
+                border-radius: 14px;
+                background: rgba(255, 255, 255, 0.08); /* Fondo esmerilado claro para que los logos se lean perfecto */
+                transition: opacity 0.5s ease-in-out;
+                opacity: 1;
+            ">
+                </div>
+        </div>
+
+
+    </div> <script src="clima.js"></script>
+    
+    <script>
+      // BASE DE DATOS DE ANUNCIANTES OFICIALES - ESTACIÓN ZÚÑIGA (13 CHIVOS CALIBRADOS)
+        const listaAuspiciantes = [
+            // 1. TORNERÍA DON JULIÁN
+            `<a href="https://wa.me/542634520709?text=Hola%20Fabián,%20vi%20su%20anuncio%20en%20Estacion%20Zuñiga" target="_blank" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 15px; text-decoration: none; color: #ffffff;">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ2yl4h5GYb8Xy4C2fYI7TLMvp-25FRGZxDJw&s" alt="Tornería Don Julián" style="height: 55px; width: auto; margin-bottom: 8px; border-radius: 6px; object-fit: contain;">
+                <div style="font-size: 0.95rem; font-weight: 900; color: #74b9ff; margin-bottom: 3px; letter-spacing: 0.5px;">TORNERÍA DON JULIÁN</div>
+                <div style="font-size: 0.75rem; color: #e0e0e0; text-align: center; font-weight: bold; padding: 0 5px; line-height: 1.2;">Mecanizados de Precisión - Trabajos en Control Numérico (CNC)</div>
+                <div style="font-size: 0.65rem; color: #a5b1c2; text-align: center; margin-top: 4px;">San Martín, Mza.</div>
+                <div style="font-size: 0.75rem; color: #25D366; font-weight: bold; margin-top: 8px; display: flex; align-items: center; gap: 4px;">Consultas al WhatsApp 📲</div>
+            </a>`,
+
+            // 2. GESTORÍA PROFESIONAL
+            `<a href="https://wa.me/542634277869?text=Hola%20Carlos,%20vi%20su%20anuncio%20en%20Estacion%20Zuñiga" target="_blank" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 15px; text-decoration: none; color: #ffffff;">
+                <img src="https://www.shutterstock.com/image-vector/community-care-logo-images-design-260nw-2469610239.jpg" alt="Gestoría Profesional" style="height: 55px; width: auto; margin-bottom: 8px; border-radius: 6px; object-fit: contain; background: white; padding: 2px;">
+                <div style="font-size: 0.95rem; font-weight: 900; color: #74b9ff; margin-bottom: 3px; letter-spacing: 0.5px;">GESTORÍA PROFESIONAL</div>
+                <div style="font-size: 0.75rem; color: #e0e0e0; text-align: center; font-weight: bold; padding: 0 5px; line-height: 1.2;">Gestiones Administrativas y Legales</div>
+                <div style="font-size: 0.65rem; color: #a5b1c2; text-align: center; margin-top: 4px;">San Martín - Mza.</div>
+                <div style="font-size: 0.75rem; color: #25D366; font-weight: bold; margin-top: 8px; display: flex; align-items: center; gap: 4px;">Consultas al WhatsApp 📲</div>
+            </a>`,
+
+            // 3. AVÍCOLA TELLO
+            `<a href="https://wa.me/542615677596?text=Hola%20Diego,%20vi%20su%20anuncio%20en%20Estacion%20Zuñiga" target="_blank" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 15px; text-decoration: none; color: #ffffff;">
+                <img src="https://i.postimg.cc/WqLsHVS2/Whats-App-Image-2026-04-22-at-18-55-04.jpg" alt="Avícola Tello" style="height: 55px; width: auto; margin-bottom: 8px; border-radius: 6px; object-fit: contain;">
+                <div style="font-size: 0.95rem; font-weight: 900; color: #74b9ff; margin-bottom: 3px; letter-spacing: 0.5px;">AVÍCOLA TELLO</div>
+                <div style="font-size: 0.75rem; color: #e0e0e0; text-align: center; font-weight: bold; padding: 0 5px; line-height: 1.2;">Calidad Suprema al Mejor Precio</div>
+                <div style="font-size: 0.65rem; color: #a5b1c2; text-align: center; margin-top: 4px;">San Martín - Mza.</div>
+                <div style="font-size: 0.75rem; color: #25D366; font-weight: bold; margin-top: 8px; display: flex; align-items: center; gap: 4px;">Consultas al WhatsApp 📲</div>
+            </a>`,
+
+            // 4. MECÁNICA DEL AUTOMOTOR (HUGO)
+            `<a href="https://wa.me/542634564355?text=Hola%20Hugo,%20vi%20su%20anuncio%20en%20Estacion%20Zuñiga" target="_blank" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 15px; text-decoration: none; color: #ffffff;">
+                <img src="https://i.postimg.cc/75YX224K/Whats-App-Image-2026-04-22-at-19-31-39-2.jpg" alt="Mecánica Hugo" style="height: 55px; width: auto; margin-bottom: 8px; border-radius: 6px; object-fit: contain;">
+                <div style="font-size: 0.95rem; font-weight: 900; color: #74b9ff; margin-bottom: 3px; letter-spacing: 0.5px;">MECÁNICA DEL AUTOMOTOR</div>
+                <div style="font-size: 0.75rem; color: #e0e0e0; text-align: center; font-weight: bold; padding: 0 5px; line-height: 1.2;">Motores Diésel y Nafteros</div>
+                <div style="font-size: 0.65rem; color: #a5b1c2; text-align: center; margin-top: 4px;">San Martín - Mza.</div>
+                <div style="font-size: 0.75rem; color: #25D366; font-weight: bold; margin-top: 8px; display: flex; align-items: center; gap: 4px;">Consultas al WhatsApp 📲</div>
+            </a>`,
+
+            // 5. SERVICIO DE FLETES (SERGIO)
+            `<a href="https://wa.me/542634219497?text=Hola%20Sergio,%20vi%20su%20anuncio%20en%20Estacion%20Zuñiga" target="_blank" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 15px; text-decoration: none; color: #ffffff;">
+                <img src="https://i.postimg.cc/KRB9frkV/fletes-sergio.jpg" alt="Fletes A.G." style="height: 55px; width: auto; margin-bottom: 8px; border-radius: 6px; object-fit: contain;">
+                <div style="font-size: 0.95rem; font-weight: 900; color: #74b9ff; margin-bottom: 3px; letter-spacing: 0.5px;">SERVICIO DE FLETES</div>
+                <div style="font-size: 0.75rem; color: #e0e0e0; text-align: center; font-weight: bold; padding: 0 5px; line-height: 1.2;">De Sergio Villalobos</div>
+                <div style="font-size: 0.65rem; color: #a5b1c2; text-align: center; margin-top: 4px;">San Martín - Mza.</div>
+                <div style="font-size: 0.75rem; color: #25D366; font-weight: bold; margin-top: 8px; display: flex; align-items: center; gap: 4px;">Consultas al WhatsApp 📲</div>
+            </a>`,
+
+            // 6. LUBRICENTRO LOURDES
+            `<a href="https://wa.me/542634656200?text=Hola%20Paula,%20vi%20su%20anuncio%20en%20Estacion%20Zuñiga" target="_blank" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 15px; text-decoration: none; color: #ffffff;">
+                <img src="https://i.postimg.cc/75skCQhX/Whats-App-Image-2026-04-23-at-19-59-32.jpg" alt="Lubricentro Lourdes" style="height: 55px; width: auto; margin-bottom: 8px; border-radius: 6px; object-fit: contain;">
+                <div style="font-size: 0.95rem; font-weight: 900; color: #74b9ff; margin-bottom: 3px; letter-spacing: 0.5px;">LUBRICENTRO LOURDES</div>
+                <div style="font-size: 0.75rem; color: #e0e0e0; text-align: center; font-weight: bold; padding: 0 5px; line-height: 1.2;">Cuidamos tu Motor - Cuidamos tu Camino</div>
+                <div style="font-size: 0.65rem; color: #a5b1c2; text-align: center; margin-top: 4px;">San Martín - Mza.</div>
+                <div style="font-size: 0.75rem; color: #25D366; font-weight: bold; margin-top: 8px; display: flex; align-items: center; gap: 4px;">Consultas al WhatsApp 📲</div>
+            </a>`,
+
+            // 7. AUTOSERVICIO DEL ESTE (Enlace de Mapa)
+            `<a href="https://www.google.com/maps/search/?api=1&query=Padre+Migone+169+San+Martin+Mendoza" target="_blank" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 15px; text-decoration: none; color: #ffffff;">
+                <img src="https://i.postimg.cc/grJStBBz/Whats-App-Image-2026-04-24-at-10-01-45.jpg" alt="Autoservicio del Este" style="height: 50px; width: auto; margin-bottom: 8px; border-radius: 6px; object-fit: contain;">
+                <div style="font-size: 0.95rem; font-weight: 900; color: #74b9ff; margin-bottom: 3px; letter-spacing: 0.5px;">AUTOSERVICIO DEL ESTE</div>
+                <div style="font-size: 0.75rem; color: #e0e0e0; text-align: center; font-weight: bold; padding: 0 5px; line-height: 1.2;">"Productos frescos, precios imbatibles, ¡tu satisfacción garantizada!"</div>
+                <div style="font-size: 0.65rem; color: #a5b1c2; text-align: center; margin-top: 4px;">San Martín - Mza.</div>
+                <div style="font-size: 0.75rem; color: #4285F4; font-weight: bold; margin-top: 8px; display: flex; align-items: center; gap: 4px;">📍 Cómo llegar al Mapa</div>
+            </a>`,
+
+            // 8. CARNES NOVICAR S.A.
+            `<a href="https://wa.me/542634512011?text=Hola%20Marcio,%20vi%20su%20anuncio%20en%20Estacion%20Zuñiga" target="_blank" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 15px; text-decoration: none; color: #ffffff;">
+                <img src="https://i.postimg.cc/CB4CNqqp/Novicar.jpg" alt="Carnes Novicar" style="height: 55px; width: auto; margin-bottom: 8px; border-radius: 6px; object-fit: contain;">
+                <div style="font-size: 0.95rem; font-weight: 900; color: #74b9ff; margin-bottom: 3px; letter-spacing: 0.5px;">CARNES NOVICAR S.A.</div>
+                <div style="font-size: 0.75rem; color: #e0e0e0; text-align: center; font-weight: bold; padding: 0 5px; line-height: 1.2;">Calidad, Frescura y Confianza en cada Corte</div>
+                <div style="font-size: 0.65rem; color: #a5b1c2; text-align: center; margin-top: 4px;">San Martín - Mza.</div>
+                <div style="font-size: 0.75rem; color: #25D366; font-weight: bold; margin-top: 8px; display: flex; align-items: center; gap: 4px;">Consultas al WhatsApp 📲</div>
+            </a>`,
+
+            // 9. CLASES DE PIANO Y UKULELE
+            `<a href="https://wa.me/542615585382?text=Hola%20Noa,%20vi%20su%20anuncio%20en%20Estacion%20Zuñiga" target="_blank" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 15px; text-decoration: none; color: #ffffff;">
+                <img src="https://i.postimg.cc/VSshrjrJ/2-Noa.jpg" alt="Clases de piano y ukelele" style="height: 55px; width: auto; margin-bottom: 8px; border-radius: 6px; object-fit: contain;">
+                <div style="font-size: 0.95rem; font-weight: 900; color: #74b9ff; margin-bottom: 3px; letter-spacing: 0.5px;">CLASES DE PIANO Y UKULELE</div>
+                <div style="font-size: 0.75rem; color: #e0e0e0; text-align: center; font-weight: bold; padding: 0 5px; line-height: 1.2;">Prof. Noa Molson</div>
+                <div style="font-size: 0.65rem; color: #a5b1c2; text-align: center; margin-top: 4px;">Ciudad - Mza.</div>
+                <div style="font-size: 0.75rem; color: #25D366; font-weight: bold; margin-top: 8px; display: flex; align-items: center; gap: 4px;">Consultas al WhatsApp 📲</div>
+            </a>`,
+
+            // 10. REFRIGERACIÓN AMENGUAL
+            `<a href="https://wa.me/542634417380?text=Hola%20Leo,%20vi%20su%20anuncio%20en%20Estacion%20Zuñiga" target="_blank" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 15px; text-decoration: none; color: #ffffff;">
+                <img src="https://i.postimg.cc/9rq4tCBY/Whats-App-Image-2026-04-25-at-18-05-03.jpg" alt="Refrigeración Amengual" style="height: 50px; width: auto; margin-bottom: 8px; border-radius: 6px; object-fit: contain;">
+                <div style="font-size: 0.95rem; font-weight: 900; color: #74b9ff; margin-bottom: 3px; letter-spacing: 0.5px;">REFRIGERACIÓN AMENGUAL</div>
+                <div style="font-size: 0.75rem; color: #e0e0e0; text-align: center; font-weight: bold; padding: 0 5px; line-height: 1.2;">Reparación de Heladeras y Lavarropas - Colocación de Split</div>
+                <div style="font-size: 0.65rem; color: #a5b1c2; text-align: center; margin-top: 4px;">San Martín - Mza.</div>
+                <div style="font-size: 0.75rem; color: #25D366; font-weight: bold; margin-top: 8px; display: flex; align-items: center; gap: 4px;">Consultas al WhatsApp 📲</div>
+            </a>`,
+
+            // 11. TALLER DE RESINA EPÓXICA
+            `<a href="https://wa.me/542634211471?text=Hola%20Susy,%20vi%20su%20anuncio%20en%20Estacion%20Zuñiga" target="_blank" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 15px; text-decoration: none; color: #ffffff;">
+                <img src="https://i.postimg.cc/XrMvKv4L/2.jpg" alt="Taller de resina epóxica" style="height: 50px; width: auto; margin-bottom: 8px; border-radius: 6px; object-fit: contain;">
+                <div style="font-size: 0.95rem; font-weight: 900; color: #74b9ff; margin-bottom: 3px; letter-spacing: 0.5px;">TALLER DE RESINA EPÓXICA</div>
+                <div style="font-size: 0.75rem; color: #e0e0e0; text-align: center; font-weight: bold; padding: 0 5px; line-height: 1.2;">Creación de Accesorios y Objetos Decorativos</div>
+                <div style="font-size: 0.65rem; color: #a5b1c2; text-align: center; margin-top: 4px;">San Martín - Mza.</div>
+                <div style="font-size: 0.75rem; color: #25D366; font-weight: bold; margin-top: 8px; display: flex; align-items: center; gap: 4px;">Consultas al WhatsApp 📲</div>
+            </a>`,
+
+            // 12. CAR SUSPENSIÓN
+            `<a href="https://wa.me/542612449339?text=Hola%20Leandro,%20vi%20su%20anuncio%20en%20Estacion%20Zuñiga" target="_blank" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 15px; text-decoration: none; color: #ffffff;">
+                <img src="https://i.postimg.cc/bDdF5HvL/Whats-App-Image-2026-04-29-at-11-19-58.jpg" alt="Car Suspensión" style="height: 50px; width: auto; margin-bottom: 8px; border-radius: 6px; object-fit: contain;">
+                <div style="font-size: 0.95rem; font-weight: 900; color: #74b9ff; margin-bottom: 3px; letter-spacing: 0.5px;">CAR SUSPENSIÓN</div>
+                <div style="font-size: 0.75rem; color: #e0e0e0; text-align: center; font-weight: bold; padding: 0 5px; line-height: 1.2;">Tren Delantero en General - Suspensión - Alineación y Balanceo</div>
+                <div style="font-size: 0.65rem; color: #a5b1c2; text-align: center; margin-top: 4px;">San Martín - Mza.</div>
+                <div style="font-size: 0.75rem; color: #25D366; font-weight: bold; margin-top: 8px; display: flex; align-items: center; gap: 4px;">Consultas al WhatsApp 📲</div>
+            </a>`,
+
+            // 13. ANDRÉS VALERO (Mecánica)
+            `<a href="https://wa.me/542634560528?text=Hola%20Andrés,%20vi%20su%20anuncio%20en%20Estacion%20Zuñiga" target="_blank" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 15px; text-decoration: none; color: #ffffff;">
+                <img src="https://i.postimg.cc/CRBpQqvh/cab7fde32b9417310bd7e89b6ce5400c.jpg" alt="Mecánica Andrés Valero" style="height: 50px; width: auto; margin-bottom: 8px; border-radius: 6px; object-fit: contain;">
+                <div style="font-size: 0.95rem; font-weight: 900; color: #74b9ff; margin-bottom: 3px; letter-spacing: 0.5px;">ANDRÉS VALERO</div>
+                <div style="font-size: 0.75rem; color: #e0e0e0; text-align: center; font-weight: bold; padding: 0 5px; line-height: 1.2;">Mecánica del Automotor - Diésel y Nafteros - Todas las marcas</div>
+                <div style="font-size: 0.65rem; color: #a5b1c2; text-align: center; margin-top: 4px;">San Martín - Mza.</div>
+                <div style="font-size: 0.75rem; color: #25D366; font-weight: bold; margin-top: 8px; display: flex; align-items: center; gap: 4px;">Consultas al WhatsApp 📲</div>
+            </a>`
+        ];
+
+        // EL MOTORCITO DE ROTACIÓN REPARADO (REEMPLAZÁ EL FINAL POR ESTE)
+        let idxActual = 0;
+        const boxPublicidad = document.getElementById('contenedor-publicidad-activa');
+
+        function cambiarChivoDinamico() {
+            if (!boxPublicidad || listaAuspiciantes.length === 0) return;
+
+            boxPublicidad.style.opacity = 0;
+
+            setTimeout(() => {
+                boxPublicidad.innerHTML = listaAuspiciantes[idxActual];
+                boxPublicidad.style.opacity = 1;
+                idxActual = (idxActual + 1) % listaAuspiciantes.length;
+            }, 500);
+        }
+
+        cambiarChivoDinamico();
+        setInterval(cambiarChivoDinamico, 10000);
+    </script>
+
+<div style="margin-bottom: 15px; display: flex; justify-content: center; width: 100%;">
+            <a href="calendario.html" style="
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                background: rgba(0, 0, 0, 0.6);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                border: 2px solid rgba(155, 89, 182, 0.5); /* Borde lila ejecutivo */
+                color: white;
+                text-decoration: none;
+                padding: 14px 28px;
+                border-radius: 16px;
+                font-weight: 900;
+                font-size: 0.95rem;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                width: 85%;
+                max-width: 360px;
+                box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+                transition: all 0.3s ease;
+            "
+            onmouseover="this.style.background='rgba(155, 89, 182, 0.25)'; this.style.transform='scale(1.04)';" 
+            onmouseout="this.style.background='rgba(0, 0, 0, 0.6)'; this.style.transform='scale(1)';">
+                <span class="material-symbols-outlined" style="color: #9b59b6; font-size: 24px;">calendar_month</span>
+                Calendario Estación 📅
+            </a>
+        </div>
+
+        <div style="margin-bottom: 30px; display: flex; justify-content: center; width: 100%;">
+            <a href="calculadora.html" style="
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                background: rgba(0, 0, 0, 0.6);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                border: 2px solid rgba(46, 204, 113, 0.5); /* Borde verde */
+                color: white;
+                text-decoration: none;
+                padding: 14px 28px;
+                border-radius: 16px;
+                font-weight: 900;
+                font-size: 0.95rem;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                width: 85%;
+                max-width: 360px;
+                box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+                transition: all 0.3s ease;
+            "
+            onmouseover="this.style.background='rgba(46, 204, 113, 0.25)'; this.style.transform='scale(1.04)';" 
+            onmouseout="this.style.background='rgba(0, 0, 0, 0.6)'; this.style.transform='scale(1)';">
+                <span class="material-symbols-outlined" style="color: #2ecc71; font-size: 24px;">calculate</span>
+                Calculadora Activa 🧮
+            </a>
+        </div>
+<div style="margin-bottom: 15px; display: flex; justify-content: center; width: 100%;">
+            <a href="colectivos.html" style="
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                background: rgba(0, 0, 0, 0.6);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                border: 2px solid rgba(241, 196, 15, 0.5); /* Borde Amarillo Oro */
+                color: white;
+                text-decoration: none;
+                padding: 14px 28px;
+                border-radius: 16px;
+                font-weight: 900;
+                font-size: 0.95rem;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                width: 85%;
+                max-width: 360px;
+                box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+                transition: all 0.3s ease;
+            "
+            onmouseover="this.style.background='rgba(241, 196, 15, 0.2)'; this.style.transform='scale(1.04)';" 
+            onmouseout="this.style.background='rgba(0, 0, 0, 0.6)'; this.style.transform='scale(1)';"
+            id="boton-colectivos">
+                <span class="material-symbols-outlined" style="color: #f1c40f; font-size: 24px;">departure_board</span>
+                Mendotran y Media Distancia 🚌
+            </a>
+        </div>
+
+<div style="margin-bottom: 15px; display: flex; justify-content: center; width: 100%;">
+            <a href="anses.html" style="
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                background: rgba(0, 0, 0, 0.6);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                border: 2px solid rgba(52, 152, 219, 0.5); /* Borde Celeste ANSES */
+                color: white;
+                text-decoration: none;
+                padding: 14px 28px;
+                border-radius: 16px;
+                font-weight: 900;
+                font-size: 0.95rem;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                width: 85%;
+                max-width: 360px;
+                box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+                transition: all 0.3s ease;
+            "
+            onmouseover="this.style.background='rgba(52, 152, 219, 0.2)'; this.style.transform='scale(1.04)';" 
+            onmouseout="this.style.background='rgba(0, 0, 0, 0.6)'; this.style.transform='scale(1)';">
+                <span class="material-symbols-outlined" style="color: #3498db; font-size: 24px;">payments</span>
+                Calendario de Pagos ANSES 💳
+            </a>
+        </div>
+
+<div style="margin-bottom: 15px; display: flex; justify-content: center; width: 100%;">
+            <a href="sismos.html" style="
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                background: rgba(0, 0, 0, 0.6);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                border: 2px solid rgba(231, 76, 60, 0.5); /* Borde Rojo Sísmico */
+                color: white;
+                text-decoration: none;
+                padding: 14px 28px;
+                border-radius: 16px;
+                font-weight: 900;
+                font-size: 0.95rem;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                width: 85%;
+                max-width: 360px;
+                box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+                transition: all 0.3s ease;
+            "
+            onmouseover="this.style.background='rgba(231, 76, 60, 0.2)'; this.style.transform='scale(1.04)';" 
+            onmouseout="this.style.background='rgba(0, 0, 0, 0.6)'; this.style.transform='scale(1)';"
+            id="boton-sismos">
+                <span class="material-symbols-outlined" style="color: #e74c3c; font-size: 24px;">volcano</span>
+                Últimos Sismos en Vivo 🌋
+            </a>
+        </div>
+
+<div style="margin-bottom: 12px; display: flex; justify-content: center; width: 100%;">
+            <a href="gestiones.html" style="
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                background: rgba(0, 0, 0, 0.6);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                border: 2px solid rgba(129, 236, 236, 0.4); /* Celeste Judicial */
+                color: white;
+                text-decoration: none;
+                padding: 14px 28px;
+                border-radius: 16px;
+                font-weight: 900;
+                font-size: 0.95rem;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                width: 85%;
+                max-width: 360px;
+                box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+                transition: all 0.3s ease;
+            "
+            onmouseover="this.style.background='rgba(129, 236, 236, 0.15)'; this.style.transform='scale(1.04)';" 
+            onmouseout="this.style.background='rgba(0, 0, 0, 0.6)'; this.style.transform='scale(1)';"
+            id="boton-gestiones">
+                <span class="material-symbols-outlined" style="color: #81ecec; font-size: 24px;">gavel</span>
+                Gestiones y Trámites 💼
+            </a>
+        </div>
+
+        <div style="margin-bottom: 15px; display: flex; justify-content: center; width: 100%;">
+            <a href="entretenimiento.html" style="
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                background: rgba(0, 0, 0, 0.6);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                border: 2px solid rgba(253, 121, 168, 0.4); /* Rosa Ocio */
+                color: white;
+                text-decoration: none;
+                padding: 14px 28px;
+                border-radius: 16px;
+                font-weight: 900;
+                font-size: 0.95rem;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                width: 85%;
+                max-width: 360px;
+                box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+                transition: all 0.3s ease;
+            "
+            onmouseover="this.style.background='rgba(253, 121, 168, 0.15)'; this.style.transform='scale(1.04)';" 
+            onmouseout="this.style.background='rgba(0, 0, 0, 0.6)'; this.style.transform='scale(1)';"
+            id="boton-entretenimiento">
+                <span class="material-symbols-outlined" style="color: #fd79a8; font-size: 24px;">live_tv</span>
+                Portal Multimedia 🍿
+            </a>
+        </div>
+<div style="margin-bottom: 12px; display: flex; justify-content: center; width: 100%;">
+            <a href="https://www.quini-6-resultados.com.ar/" target="_blank" style="
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                background: rgba(0, 0, 0, 0.6);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                border: 2px solid rgba(230, 126, 34, 0.5); /* Naranja Suerte */
+                color: white;
+                text-decoration: none;
+                padding: 14px 28px;
+                border-radius: 16px;
+                font-weight: 900;
+                font-size: 0.95rem;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                width: 85%;
+                max-width: 360px;
+                box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+                transition: all 0.3s ease;
+            "
+            onmouseover="this.style.background='rgba(230, 126, 34, 0.15)'; this.style.transform='scale(1.04)';" 
+            onmouseout="this.style.background='rgba(0, 0, 0, 0.6)'; this.style.transform='scale(1)';">
+                <span class="material-symbols-outlined" style="color: #e67e22; font-size: 24px;">casino</span>
+                Resultados del Quini 6 y Sorteos 🎲
+            </a>
+        </div>
+
+        <div style="margin-bottom: 12px; display: flex; justify-content: center; width: 100%;">
+            <a href="https://myradioenvivo.ar/" target="_blank" style="
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                background: rgba(0, 0, 0, 0.6);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                border: 2px solid rgba(46, 204, 113, 0.5); /* Verde Radio */
+                color: white;
+                text-decoration: none;
+                padding: 14px 28px;
+                border-radius: 16px;
+                font-weight: 900;
+                font-size: 0.95rem;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                width: 85%;
+                max-width: 360px;
+                box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+                transition: all 0.3s ease;
+            "
+            onmouseover="this.style.background='rgba(46, 204, 113, 0.15)'; this.style.transform='scale(1.04)';" 
+            onmouseout="this.style.background='rgba(0, 0, 0, 0.6)'; this.style.transform='scale(1)';">
+                <span class="material-symbols-outlined" style="color: #2ecc71; font-size: 24px;">radio</span>
+                Radios en Vivo Online 📻
+            </a>
+        </div>
+
+        <div style="margin-bottom: 30px; display: flex; justify-content: center; width: 100%;">
+            <a href="https://www.ruta0.com/" target="_blank" style="
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                background: rgba(0, 0, 0, 0.6);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                border: 2px solid rgba(52, 152, 219, 0.5); /* Azul Viajes */
+                color: white;
+                text-decoration: none;
+                padding: 14px 28px;
+                border-radius: 16px;
+                font-weight: 900;
+                font-size: 0.95rem;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                width: 85%;
+                max-width: 360px;
+                box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+                transition: all 0.3s ease;
+            "
+            onmouseover="this.style.background='rgba(52, 152, 219, 0.15)'; this.style.transform='scale(1.04)';" 
+            onmouseout="this.style.background='rgba(0, 0, 0, 0.6)'; this.style.transform='scale(1)';">
+                <span class="material-symbols-outlined" style="color: #3498db; font-size: 24px;">map</span>
+                Ruta 0: Mapas y Viajes 🗺️
+            </a>
+        </div>
+
+<div style="margin-bottom: 12px; display: flex; justify-content: center; width: 100%;">
+            <a href="trivia-game/Trivia.html" style="
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                background: rgba(0, 0, 0, 0.6);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                border: 2px solid rgba(0, 206, 201, 0.5); /* Borde Cian Gamer */
+                color: white;
+                text-decoration: none;
+                padding: 14px 28px;
+                border-radius: 16px;
+                font-weight: 900;
+                font-size: 0.95rem;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                width: 85%;
+                max-width: 360px;
+                box-shadow: 0 8px 25px rgba(0,206,201,0.3);
+                transition: all 0.3s ease;
+            "
+            onmouseover="this.style.background='rgba(0, 206, 201, 0.15)'; this.style.transform='scale(1.04)';" 
+            onmouseout="this.style.background='rgba(0, 0, 0, 0.6)'; this.style.transform='scale(1)';"
+            id="boton-trivia">
+                <span class="material-symbols-outlined" style="color: #00cec9; font-size: 24px;">quiz</span>
+                No Me Chamuyes! 🧠
+            </a>
+        </div>
+
+        <div style="margin-bottom: 15px; display: flex; justify-content: center; width: 100%;">
+            <a href="juegos-palabras-v3_1.html" style="
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                background: rgba(0, 0, 0, 0.6);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                border: 2px solid rgba(108, 92, 231, 0.5); /* Borde Violeta Recreo */
+                color: white;
+                text-decoration: none;
+                padding: 14px 28px;
+                border-radius: 16px;
+                font-weight: 900;
+                font-size: 0.95rem;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                width: 85%;
+                max-width: 360px;
+                box-shadow: 0 8px 25px rgba(108, 92, 231, 0.3);
+                transition: all 0.3s ease;
+            "
+            onmouseover="this.style.background='rgba(108, 92, 231, 0.15)'; this.style.transform='scale(1.04)';" 
+            onmouseout="this.style.background='rgba(0, 0, 0, 0.6)'; this.style.transform='scale(1)';"
+            id="boton-recreo">
+                <span class="material-symbols-outlined" style="color: #6c5ce7; font-size: 24px;">extension</span>
+                Recreo en la Estación 🧩
+            </a>
+        </div>
+
+<div style="margin-bottom: 15px; display: flex; justify-content: center; width: 100%;">
+            <a href="https://quetienesparacocinar.lovable.app/" target="_blank" style="
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                background: rgba(0, 0, 0, 0.6);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                border: 2px solid rgba(250, 130, 49, 0.5); /* Borde Naranja Fuego Gastronómico */
+                color: white;
+                text-decoration: none;
+                padding: 14px 28px;
+                border-radius: 16px;
+                font-weight: 900;
+                font-size: 0.95rem;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                width: 85%;
+                max-width: 360px;
+                box-shadow: 0 8px 25px rgba(250, 130, 49, 0.2);
+                transition: all 0.3s ease;
+            "
+            onmouseover="this.style.background='rgba(250, 130, 49, 0.15)'; this.style.transform='scale(1.04)';" 
+            onmouseout="this.style.background='rgba(0, 0, 0, 0.6)'; this.style.transform='scale(1)';"
+            id="boton-chef-ia">
+                <span class="material-symbols-outlined" style="color: #fa8231; font-size: 24px;">chef_hat</span>
+                Chef IA: ¿Qué Cocinamos? 🍳
+            </a>
+        </div>
+
+<div style="
+            margin: 20px auto;
+            width: 85%;
+            max-width: 360px;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 2px solid rgba(230, 126, 34, 0.3); /* Borde naranja de la suerte */
+            border-radius: 24px;
+            padding: 18px 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            text-align: center;
+            box-sizing: border-box;
+        ">
+            <div style="font-size: 0.85rem; font-weight: 900; color: #e67e22; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 3px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                <span class="material-symbols-outlined" style="font-size: 20px; color: #e67e22;">casino</span>
+                Bolillas de la Suerte
+            </div>
+            <div style="font-size: 0.7rem; color: #a0a0a0; font-weight: bold; margin-bottom: 15px; letter-spacing: 0.5px;" id="fecha-suerte">
+                ACTUALIZADAS PARA ESTA SEMANA
+            </div>
+
+            <div style="display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 5px;">
+                <div class="bolilla-suerte" style="width: 42px; height: 42px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #ff9f43, #e67e22); color: white; font-weight: 900; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; box-shadow: inset -3px -3px 8px rgba(0,0,0,0.4), 0 5px 10px rgba(0,0,0,0.5); text-shadow: 1px 1px 2px rgba(0,0,0,0.6);" id="bolilla-1">--</div>
+                <div class="bolilla-suerte" style="width: 42px; height: 42px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #ff9f43, #e67e22); color: white; font-weight: 900; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; box-shadow: inset -3px -3px 8px rgba(0,0,0,0.4), 0 5px 10px rgba(0,0,0,0.5); text-shadow: 1px 1px 2px rgba(0,0,0,0.6);" id="bolilla-2">--</div>
+                <div class="bolilla-suerte" style="width: 42px; height: 42px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #ff9f43, #e67e22); color: white; font-weight: 900; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; box-shadow: inset -3px -3px 8px rgba(0,0,0,0.4), 0 5px 10px rgba(0,0,0,0.5); text-shadow: 1px 1px 2px rgba(0,0,0,0.6);" id="bolilla-3">--</div>
+                <div class="bolilla-suerte" style="width: 42px; height: 42px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #ff9f43, #e67e22); color: white; font-weight: 900; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; box-shadow: inset -3px -3px 8px rgba(0,0,0,0.4), 0 5px 10px rgba(0,0,0,0.5); text-shadow: 1px 1px 2px rgba(0,0,0,0.6);" id="bolilla-4">--</div>
+                <div class="bolilla-suerte" style="width: 42px; height: 42px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #ff9f43, #e67e22); color: white; font-weight: 900; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; box-shadow: inset -3px -3px 8px rgba(0,0,0,0.4), 0 5px 10px rgba(0,0,0,0.5); text-shadow: 1px 1px 2px rgba(0,0,0,0.6);" id="bolilla-5">--</div>
+                <div class="bolilla-suerte" style="width: 42px; height: 42px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #ff9f43, #e67e22); color: white; font-weight: 900; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; box-shadow: inset -3px -3px 8px rgba(0,0,0,0.4), 0 5px 10px rgba(0,0,0,0.5); text-shadow: 1px 1px 2px rgba(0,0,0,0.6);" id="bolilla-6">--</div>
+            </div>
+        </div>
+
+<div style="margin-bottom: 15px; display: flex; justify-content: center; width: 100%;">
+            <a href="cine.html" style="
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                background: rgba(0, 0, 0, 0.6);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                border: 2px solid rgba(232, 67, 147, 0.5); /* Borde Fucsia de Cine */
+                color: white;
+                text-decoration: none;
+                padding: 14px 28px;
+                border-radius: 16px;
+                font-weight: 900;
+                font-size: 0.95rem;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                width: 85%;
+                max-width: 360px;
+                box-shadow: 0 8px 25px rgba(232, 67, 147, 0.2);
+                transition: all 0.3s ease;
+            "
+            onmouseover="this.style.background='rgba(232, 67, 147, 0.15)'; this.style.transform='scale(1.04)';" 
+            onmouseout="this.style.background='rgba(0, 0, 0, 0.6)'; this.style.transform='scale(1)';"
+            id="boton-cine-propio">
+                <span class="material-symbols-outlined" style="color: #e84393; font-size: 24px;">movie_filter</span>
+                Cine en la Estación 🍿
+            </a>
+        </div>
+        
+	<script>
+            function gestionarNumerosDeLaSuerte() {
+                const ahora = new Date();
+                
+                // Calculamos el inicio de la semana actual (el último lunes que pasó)
+                const diaSemana = ahora.getDay(); // 0=Dom, 1=Lun, ..., 6=Sab
+                const diferenciaALunes = diaSemana === 0 ? -6 : 1 - diaSemana;
+                
+                const lunesActual = new Date(ahora);
+                lunesActual.setDate(ahora.getDate() + diferenciaALunes);
+                
+                // Formateamos una clave única basada en el año, mes y día del lunes vigente
+                const claveSemana = `suerte_semana_${lunesActual.getFullYear()}_${lunesActual.getMonth()}_${lunesActual.getDate()}`;
+                
+                let numeros = [];
+
+                // Si ya existen números guardados para esta semana específica, los levantamos
+                if (localStorage.getItem(claveSemana)) {
+                    numeros = JSON.parse(localStorage.getItem(claveSemana));
+                } else {
+                    // Si es una semana nueva (o lunes nuevo), limpiamos la memoria vieja y generamos 6 números sin repetir (0 al 45)
+                    localStorage.clear(); // Limpia semanas anteriores para no acumular basura
+                    
+                    while (numeros.length < 6) {
+                        const numAleatorio = Math.floor(Math.random() * 46); // Del 0 al 45
+                        if (!numeros.includes(numAleatorio)) {
+                            numeros.push(numAleatorio);
+                        }
+                    }
+                    // Los ordenamos de menor a mayor para que queden prolijos como en el sorteo real
+                    numeros.sort((a, b) => a - b);
+                    localStorage.setItem(claveSemana, JSON.stringify(numeros));
+                }
+
+                // Inyectamos los números finales adentro de las 6 bolillas tridimensionales
+                for (let i = 0; i < 6; i++) {
+                    // Le agregamos el cero adelante a los números de un solo dígito para mantener la simetría
+                    document.getElementById(`bolilla-${i+1}`).innerText = numeros[i].toString().padStart(2, '0');
+                }
+
+                // Colgamos la fecha del lunes vigente abajo del título
+                const meses = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+                document.getElementById('fecha-suerte').innerText = `JUGADA FIJA DESDE EL LUNES ${lunesActual.getDate()} DE ${meses[lunesActual.getMonth()].toUpperCase()}`;
+            }
+
+            // Ejecutamos el bolillero apenas enciende el panel
+            gestionarNumerosDeLaSuerte();
+        </script>
+
+<div style="margin-top: 25px; margin-bottom: 30px; display: flex; justify-content: center; width: 100%;">
+            <a href="alertas.html" style="
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                background: rgba(0, 0, 0, 0.75);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                border: 2px solid rgba(243, 156, 18, 0.6); /* Borde Alerta Naranja Fuego */
+                color: white;
+                text-decoration: none;
+                padding: 16px 30px;
+                border-radius: 18px;
+                font-weight: 900;
+                font-size: 1rem;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                width: 85%;
+                max-width: 360px;
+                box-shadow: 0 0 25px rgba(243, 156, 18, 0.25);
+                transition: all 0.3s ease;
+            "
+            onmouseover="this.style.background='rgba(243, 156, 18, 0.15)'; this.style.boxShadow='0 0 30px rgba(243, 156, 18, 0.5)'; this.style.transform='scale(1.04)';" 
+            onmouseout="this.style.background='rgba(0, 0, 0, 0.75)'; this.style.boxShadow='0 0 25px rgba(243, 156, 18, 0.25)'; this.style.transform='scale(1)';"
+            id="boton-defensa-civil">
+                <span class="material-symbols-outlined" style="color: #f39c12; font-size: 26px;">emergency_home</span>
+                Alertas y Defensa Civil 🚨
+            </a>
+        </div>
+</body>
+</html>
+
