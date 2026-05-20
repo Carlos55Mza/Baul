@@ -83,7 +83,8 @@
             const lonPaso = "-70.081";
 
             try {
-                const urlPaso = `https://api.open-meteo.com/v1/forecast?latitude=${latPaso}&longitude=${lonPaso}&current=temperature_2m,weather_code&timezone=auto`;
+                // AGREGADO EL TRUCO DEL DATE.NOW() PARA IMPEDIR QUE EL NAVEGADOR CLAVE LA CACHÉ
+                const urlPaso = `https://api.open-meteo.com/v1/forecast?latitude=${latPaso}&longitude=${lonPaso}&current=temperature_2m,weather_code&timezone=auto&v=${Date.now()}`;
                 const res = await fetch(urlPaso);
                 const data = await res.json();
 
@@ -96,12 +97,13 @@
                     let colorEstado = "#2ecc71";
                     let icono = "gavel";
 
+                    // CORREGIDA LA LÓGICA DE DETECCIÓN PARA EVITAR CIERRES FALSOS
                     if (codigoClima >= 71 && codigoClima <= 77) {
                         estado = "PRECAUCIÓN ⚠️";
                         detalle = "Nevadas débiles. Uso obligatorio de cadenas.";
                         colorEstado = "#f1c40f";
                         icono = "ac_unit";
-                    } else if (codigoClima >= 85 || codigoClima >= 20 || tempAltaMontana < -6) {
+                    } else if (codigoClima >= 85 || (codigoClima >= 20 && codigoClima <= 29) || tempAltaMontana < -6) {
                         estado = "CERRADO 🔴";
                         detalle = "Temporal de nieve o hielo pesado en calzada.";
                         colorEstado = "#ff7675";
