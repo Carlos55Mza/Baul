@@ -46,10 +46,11 @@ async function updateWeatherLocation(val) {
     let windSpeedFinal = "--";
     let windGustFinal = "--";
     let windDirFinal = "--";
+    let uvFinal = "--"; // Nueva variable para capturar el UV
 
     let maxM = "--", minM = "--", maxP = "--", minP = "--";
 
-    // 1. CONSULTA WEB GENERAL
+    // 1. CONSULTA WEB GENERAL (Mantenemos las variables vivas)
     try {
         const urlMeteo = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,wind_gusts_10m,wind_direction_10m&daily=temperature_2m_max,temperature_2m_min&timezone=auto`;
         const res = await fetch(urlMeteo);
@@ -68,19 +69,20 @@ async function updateWeatherLocation(val) {
             if (code === 0) iconText = 'wb_sunny';
             else if (code <= 3) iconText = 'cloud';
             else iconText = 'umbrella';
-
-            if (data.daily) {
-                maxM = Math.round(data.daily.temperature_2m_max[1]) + "°";
-                minM = Math.round(data.daily.temperature_2m_min[1]) + "°";
-                maxP = Math.round(data.daily.temperature_2m_max[2]) + "°";
-                minP = Math.round(data.daily.temperature_2m_min[2]) + "°";
-            }
+        }
+        
+        // El pronóstico extendido se guarda acá y ya no se pisa
+        if (data && data.daily) {
+            maxM = Math.round(data.daily.temperature_2m_max[1]) + "°";
+            minM = Math.round(data.daily.temperature_2m_min[1]) + "°";
+            maxP = Math.round(data.daily.temperature_2m_max[2]) + "°";
+            minP = Math.round(data.daily.temperature_2m_min[2]) + "°";
         }
     } catch (e) {
         console.log("Error en motor web:", e);
     }
 
-    // 2. FILTRO EXCLUSIVO SAN MARTÍN (Tu búnker toma el control)
+    // 2. FILTRO EXCLUSIVO SAN MARTÍN (Tu búnker toma el control del tiempo actual)
     if (ciudad === "SAN MARTÍN") {
         try {
             const datoEstacion = await obtenerDatoEstacionReal();
@@ -92,6 +94,7 @@ async function updateWeatherLocation(val) {
                 windSpeedFinal = datoEstacion.vientoVel;
                 windGustFinal = datoEstacion.vientoRaf;
                 windDirFinal = obtenerDireccionRosa(datoEstacion.vientoDir);
+                uvFinal = datoEstacion.uv; // Rescatamos el UV real del techo
             }
         } catch (errEst) {
             console.log("Consola offline:", errEst);
@@ -110,13 +113,15 @@ async function updateWeatherLocation(val) {
     if(document.getElementById('wind-dir')) document.getElementById('wind-dir').innerText = windDirFinal;
     if(document.getElementById('wind-gust')) document.getElementById('wind-gust').innerHTML = `${windGustFinal} <span style="font-size: 0.8rem;">km/h</span>`;
 
+    // Si tenés o agregás un id="uv-display" en el HTML, te inyecta el índice UV directo en la home
+    if(document.getElementById('uv-display')) document.getElementById('uv-display').innerText = `UV: ${uvFinal}`;
+
     // Animación del molino según la fuerza del viento
     const windIcon = document.getElementById('wind-icon');
     if (windIcon && windSpeedFinal !== "--" && windSpeedFinal > 0) {
         const velocidadRotacion = Math.max(0.2, 3 / (windSpeedFinal / 5)); // Más viento, gira más rápido
         windIcon.style.animation = `girar ${velocidadRotacion}s linear infinite`;
         
-        // Le inyectamos la regla de animación al documento sobre la marcha si no existe
         if (!document.getElementById('estilo-giro')) {
             const style = document.createElement('style');
             style.id = 'estilo-giro';
@@ -127,6 +132,7 @@ async function updateWeatherLocation(val) {
         windIcon.style.animation = 'none';
     }
 
+    // Imprimimos el pronóstico extendido de forma segura
     if(document.getElementById('max-manana')) document.getElementById('max-manana').innerText = maxM;
     if(document.getElementById('min-manana')) document.getElementById('min-manana').innerText = minM;
     if(document.getElementById('max-pasado')) document.getElementById('max-pasado').innerText = maxP;
@@ -146,7 +152,8 @@ async function obtenerDatoEstacionReal() {
             st: Math.round(o.metric.windChill || o.metric.temp),
             vientoVel: Math.round(o.metric.windSpeed),
             vientoRaf: Math.round(o.metric.windGust),
-            vientoDir: o.winddir
+            vientoDir: o.winddir,
+            uv: o.uv !== undefined && o.uv !== null ? o.uv : "--" // <--- ACÁ CAPTURAMOS EL UV DESDE EL SATÉLITE
         };
     }
     return null;
@@ -177,7 +184,6 @@ function arrancarReloj() {
     setInterval(() => {
         const ahora = new Date();
         
-        // 1. Formateamos la hora para que siempre tenga 2 dígitos (ej: 09:05:02)
         const horas = String(ahora.getHours()).padStart(2, '0');
         const minutos = String(ahora.getMinutes()).padStart(2, '0');
         const segundos = String(ahora.getSeconds()).padStart(2, '0');
@@ -187,7 +193,6 @@ function arrancarReloj() {
             relojContenedor.innerText = `${horas}:${minutos}:${segundos}`;
         }
 
-        // 2. Formateamos la fecha en criollo
         const diasSemana = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
         const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
         
@@ -200,10 +205,9 @@ function arrancarReloj() {
         if (fechaContenedor) {
             fechaContenedor.innerText = `${nombreDia}, ${numeroDia} de ${nombreMes} ${anio}`;
         }
-    }, 1000); // Se ejecuta cada 1000 milisegundos (1 segundo)
+    }, 1000);
 }
 
-// Activamos el reloj apenas arranca la app de forma segura
 if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", arrancarReloj);
 } else {
