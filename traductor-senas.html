@@ -67,7 +67,8 @@
         button:hover {
             background: #04a758;
         }
-        /* CONTENEDOR DE SEÑAS REALES */
+        
+        /* 🛠️ MODIFICADO CON SCROLL INTERNO PARA MÓVILES */
         .resultado-senas {
             display: flex;
             flex-wrap: wrap;
@@ -76,9 +77,12 @@
             background: #13191c;
             padding: 15px;
             border-radius: 8px;
-            min-height: 120px;
+            max-height: 160px; /* Evita que crezca infinitamente hacia abajo */
+            overflow-y: auto;  /* Activa la barra de desplazamiento vertical si se pasa de rosca */
             border: 1px dashed #485460;
+            box-sizing: border-box;
         }
+        
         .tarjeta-letra {
             background: #2f3640;
             padding: 8px;
@@ -93,7 +97,7 @@
             align-items: center;
         }
         .dibujo-mano {
-            font-size: 2.2rem; /* Tamaño grande para el emoji gestual */
+            font-size: 2.2rem;
             background: #ffffff;
             width: 100%;
             border-radius: 4px;
@@ -134,35 +138,13 @@
     </div>
 
     <script>
-        // DICCIONARIO INTERNO: Configuraciones de mano oficiales de la LSA argentina mapeadas de forma segura
         const diccionarioLSA = {
-            'A': '✊',  // Puño cerrado, pulgar al costado
-            'B': '✋',  // Mano abierta, dedos juntos
-            'C': '👌',  // Dedos curvos formando una C
-            'D': '☝️',  // Índice arriba, los otros cerrados
-            'E': '✊',  // Dedos encogidos sobre la palma
-            'F': '👎',  // Mano de perfil, pulgar cruza adelante (variante LSA)
-            'G': '🫵',  // Índice apuntando al frente horizontal
-            'H': '✌️',  // Dedos índice y medio extendidos en movimiento
-            'I': '🤙',  // Meñique levantado
-            'J': '🤙',  // Meñique dibuja la curva en el aire
-            'K': '🖖',  // Dedos abiertos con pulgar al medio
-            'L': '🫱',  // Formando ángulo recto con índice y pulgar
-            'M': '👊',  // Tres dedos hacia abajo sobre la palma
-            'N': '🫳',  // Dos dedos hacia abajo
-            'Ñ': '👋',  // Dos dedos hacia abajo sacudiéndose
-            'O': '👌',  // Dedos formando un círculo
-            'P': '🫵',  // Índice y pulgar apuntando abajo
-            'Q': '🤏',  // Dedos en forma de gancho
-            'R': '🤞',  // Dedos índice y medio cruzados (Seña nativa LSA)
-            'S': '☝️',  // Dibuja la S en el aire con el índice
-            'T': '👍',  // Pulgar metido entre índice y medio
-            'U': '🤘',  // Índice y meñique arriba
-            'V': '✌️',  // Dedos en V (forma de dos)
-            'W': '🖐️',  // Tres dedos extendidos abiertos
-            'X': '🤞',  // Índice flexionado en forma de gancho cruzado
-            'Y': '🤙',  // Pulgar y meñique extendidos
-            'Z': '☝️'   // Índice dibuja la Z en el aire
+            'A': '✊', 'B': '✋', 'C': '👌', 'D': '☝️', 'E': '✊', 
+            'F': '👎', 'G': '🫵', 'H': '✌️', 'I': '🤙', 'J': '🤙', 
+            'K': '🖖', 'L': '🫱', 'M': '👊', 'N': '🫳', 'Ñ': '👋', 
+            'O': '👌', 'P': '🫵', 'Q': '🤏', 'R': '🤞', 'S': '☝️', 
+            'T': '👍', 'U': '🤘', 'V': '✌️', 'W': '🖐️', 'X': '🤞', 
+            'Y': '🤙', 'Z': '☝️'
         };
 
         function traducirFrase() {
