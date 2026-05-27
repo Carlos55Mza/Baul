@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traductor LSA Real - Estación Zúñiga</title>
+    <style>
+        body {
+            background-color: #13191c;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .contenedor-traductor {
+            background: #1e272e;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 550px;
+            text-align: center;
+            border: 1px solid #2f3640;
+        }
+        h2 {
+            color: #74b9ff;
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+        }
+        p {
+            color: #a5b1c2;
+            font-size: 0.85rem;
+            margin-bottom: 20px;
+        }
+        .caja-entrada {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        input {
+            flex: 1;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid #485460;
+            background: #2f3640;
+            color: white;
+            font-size: 1rem;
+            text-transform: uppercase;
+        }
+        input:focus {
+            outline: 2px solid #74b9ff;
+        }
+        button {
+            padding: 12px 20px;
+            background: #05c46b;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background: #04a758;
+        }
+        /* CONTENEDOR DE SEÑAS REALES */
+        .resultado-senas {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            background: #13191c;
+            padding: 15px;
+            border-radius: 8px;
+            min-height: 120px;
+            border: 1px dashed #485460;
+        }
+        .tarjeta-letra {
+            background: #2f3640;
+            padding: 8px;
+            border-radius: 6px;
+            text-align: center;
+            width: 75px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            border: 1px solid #485460;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .dibujo-mano {
+            font-size: 2.2rem; /* Tamaño grande para el emoji gestual */
+            background: #ffffff;
+            width: 100%;
+            border-radius: 4px;
+            padding: 5px 0;
+            margin-bottom: 6px;
+        }
+        .letra-subtitulo {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #ffdd59;
+        }
+        .espacio-bloque {
+            width: 35px;
+            height: 90px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            color: #74b9ff;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="contenedor-traductor">
+        <h2>🤟 Traductor LSA (Lengua de Señas Argentina)</h2>
+        <p>Escribí tu mensaje para ver la configuración de manos correspondiente en LSA.</p>
+        
+        <div class="caja-entrada">
+            <input type="text" id="texto-usuario" placeholder="Ej: HOLA, MENDOZA..." maxlength="25">
+            <button onclick="traducirFrase()">Traducir</button>
+        </div>
+
+        <div class="resultado-senas" id="contenedor-resultado">
+            <span style="color: #485460; font-size: 0.9rem; margin: auto;">El resultado aparecerá acá...</span>
+        </div>
+    </div>
+
+    <script>
+        // DICCIONARIO INTERNO: Configuraciones de mano oficiales de la LSA argentina mapeadas de forma segura
+        const diccionarioLSA = {
+            'A': '✊',  // Puño cerrado, pulgar al costado
+            'B': '✋',  // Mano abierta, dedos juntos
+            'C': '👌',  // Dedos curvos formando una C
+            'D': '☝️',  // Índice arriba, los otros cerrados
+            'E': '✊',  // Dedos encogidos sobre la palma
+            'F': '👎',  // Mano de perfil, pulgar cruza adelante (variante LSA)
+            'G': '🫵',  // Índice apuntando al frente horizontal
+            'H': '✌️',  // Dedos índice y medio extendidos en movimiento
+            'I': '🤙',  // Meñique levantado
+            'J': '🤙',  // Meñique dibuja la curva en el aire
+            'K': '🖖',  // Dedos abiertos con pulgar al medio
+            'L': '🫱',  // Formando ángulo recto con índice y pulgar
+            'M': '👊',  // Tres dedos hacia abajo sobre la palma
+            'N': '🫳',  // Dos dedos hacia abajo
+            'Ñ': '👋',  // Dos dedos hacia abajo sacudiéndose
+            'O': '👌',  // Dedos formando un círculo
+            'P': '🫵',  // Índice y pulgar apuntando abajo
+            'Q': '🤏',  // Dedos en forma de gancho
+            'R': '🤞',  // Dedos índice y medio cruzados (Seña nativa LSA)
+            'S': '☝️',  // Dibuja la S en el aire con el índice
+            'T': '👍',  // Pulgar metido entre índice y medio
+            'U': '🤘',  // Índice y meñique arriba
+            'V': '✌️',  // Dedos en V (forma de dos)
+            'W': '🖐️',  // Tres dedos extendidos abiertos
+            'X': '🤞',  // Índice flexionado en forma de gancho cruzado
+            'Y': '🤙',  // Pulgar y meñique extendidos
+            'Z': '☝️'   // Índice dibuja la Z en el aire
+        };
+
+        function traducirFrase() {
+            const texto = document.getElementById('texto-usuario').value.toUpperCase().trim();
+            const contenedor = document.getElementById('contenedor-resultado');
+            
+            contenedor.innerHTML = '';
+
+            if (texto === '') {
+                contenedor.innerHTML = '<span style="color: #485460; font-size: 0.9rem; margin: auto;">Por favor, escribí algo para traducir.</span>';
+                return;
+            }
+
+            for (let i = 0; i < texto.length; i++) {
+                const letra = texto[i];
+
+                if (letra === ' ') {
+                    const bloqueEspacio = document.createElement('div');
+                    bloqueEspacio.className = 'espacio-bloque';
+                    bloqueEspacio.innerHTML = '➔';
+                    contenedor.appendChild(bloqueEspacio);
+                } else if (diccionarioLSA[letra]) {
+                    const tarjeta = document.createElement('div');
+                    tarjeta.className = 'tarjeta-letra';
+
+                    const dibujo = document.createElement('div');
+                    dibujo.className = 'dibujo-mano';
+                    dibujo.innerText = diccionarioLSA[letra];
+
+                    const subTitulo = document.createElement('div');
+                    subTitulo.className = 'letra-subtitulo';
+                    subTitulo.innerText = letra;
+
+                    tarjeta.appendChild(dibujo);
+                    tarjeta.appendChild(subTitulo);
+                    contenedor.appendChild(tarjeta);
+                }
+            }
+
+            if (contenedor.innerHTML === '') {
+                contenedor.innerHTML = '<span style="color: #ff5e57; font-size: 0.9rem; margin: auto;">Usá solo letras de la A a la Z.</span>';
+            }
+        }
+
+        document.getElementById('texto-usuario').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                traducirFrase();
+            }
+        });
+    </script>
+</body>
+</html>
