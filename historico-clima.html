@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Récords Históricos - Estación Zúñiga</title>
+    <style>
+        body {
+            background-color: #13191c;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        .contenedor-historico {
+            background: #1e272e;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 550px;
+            text-align: center;
+            border: 1px solid #2f3640;
+        }
+        h2 {
+            color: #74b9ff;
+            margin-top: 0;
+            margin-bottom: 5px;
+            font-size: 1.3rem;
+        }
+        .subtitulo {
+            color: #a5b1c2;
+            font-size: 0.8rem;
+            margin-bottom: 20px;
+        }
+        /* CUADRICULA DE TARJETAS DE LOGROS */
+        .vitrina-records {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+        .tarjeta-record {
+            background: #13191c;
+            border: 1px solid #485460;
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+        .tarjeta-record:hover {
+            transform: translateY(-2px);
+            border-color: #74b9ff;
+        }
+        .icono-record {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+        .titulo-record {
+            font-size: 0.75rem;
+            color: #a5b1c2;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .valor-record {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #ffdd59;
+            margin: 6px 0;
+        }
+        .fecha-record {
+            font-size: 0.7rem;
+            color: #74b9ff;
+            background: rgba(116, 185, 255, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        /* DISEÑO ESPECIAL PARA LA RACHA SECA (MÁS ANCHA) */
+        .tarjeta-ancha {
+            grid-column: 1 / -1;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding: 10px 20px;
+        }
+        .tarjeta-ancha .detalles-ancha {
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="contenedor-historico">
+        <h2>📊 Extremos Históricos Registrados</h2>
+        <div class="subtitulo">Los récords imbatibles medidos en nuestra zona</div>
+
+        <div class="vitrina-records">
+            
+            <div class="tarjeta-record">
+                <div class="icono-record">☀️</div>
+                <div class="titulo-record">Máxima Absoluta</div>
+                <div class="valor-record" id="temp-max">--.-°C</div>
+                <div class="fecha-record" id="fecha-max">--/--/----</div>
+            </div>
+
+            <div class="tarjeta-record">
+                <div class="icono-record">❄️</div>
+                <div class="titulo-record">Mínima Absoluta</div>
+                <div class="valor-record" id="temp-min">--.-°C</div>
+                <div class="fecha-record" id="fecha-min">--/--/----</div>
+            </div>
+
+            <div class="tarjeta-record">
+                <div class="icono-record">🍃</div>
+                <div class="titulo-record">Vuela Vecino</div>
+                <div class="valor-record" id="viento-max">--- km/h</div>
+                <div class="fecha-record" id="fecha-viento">--/--/----</div>
+            </div>
+
+            <div class="tarjeta-record">
+                <div class="icono-record">📈</div>
+                <div class="titulo-record">Mayor Amplitud</div>
+                <div class="valor-record" id="amplitud-max">--.-°C</div>
+                <div class="fecha-record" id="fecha-amplitud">--/--/----</div>
+            </div>
+
+            <div class="tarjeta-record tarjeta-ancha">
+                <div class="icono-record">🌵</div>
+                <div class="detalles-ancha">
+                    <div class="titulo-record">Racha Seca Secuencial</div>
+                    <div class="fecha-record" style="margin-top: 4px;">Humedad &lt; 20%</div>
+                </div>
+                <div class="valor-record" id="racha-seca" style="font-size: 1.4rem; margin: 0; text-align: right;">--</div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // 📊 DATOS CORREGIDOS CON SINTAXIS VÁLIDA PARA JAVASCRIPT
+        const datosRecords = {
+            temp_max: { valor: 43.3, fecha: "24/12/2012" },
+            temp_min: { valor: -9.6, fecha: "06/07/2007" },
+            viento_max: { valor: 100, fecha: "21/07/2023" },
+            amplitud_max: { valor: 27.8, fecha: "10/02/2025" },
+            racha_seca: { valor: 120, detalle: "Primer semestre del 2022" }
+        };
+
+        // Función para inyectar los datos en las tarjetas
+        function cargarVitrina() {
+            document.getElementById('temp-max').innerText = `${datosRecords.temp_max.valor}°C`;
+            document.getElementById('fecha-max').innerText = datosRecords.temp_max.fecha;
+
+            document.getElementById('temp-min').innerText = `${datosRecords.temp_min.valor}°C`;
+            document.getElementById('fecha-min').innerText = datosRecords.temp_min.fecha;
+
+            document.getElementById('viento-max').innerText = `${datosRecords.viento_max.valor} km/h`;
+            document.getElementById('fecha-viento').innerText = datosRecords.viento_max.fecha;
+
+            document.getElementById('amplitud-max').innerText = `${datosRecords.amplitud_max.valor}°C`;
+            document.getElementById('fecha-amplitud').innerText = datosRecords.amplitud_max.fecha;
+
+            // Inyección especial de la racha seca con su etiqueta aclaratoria abajo
+            document.getElementById('racha-seca').innerHTML = `${datosRecords.racha_seca.valor} días <br><span style="font-size: 0.7rem; color: #a5b1c2; font-weight: normal;">${datosRecords.racha_seca.detalle}</span>`;
+        }
+
+        // Ejecutar al cargar la página
+        window.onload = cargarVitrina;
+    </script>
+</body>
+</html>
