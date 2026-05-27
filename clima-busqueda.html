@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscador Clima Mini - Estación Zúñiga</title>
+    <style>
+        body {
+            background-color: #13191c;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .contenedor-clima {
+            background: #1e272e;
+            padding: 12px;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 250px;
+            text-align: center;
+            border: 1px solid #2f3640;
+            box-sizing: border-box;
+        }
+        h2 {
+            color: #74b9ff;
+            margin: 0 0 10px 0;
+            font-size: 0.9rem;
+            letter-spacing: 0.3px;
+        }
+        .buscador-caja {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 4px; /* Se achicó el margen para darle lugar a la leyenda */
+        }
+        input {
+            flex: 1;
+            padding: 6px 10px;
+            border-radius: 4px;
+            border: 1px solid #485460;
+            background: #2f3640;
+            color: white;
+            font-size: 0.8rem;
+            min-width: 0;
+        }
+        input:focus {
+            outline: 1px solid #74b9ff;
+        }
+        button {
+            padding: 6px 10px;
+            background: #05c46b;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        button:hover {
+            background: #04a758;
+        }
+        /* ESTILO PARA LA LEYENDA SUGERIDA */
+        .leyenda-busqueda {
+            font-size: 0.65rem;
+            color: #a5b1c2;
+            text-align: left;
+            margin-bottom: 12px;
+            padding-left: 2px;
+            font-style: italic;
+        }
+        .info-ciudad {
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 3px;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .info-temp {
+            font-size: 1.8rem;
+            font-weight: 900;
+            margin: 5px 0;
+            color: #ffdd59;
+            line-height: 1;
+        }
+        .info-viento {
+            color: #a5b1c2;
+            font-size: 0.75rem;
+            margin-top: 3px;
+        }
+        .error-msg {
+            color: #ff5e57;
+            font-size: 0.7rem;
+            margin-top: 5px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="contenedor-clima">
+        <h2>Consultar Clima</h2>
+        
+        <div class="buscador-caja">
+            <input type="text" id="input-ciudad" placeholder="Ciudad...">
+            <button onclick="buscarClimaManual()">Buscar</button>
+        </div>
+        
+        <div class="leyenda-busqueda">* Para localidades argentinas colocar ,AR (Ej: San Luis, AR)</div>
+
+        <div id="bloque-info">
+            <div class="info-ciudad" id="txt-ciudad">Ubicación...</div>
+            <div class="info-temp" id="txt-temp">--°C</div>
+            <div class="info-viento" id="txt-viento">Viento: -- km/h</div>
+        </div>
+        
+        <div class="error-msg" id="txt-error">Error al buscar.</div>
+    </div>
+
+    <script>
+        async function detectarUbicacionAlInicio() {
+            try {
+                const resGeo = await fetch('http://ip-api.com/json/');
+                const datosGeo = await resGeo.json();
+                
+                if (datosGeo.status === "success") {
+                    obtenerClimaOpenMeteo(datosGeo.lat, datosGeo.lon, `${datosGeo.city}`);
+                } else {
+                    obtenerClimaOpenMeteo(-33.081, -68.468, "San Martín, Mza.");
+                }
+            } catch (error) {
+                obtenerClimaOpenMeteo(-33.081, -68.468, "San Martín, Mza.");
+            }
+        }
+
+        async function buscarClimaManual() {
+            const ciudadBuscada = document.getElementById('input-ciudad').value.trim();
+            const txtError = document.getElementById('txt-error');
+            if (ciudadBuscada === "") return;
+
+            try {
+                txtError.style.display = 'none';
+                const urlGeocoding = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(ciudadBuscada)}&limit=1`;
+                const respuestaGeo = await fetch(urlGeocoding);
+                const datosGeo = await respuestaGeo.json();
+
+                if (datosGeo.length > 0) {
+                    const lat = datosGeo[0].lat;
+                    const lon = datosGeo[0].lon;
+                    const parts = datosGeo[0].display_name.split(',');
+                    const nombreFormateado = parts[0] + ", " + (parts[2] || parts[1] || "").trim();
+                    
+                    obtenerClimaOpenMeteo(lat, lon, nombreFormateado);
+                } else {
+                    txtError.style.display = 'block';
+                }
+            } catch (error) {
+                console.error(error);
+                txtError.style.display = 'block';
+            }
+        }
+
+        async function obtenerClimaOpenMeteo(lat, lon, nombreMostrar) {
+            const urlClima = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m&timezone=auto`;
+            
+            try {
+                const respuesta = await fetch(urlClima);
+                const datos = await respuesta.json();
+
+                document.getElementById('txt-ciudad').innerText = nombreMostrar;
+                document.getElementById('txt-temp').innerText = `${Math.round(datos.current.temperature_2m)}°C`;
+                document.getElementById('txt-viento').innerText = `Viento: ${Math.round(datos.current.wind_speed_10m)} km/h`;
+                
+            } catch (error) {
+                console.error("Error al traer clima de Open-Meteo:", error);
+                document.getElementById('txt-error').style.display = 'block';
+            }
+        }
+
+        document.getElementById('input-ciudad').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                buscarClimaManual();
+            }
+        });
+
+        window.onload = detectarUbicacionAlInicio;
+    </script>
+</body>
+</html>
