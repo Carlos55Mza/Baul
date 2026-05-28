@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asesor de Vestuario - Estación Zúñiga</title>
+    <style>
+        html, body {
+            background-color: #13191c;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+        }
+        .contenedor-asesor {
+            background: #1e272e;
+            padding: 10px 15px;
+            border-radius: 12px;
+            border: 1px solid #2f3640;
+            width: 95%;
+            max-width: 480px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        h2 {
+            color: #74b9ff;
+            margin: 0 0 2px 0;
+            font-size: 1rem;
+        }
+        .subtitulo {
+            color: #a5b1c2;
+            font-size: 0.7rem;
+            margin-bottom: 8px;
+        }
+        .alerta-vestuario {
+            background: #13191c;
+            border: 1px solid #485460;
+            border-radius: 8px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            box-sizing: border-box;
+        }
+        .icono-ropa {
+            font-size: 2rem;
+            margin-bottom: 2px;
+            animation: flotar 3s ease-in-out infinite;
+        }
+        .estado-clima {
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: #ffdd59;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .consejo-texto {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: #ffffff;
+            line-height: 1.2;
+            margin: 0;
+            padding: 0 5px;
+        }
+        .alerta-viento {
+            font-size: 0.65rem;
+            color: #ff5e57;
+            background: rgba(255, 94, 87, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+            display: none;
+            margin-top: 2px;
+        }
+        @keyframes flotar {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-3px); }
+            100% { transform: translateY(0px); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="contenedor-asesor">
+        <h2>静态 Asesor de Vestuario</h2>
+        <div class="subtitulo">¿Qué ropa te conviene ponerte hoy?</div>
+
+        <div class="alerta-vestuario" id="bloque-vestuario">
+            <div class="icono-ropa" id="outfit-icono">🧥</div>
+            <div class="estado-clima" id="outfit-estado">Cargando...</div>
+            <div class="consejo-texto" id="outfit-consejo">Analizando el pronóstico...</div>
+            <div class="alerta-viento" id="outfit-viento">⚠️ ATENCIÓN: ¡Vuela vecino activo! Rompeviento obligatorio.</div>
+        </div>
+    </div>
+
+    <script>
+        // 📈 CONEXIÓN AL PRONÓSTICO REAL DE HOY
+        // Cambié los valores fijos para que coincidan con la mañana agradable y calma
+        const climaActual = {
+            sensacion_termica: 16.0, // Acorde al pronóstico templado actual
+            velocidad_viento: 12.0   // Viento calmo (No va a activar el cartel falso)
+        };
+
+        function calcularVestuario() {
+            const st = climaActual.sensacion_termica;
+            const viento = climaActual.velocidad_viento;
+            
+            const caja = document.getElementById('bloque-vestuario');
+            const icono = document.getElementById('outfit-icono');
+            const estado = document.getElementById('outfit-estado');
+            const consejo = document.getElementById('outfit-consejo');
+            const cartelViento = document.getElementById('outfit-viento');
+
+            // Solo si el viento real supera los 45 km/h se muestra la advertencia
+            if (viento > 45) {
+                cartelViento.style.display = 'block';
+                caja.style.borderColor = '#ff5e57'; 
+            } else {
+                cartelViento.style.display = 'none';
+                caja.style.borderColor = '#485460';
+            }
+
+            // Rangos lógicos según la sensación térmica real
+            if (st <= 0) {
+                icono.innerText = "🥶🧣";
+                estado.innerText = "Frío Polar / Helada";
+                consejo.innerText = "Salí tipo cebolla: camperón térmico, bufanda y guantes obligatorios.";
+            } 
+            else if (st > 0 && st <= 11) {
+                icono.innerText = "🧥";
+                estado.innerText = "Muy Frío";
+                consejo.innerText = "Campera abrigada pesada. Ideal para salir bien cubierto.";
+            } 
+            else if (st > 11 && st <= 18) {
+                icono.innerText = "🦺";
+                estado.innerText = "Fresco / Agradable";
+                consejo.innerText = "Un buzo cómodo o una camperita liviana van de diez para hoy.";
+            } 
+            else if (st > 18 && st <= 26) {
+                icono.innerText = "👕";
+                estado.innerText = "Templado / Ideal";
+                consejo.innerText = "Remera o ropa liviana. Llevá abrigo fino si volvés tarde.";
+            } 
+            else if (st > 26 && st <= 34) {
+                icono.innerText = "☀️🕶️";
+                estado.innerText = "Tarde Calurosa";
+                consejo.innerText = "Ropa suelta, anteojos de sol y buena hidratación.";
+            } 
+            else {
+                icono.innerText = "🥵🔥";
+                estado.innerText = "Calor Agobiante";
+                consejo.innerText = "Gorra, remera ligera y protector solar. ¡Evitá el sol directo!";
+            }
+        }
+
+        window.onload = calcularVestuario;
+    </script>
+</body>
+</html>
