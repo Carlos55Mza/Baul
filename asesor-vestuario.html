@@ -88,7 +88,7 @@
 <body>
 
     <div class="contenedor-asesor">
-        <h2>静态 Asesor de Vestuario</h2>
+        <h2> Asesor de Vestuario</h2>
         <div class="subtitulo">¿Qué ropa te conviene ponerte hoy?</div>
 
         <div class="alerta-vestuario" id="bloque-vestuario">
@@ -99,67 +99,65 @@
         </div>
     </div>
 
-    <script>
-        // 📈 CONEXIÓN AL PRONÓSTICO REAL DE HOY
-        // Cambié los valores fijos para que coincidan con la mañana agradable y calma
-        const climaActual = {
-            sensacion_termica: 16.0, // Acorde al pronóstico templado actual
-            velocidad_viento: 12.0   // Viento calmo (No va a activar el cartel falso)
-        };
+<script>
+        // Escuchamos el paquete de datos seguro que envía clima.js
+        window.addEventListener('message', function(event) {
+            try {
+                const stReal = parseFloat(event.data.sensacion);
+                const vientoReal = parseFloat(event.data.viento);
 
-        function calcularVestuario() {
-            const st = climaActual.sensacion_termica;
-            const viento = climaActual.velocidad_viento;
-            
-            const caja = document.getElementById('bloque-vestuario');
-            const icono = document.getElementById('outfit-icono');
-            const estado = document.getElementById('outfit-estado');
-            const consejo = document.getElementById('outfit-consejo');
-            const cartelViento = document.getElementById('outfit-viento');
+                if (isNaN(stReal) || isNaN(vientoReal)) return;
 
-            // Solo si el viento real supera los 45 km/h se muestra la advertencia
-            if (viento > 45) {
-                cartelViento.style.display = 'block';
-                caja.style.borderColor = '#ff5e57'; 
-            } else {
-                cartelViento.style.display = 'none';
-                caja.style.borderColor = '#485460';
+                const caja = document.getElementById('bloque-vestuario');
+                const icono = document.getElementById('outfit-icono');
+                const estado = document.getElementById('outfit-estado');
+                const consejo = document.getElementById('outfit-consejo');
+                const cartelViento = document.getElementById('outfit-viento');
+
+                // Alerta de ráfagas ("Vuela Vecino")
+                if (vientoReal > 45) {
+                    cartelViento.style.display = 'block';
+                    caja.style.borderColor = '#ff5e57'; 
+                } else {
+                    cartelViento.style.display = 'none';
+                    caja.style.borderColor = '#485460';
+                }
+
+                // Rangos automáticos de vestuario
+                if (stReal <= 0) {
+                    icono.innerText = "🥶🧣";
+                    estado.innerText = "Frío Polar / Helada";
+                    consejo.innerText = "Salí tipo cebolla: camperón térmico, bufanda y guantes obligatorios.";
+                } 
+                else if (stReal > 0 && stReal <= 11) {
+                    icono.innerText = "🧥";
+                    estado.innerText = "Muy Frío";
+                    consejo.innerText = "Campera abrigada pesada. Ideal para salir bien cubierto.";
+                } 
+                else if (stReal > 11 && stReal <= 18) {
+                    icono.innerText = "🦺";
+                    estado.innerText = "Fresco / Agradable";
+                    consejo.innerText = "Un buzo cómodo o una camperita liviana van de diez para hoy.";
+                } 
+                else if (stReal > 18 && stReal <= 26) {
+                    icono.innerText = "👕";
+                    estado.innerText = "Templado / Ideal";
+                    consejo.innerText = "Remera o ropa liviana. Llevá abrigo fino si volvés tarde.";
+                } 
+                else if (stReal > 26 && stReal <= 34) {
+                    icono.innerText = "☀️🕶️";
+                    estado.innerText = "Tarde Calurosa";
+                    consejo.innerText = "Ropa suelta, anteojos de sol y buena hidratación.";
+                } 
+                else {
+                    icono.innerText = "🥵🔥";
+                    estado.innerText = "Calor Agobiante";
+                    consejo.innerText = "Gorra, remera ligera y protector solar. ¡Evitá el sol directo!";
+                }
+            } catch (e) {
+                console.log("Error procesando vestuario:", e);
             }
-
-            // Rangos lógicos según la sensación térmica real
-            if (st <= 0) {
-                icono.innerText = "🥶🧣";
-                estado.innerText = "Frío Polar / Helada";
-                consejo.innerText = "Salí tipo cebolla: camperón térmico, bufanda y guantes obligatorios.";
-            } 
-            else if (st > 0 && st <= 11) {
-                icono.innerText = "🧥";
-                estado.innerText = "Muy Frío";
-                consejo.innerText = "Campera abrigada pesada. Ideal para salir bien cubierto.";
-            } 
-            else if (st > 11 && st <= 18) {
-                icono.innerText = "🦺";
-                estado.innerText = "Fresco / Agradable";
-                consejo.innerText = "Un buzo cómodo o una camperita liviana van de diez para hoy.";
-            } 
-            else if (st > 18 && st <= 26) {
-                icono.innerText = "👕";
-                estado.innerText = "Templado / Ideal";
-                consejo.innerText = "Remera o ropa liviana. Llevá abrigo fino si volvés tarde.";
-            } 
-            else if (st > 26 && st <= 34) {
-                icono.innerText = "☀️🕶️";
-                estado.innerText = "Tarde Calurosa";
-                consejo.innerText = "Ropa suelta, anteojos de sol y buena hidratación.";
-            } 
-            else {
-                icono.innerText = "🥵🔥";
-                estado.innerText = "Calor Agobiante";
-                consejo.innerText = "Gorra, remera ligera y protector solar. ¡Evitá el sol directo!";
-            }
-        }
-
-        window.onload = calcularVestuario;
+        });
     </script>
 </body>
 </html>
