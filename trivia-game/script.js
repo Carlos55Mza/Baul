@@ -1,4 +1,4 @@
-const QUESTION_TIME = 20;
+const QUESTION_TIME = 40;
 const TOTAL_LIVES = 3;
 const QUESTIONS_PER_LEVEL = 20;
 const HIGH_SCORES_KEY = "trivia_master_high_scores_v3";
